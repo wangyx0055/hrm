@@ -18,6 +18,7 @@
 package hrm.deployment.utils;
 
 import hrm.model.SystemConfDatabase;
+import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -59,7 +60,7 @@ public class DeploySystemPresetsToDatabase {
         }
 
         @Test
-        public void system_page_presets() {
+        public void system_page_presets() throws ClassNotFoundException, SQLException {
                 hrm.model.SystemPagePreset preset = 
                         new hrm.model.SystemPagePreset(hrm.deployment.ResourceConvention.DEFAULT_PAGE_PRESET);
                 preset.add_module_from_directory("Conf/");
@@ -67,6 +68,5 @@ public class DeploySystemPresetsToDatabase {
                 else SystemConfDatabase.init_with_mock_database();
                 SystemConfDatabase.clear();
                 SystemConfDatabase.add_preset(preset);
-                SystemConfDatabase.commit();
         }
 }

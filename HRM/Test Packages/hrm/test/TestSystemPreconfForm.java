@@ -17,6 +17,7 @@
  */
 package hrm.test;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -57,7 +58,7 @@ public class TestSystemPreconfForm {
         }
 
         @Test
-        public void set_and_draw_form_data_from_system() {
+        public void set_and_draw_form_data_from_system() throws ClassNotFoundException, SQLException {
                 hrm.model.SystemPagePreset preset = new hrm.model.SystemPagePreset("Test HRM System Preset");
                 hrm.model.SystemPageModule module = preset.add_module("Test HR Archive Registration");
                 assertTrue(module != null);
@@ -102,7 +103,6 @@ public class TestSystemPreconfForm {
                 // Add presets to database
                 hrm.model.SystemConfDatabase.init_with_mock_database();
                 hrm.model.SystemConfDatabase.add_preset(preset);
-                hrm.model.SystemConfDatabase.commit();
                 // Fetch the preset back
                 hrm.model.SystemPreset preset_fetched = hrm.model.SystemConfDatabase.fetch("Test HRM System Preset");
                 assertTrue(preset_fetched != null);

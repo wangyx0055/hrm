@@ -17,17 +17,28 @@
  */
 package hrm.model;
 
+import hrm.utils.Serializer;
+
 /**
- *
+ * Define a system preset.
  * @author davis
  */
-public class SystemPreset {
+public abstract class SystemPreset implements hrm.utils.Serializable {
         private final String    m_name;
         
+        /**
+         * Construct the system preset with a name constant.
+         * @param name Name of this system preset.
+         */
         SystemPreset(String name) {
                 m_name = name;
         }
         
+        /**
+         * Compare the object against a name.
+         * @param o the name to be compared.
+         * @return true if the name equals to this object's.
+         */
         @Override
         public boolean equals(Object o) {
                 if (!(o instanceof String)) return false;
@@ -37,5 +48,9 @@ public class SystemPreset {
         @Override
         public int hashCode() {
                 return m_name.hashCode();
+        }
+
+        public String get_name() {
+                return m_name;
         }
 }
