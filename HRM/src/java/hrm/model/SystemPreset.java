@@ -17,21 +17,21 @@
  */
 package hrm.model;
 
-import hrm.utils.Serializer;
-
 /**
  * Define a system preset.
  * @author davis
  */
 public abstract class SystemPreset implements hrm.utils.Serializable {
         private final String    m_name;
+        private final int       m_type;
         
         /**
          * Construct the system preset with a name constant.
          * @param name Name of this system preset.
          */
-        SystemPreset(String name) {
+        SystemPreset(String name, int type) {
                 m_name = name;
+                m_type = type;
         }
         
         /**
@@ -52,5 +52,9 @@ public abstract class SystemPreset implements hrm.utils.Serializable {
 
         public String get_name() {
                 return m_name;
+        }
+        
+        public int get_type() {
+                return m_type;
         }
 }

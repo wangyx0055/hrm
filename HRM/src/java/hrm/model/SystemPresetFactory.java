@@ -17,26 +17,22 @@
  */
 package hrm.model;
 
-import java.util.List;
-
 /**
- *
+ * Factory to construct a SystemPreset.
  * @author davis
  */
-public class SystemPageModule {
+public class SystemPresetFactory {
+        public static final int         DBFORM_MODULE_PRESET = 1;
+        public static final int         AUTHEN_PRESET = 2;
         
-        public SystemPageModule() {
-        }
-        
-        public void add_element(String name, List<String> predefined) {
-                throw new UnsupportedOperationException("Not supported yet.");
-        }
-        
-        public List<String> get_element(String name) {
-                throw new UnsupportedOperationException("Not supported yet.");
-        }
-        
-        public void build_from_file(String hrArchiveRegistrationconf) throws SystemPageModuleException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public static SystemPreset create_by_type_and_name(int type, String name) {
+                switch (type) {
+                        case DBFORM_MODULE_PRESET:
+                                return new DBFormModulePreset(name);
+                        case AUTHEN_PRESET:
+                                return new AuthenPreset(name);
+                        default:
+                                return null;
+                }
         }
 }

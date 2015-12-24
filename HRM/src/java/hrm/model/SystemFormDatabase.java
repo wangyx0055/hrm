@@ -15,12 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.deployment;
+package hrm.model;
 
 /**
- * Resource Naming conventions go here.
+ * A database dedicated for form data.
  * @author davis
  */
-public class ResourceConvention {
-        public static final String      DEFAULT_PAGE_PRESET = "%Default-Syatem-Page-Preset";
+public class SystemFormDatabase {
+        
 }

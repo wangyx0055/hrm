@@ -17,15 +17,15 @@
  */
 package hrm.view;
 
-import hrm.model.SystemPageModule;
+import hrm.model.DBFormModule;
 
 /**
  * Resolve Page Module data to jsp page.
  * @author davis
  */
-public class PageModuleJSPResolver extends JSPResolver {
+public class DBFormModuleJSPResolver extends JSPResolver {
 
-        public PageModuleJSPResolver(SystemPageModule m) {
+        public DBFormModuleJSPResolver(DBFormModule m) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

@@ -21,22 +21,10 @@ package hrm.model;
  *
  * @author davis
  */
-public class SystemPagePreset extends SystemPreset {
+public class AuthenPreset extends SystemPreset {
 
-        public SystemPagePreset(String name) {
-                super(name);
-        }
-
-        public SystemPageModule add_module(String module_name) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-       
-        public SystemPageModule get_module(String module_name) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        public void add_module_from_directory(String dir) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public AuthenPreset(String name) {
+                super(name, SystemPresetFactory.AUTHEN_PRESET);
         }
 
         @Override
@@ -48,4 +36,5 @@ public class SystemPagePreset extends SystemPreset {
         public void deserialize(byte[] stream) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
+        
 }

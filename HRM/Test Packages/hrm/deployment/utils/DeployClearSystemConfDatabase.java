@@ -17,28 +17,20 @@
  */
 package hrm.deployment.utils;
 
-import hrm.model.SystemConfDatabase;
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TestName;
 
 /**
- * A utility to deploy page presets to the database.
+ * Clear the System configuration database
  * @author davis
  */
-public class DeploySystemPresetsToDatabase {
+public class DeployClearSystemConfDatabase {
         
-        @Rule public final TestName     m_deployment_name = new TestName();
-        
-        public boolean                  m_is_mocked = false;
-        
-        public DeploySystemPresetsToDatabase() {
+        public DeployClearSystemConfDatabase() {
         }
         
         @BeforeClass
@@ -51,22 +43,15 @@ public class DeploySystemPresetsToDatabase {
         
         @Before
         public void setUp() {
-                System.out.println("==========" + "Deploying " + m_deployment_name.getMethodName() + "...==========");
         }
         
         @After
         public void tearDown() {
-                System.out.println("==========" + "Done      " + m_deployment_name.getMethodName() + "...==========");
         }
 
-        @Test
-        public void system_page_presets() throws ClassNotFoundException, SQLException {
-                hrm.model.DBFormModulePreset preset = 
-                        new hrm.model.DBFormModulePreset(hrm.system.ResourceConvention.DEFAULT_PAGE_PRESET);
-                preset.add_module_from_directory("Conf/");
-                if (!m_is_mocked) SystemConfDatabase.init();
-                else SystemConfDatabase.init_with_mock_database();
-                SystemConfDatabase.clear();
-                SystemConfDatabase.add_preset(preset);
-        }
+        // TODO add test methods here.
+        // The methods must be annotated with annotation @Test. For example:
+        //
+        // @Test
+        // public void hello() {}
 }

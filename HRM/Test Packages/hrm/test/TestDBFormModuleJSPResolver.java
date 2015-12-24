@@ -17,7 +17,7 @@
  */
 package hrm.test;
 
-import hrm.model.SystemPageModuleException;
+import hrm.model.DBFormModuleException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,10 +31,10 @@ import org.junit.rules.TestName;
  * Test the Page Module to JSP resolver.
  * @author davis
  */
-public class TestPageModuleJSPResolver {
+public class TestDBFormModuleJSPResolver {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestPageModuleJSPResolver() {
+        public TestDBFormModuleJSPResolver() {
         }
         
         @BeforeClass
@@ -56,14 +56,14 @@ public class TestPageModuleJSPResolver {
         }
 
         @Test
-        public void page_module_to_jsp() throws SystemPageModuleException {
+        public void page_module_to_jsp() throws DBFormModuleException {
                 // Make the preset
-                hrm.model.SystemPagePreset preset = new hrm.model.SystemPagePreset("Test HRM System Preset");
-                hrm.model.SystemPageModule module = preset.add_module("Test HR Archive Registration");
+                hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
+                hrm.model.DBFormModule module = preset.add_module("Test HR Archive Registration");
                 
-                module.build_from_file("Conf/Test.pageconf");
+                module.build_from_file("Conf/Test/Test.pageconf");
                 
-                hrm.view.PageModuleJSPResolver jsp_res = new hrm.view.PageModuleJSPResolver(module);
+                hrm.view.DBFormModuleJSPResolver jsp_res = new hrm.view.DBFormModuleJSPResolver(module);
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
                 jsp_res.add_new_line();

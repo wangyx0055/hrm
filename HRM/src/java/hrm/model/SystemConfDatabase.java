@@ -17,13 +17,17 @@
  */
 package hrm.model;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * A database that is dedicated for system configurations. This class is
+ * A database dedicated for system configurations. This class is
  * singleton. Object cannot be constructed customarily.
  *
  * @author davis
@@ -33,32 +37,41 @@ public final class SystemConfDatabase {
         private SystemConfDatabase() {
                 /* can not be constructed */
         }
+
+        private static String m_database_url;
+        private static String m_user;
+        private static String m_password;
+        private static Connection m_dbconn;
+
+        private static final String TABLE = "SYSTEMCONF";
         
-        private static String           m_database_url;
-        private static String           m_user;
-        private static String           m_password;
-        private static Connection       m_dbconn;
-        
-        private static final String     TABLE = "SystemConf"; 
-        
+        /**
+         * Table goes as: name:String(primary key), binary_blob:byte[], type:int
+         * @throws ClassNotFoundException
+         * @throws SQLException 
+         */
         private static void connect_to_database() throws ClassNotFoundException, SQLException {
-                        Class.forName("org.apache.derby.jdbc.ClientDriver");
-                        m_dbconn = DriverManager.getConnection(m_database_url, m_user, m_password);
-                        // Create a table if it doesn't exist yet
+                Class.forName("org.apache.derby.jdbc.ClientDriver");
+                m_dbconn = DriverManager.getConnection(m_database_url, m_user, m_password);
+                DatabaseMetaData dbm = m_dbconn.getMetaData();
+                // check if "employee" table is there
+                ResultSet tables = dbm.getTables(null, null, TABLE, null);
+                if (tables.next()) {
+                        // Table exists
+                } else {
+                        // Create a table as it doesn't exist yet
                         Statement stmt = m_dbconn.createStatement();
-                        String sql =    "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES \n" +
-                                        "           WHERE TABLE_NAME = N'" + TABLE + "')\n" +
-                                        "BEGIN\n" +
-                                        "       CREATE TABLE " + TABLE + " " +
-                                        "       (preset_name VARCHAR(255) not NULL, " +
-                                        "       object VARBINARY()" + 
-                                        "       PRIMARY KEY (preset_name))" +
-                                        "END";
-                        stmt.executeUpdate(sql);
+                        stmt.executeUpdate("CREATE TABLE SYSTEMCONF ("
+                                + "PRESETNAME VARCHAR(255) not NULL, "
+                                + "OBJECT BLOB(1M), "
+                                + "OBJECTTYPE INTEGER, "
+                                + "PRIMARY KEY(PRESETNAME))");
+                }
         }
 
         /**
          * Initialize with the dedicated system configuration database.
+         *
          * @throws java.lang.ClassNotFoundException
          * @throws java.sql.SQLException
          */
@@ -71,6 +84,7 @@ public final class SystemConfDatabase {
 
         /**
          * Initialize with a mock database which may be useful for testing.
+         *
          * @throws java.lang.ClassNotFoundException
          * @throws java.sql.SQLException
          */
@@ -80,9 +94,10 @@ public final class SystemConfDatabase {
                 m_password = "hrm_test_password";
                 connect_to_database();
         }
-        
+
         /**
          * Clear database connection, and all related resources.
+         *
          * @throws java.sql.SQLException
          */
         public static void free() throws SQLException {
@@ -95,10 +110,36 @@ public final class SystemConfDatabase {
          * Add a system preset to the database.
          *
          * @param preset preset that are to be added.
+         * @throws java.sql.SQLException
          */
-        public static void add_preset(SystemPreset preset) {
+        public static void add_preset(SystemPreset preset) throws SQLException {
+                try {
+                        String sql = "SELECT * FROM " + TABLE + " WHERE PRESETNAME=?";
+                        PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
+                        pstmt.setString(1, preset.get_name());
+                        ResultSet rs = pstmt.executeQuery();
+                        // update the record if it already exists
+                        sql =   "UPDATE " + TABLE + " \n" +
+                                "SET PRESETNAME=?,OBJECT=?,OBJECTTYPE=? \n" +
+                                "WHERE PRESETNAME=?";
+                        pstmt = m_dbconn.prepareStatement(sql);
+                        pstmt.setString(1, preset.get_name());
+                        pstmt.setBlob(2, new ByteArrayInputStream(preset.serialize()));
+                        pstmt.setInt(3, preset.get_type());
+                        pstmt.setString(4, preset.get_name());
+                        pstmt.executeUpdate();
+                } catch (SQLException e) {
+                        // Never seen this record before, then insert it
+                        PreparedStatement pstmt = m_dbconn.prepareStatement(
+                                "INSERT INTO " + TABLE + " VALUES (?,?,?)");
+                        pstmt.setString(1, preset.get_name());
+                        pstmt.setBlob(2, new ByteArrayInputStream(preset.serialize()));
+                        pstmt.setInt(3, preset.get_type());
+                        pstmt.executeUpdate();
+                }
+                
         }
-        
+
         /**
          * Fetch the system preset using its name.
          *
@@ -107,12 +148,38 @@ public final class SystemConfDatabase {
          * otherwise.
          */
         public static SystemPreset fetch(String entry) {
-                return null;
+                try {
+                        String sql = "SELECT * FROM " + TABLE + " WHERE PRESETNAME=?";
+                        PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
+                        pstmt.setString(1, entry);
+                        ResultSet rs = pstmt.executeQuery();
+                        if (rs.next()) {
+                                String name = rs.getString(1);
+                                byte[] stream = rs.getBytes(2);
+                                int type = rs.getInt(3);
+
+                                SystemPreset preset = SystemPresetFactory.create_by_type_and_name(type, name);
+                                preset.deserialize(stream);
+                                return preset;
+                        } else return null;
+                } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        return null;
+                }
         }
 
         /**
          * Clear entries in the database and the tracking list.
+         * @throws java.sql.SQLException
          */
-        public static void clear() {
+        public static void clear() throws SQLException {
+                Statement stmt = m_dbconn.createStatement();
+                String sql = 
+                          "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES \n"
+                        + "           WHERE TABLE_NAME = N'" + TABLE + "')\n"
+                        + "BEGIN\n"
+                        + "       DROP TABLE " + TABLE
+                        + "END";
+                stmt.executeUpdate(sql);
         }
 }
