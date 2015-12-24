@@ -18,6 +18,7 @@
 package hrm.model;
 
 import hrm.utils.Serializer;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -41,8 +42,12 @@ public class DBFormModulePreset extends SystemPreset {
         public DBFormModule get_module(String module_name) {
                 return m_modules.get(module_name);
         }
+        
+        public Collection<DBFormModule> export_all_modules() {
+                return m_modules.values();
+        }
 
-        public void add_module_from_directory(String dir) {
+        public void add_modules_from_directory(String dir) {
         }
 
         @Override

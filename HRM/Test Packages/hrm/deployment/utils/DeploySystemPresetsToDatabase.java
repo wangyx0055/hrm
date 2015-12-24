@@ -62,8 +62,8 @@ public class DeploySystemPresetsToDatabase {
         @Test
         public void system_page_presets() throws ClassNotFoundException, SQLException {
                 hrm.model.DBFormModulePreset preset = 
-                        new hrm.model.DBFormModulePreset(hrm.system.ResourceConvention.DEFAULT_PAGE_PRESET);
-                preset.add_module_from_directory("Conf/");
+                        new hrm.model.DBFormModulePreset(hrm.system.ResourceInjection.DEFAULT_DBFORM_MODULE_PRESET);
+                preset.add_modules_from_directory("Conf/");
                 if (!m_is_mocked) SystemConfDatabase.init();
                 else SystemConfDatabase.init_with_mock_database();
                 SystemConfDatabase.clear();

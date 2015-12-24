@@ -72,6 +72,21 @@ public class Serializer {
                 return read_int();
         }
         
+        public void write_serialized_stream(byte[] stream) {
+                write_array_header(stream.length);
+                for (byte b : stream) {
+                        m_stream.add(b);
+                }
+        }
+        
+        public byte[] read_serialized_stream() {
+                byte[] stream = new byte[read_array_header()];
+                for (int i = 0; i < stream.length; i ++) {
+                        stream[i] = m_stream.poll();
+                }
+                return stream;
+        }
+        
         public byte[] to_byte_stream() {
                 // added an extra byte to ensure that it always has something
                 byte[] bytes = new byte [m_stream.size() + 1];

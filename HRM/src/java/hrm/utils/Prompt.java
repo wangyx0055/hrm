@@ -23,27 +23,38 @@ package hrm.utils;
  * @author davis
  */
 public class Prompt {
-
+        // warning level
         public static final int NORMAL = 1;
         public static final int WARNING = 2;
         public static final int ERROR = 3;
+        
+        // coloring schemes
+        public static final String ANSI_RESET = "\u001B[0m";
+        public static final String ANSI_BLACK = "\u001B[30m";
+        public static final String ANSI_RED = "\u001B[31m";
+        public static final String ANSI_GREEN = "\u001B[32m";
+        public static final String ANSI_YELLOW = "\u001B[33m";
+        public static final String ANSI_BLUE = "\u001B[34m";
+        public static final String ANSI_PURPLE = "\u001B[35m";
+        public static final String ANSI_CYAN = "\u001B[36m";
+        public static final String ANSI_WHITE = "\u001B[37m";
 
         public static void log(int level, String loc, String message) {
                 String prefix;
                 switch (level) {
                         case NORMAL:
-                                prefix = "Normal:";
+                                prefix = ANSI_GREEN + "Normal:";
                                 break;
                         case WARNING:
-                                prefix = "Warning: ";
+                                prefix = ANSI_YELLOW + "Warning: ";
                                 break;
                         case ERROR:
-                                prefix = "Error: ";
+                                prefix = ANSI_RED + "Error: ";
                                 break;
                         default:
                                 prefix = "";
                 }
-                if (loc != null)  System.out.println(prefix + loc + " - " + message);
-                else              System.out.println(prefix + " - " + message);
+                if (loc != null)  System.out.println(prefix + loc + " - " + message + ANSI_RESET);
+                else              System.out.println(prefix + " - " + message + ANSI_RESET);
         }
 }

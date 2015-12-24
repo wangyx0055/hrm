@@ -17,48 +17,104 @@
  */
 package hrm.model;
 
+import hrm.utils.Element;
+import hrm.utils.NaryTree;
+import hrm.utils.Serializer;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Containing elements of a database form module.
+ * Containing elements and hierarchical structure of a database form module.
  * @author davis
  */
-public class DBFormModule implements hrm.utils.Serializable {
-        
-        public DBFormModule() {
-        }
-
+public class DBFormModule extends NaryTree<Element> implements hrm.utils.Serializable {
         @Override
         public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                // serialize the structural path
+                Serializer s = new Serializer();
+                Path<Element>[] paths = super.get_all_paths();
+                
+                s.write_array_header(paths.length);
+                for (Path<Element> path : paths) {
+                        // encode a path to the stream
+                        boolean is_root = true;
+                        while (path.next != null) {
+                                if (!is_root) {
+                                        s.write_int(1);         // enable continue
+                                        s.write_string(path.name);
+                                        s.write_serialized_stream(path.value.serialize());
+                                } else {
+                                        is_root = false;
+                                }
+                        }
+                        s.write_int(0);                 // disable continue
+                }
+                return s.to_byte_stream();
         }
 
         @Override
         public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                // deserialize all paths
+                Serializer s = new Serializer();
+                s.from_byte_stream(stream);
+                
+                int l = s.read_array_header();
+                for (int i = 0; i < l; i ++) {
+                        // extract a path from the stream
+                        NaryTree<Element> current = this;
+                        while (s.read_int() != 0) {
+                                // there is a path then
+                                String  child_name = s.read_string();
+                                Element value = new Element();
+                                value.deserialize(s.read_serialized_stream());
+                                
+                                current = current.add_child(child_name, value);
+                        }
+                }
         }
         
-        public class Hierarchy {
+        /**
+         * Construct a database form module.
+         */
+        public DBFormModule() {
         }
         
-        public Hierarchy get_root() {
-                throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * For internal use.
+         * @param as_root root level.
+         */
+        private DBFormModule(NaryTree<Element> as_root) {
+                super(as_root);
         }
         
-        public Hierarchy step_into(Hierarchy level) {
-                throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Add a key to this form module.
+         * @param child human-readable identifier for this key.
+         * @param elm the key element.
+         * @return module that contains the key.
+         */
+        public DBFormModule add_key(String child, Element elm) {
+                return new DBFormModule(super.add_child(child, elm));
         }
         
-        public Hierarchy step_out(Hierarchy level) {
-                throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * All keys that are in this database form module.
+         * @return set of keys
+         */
+        public Set<Element> get_keys() {
+                Map<String, NaryTree<Element>> children = super.get_all_children();
+                HashSet<Element> elm_set = new HashSet<>();
+                children.values().stream().forEach((node) -> {
+                        elm_set.add(node.get_value());
+                });
+                return elm_set;
         }
         
-        public Hierarchy add_element(Hierarchy level, String element) {
-                throw new UnsupportedOperationException("Not supported yet.");
+        public NaryTree<Element>.Path<Element>[] get_structure() {
+                return super.get_all_paths();
         }
-        
-        public String[] get_all_elements(Hierarchy level) {
-                throw new UnsupportedOperationException("Not supported yet.");
-        }
-        
+
         public void build_from_file(String hrArchiveRegistrationconf) throws DBFormModuleException {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }

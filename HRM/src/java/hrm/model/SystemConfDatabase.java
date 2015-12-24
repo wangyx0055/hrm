@@ -53,8 +53,9 @@ public final class SystemConfDatabase {
         private static void connect_to_database() throws ClassNotFoundException, SQLException {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 m_dbconn = DriverManager.getConnection(m_database_url, m_user, m_password);
+                
+                // check if "SYSTEMCONF" table is there
                 DatabaseMetaData dbm = m_dbconn.getMetaData();
-                // check if "employee" table is there
                 ResultSet tables = dbm.getTables(null, null, TABLE, null);
                 if (tables.next()) {
                         // Table exists
@@ -173,13 +174,13 @@ public final class SystemConfDatabase {
          * @throws java.sql.SQLException
          */
         public static void clear() throws SQLException {
-                Statement stmt = m_dbconn.createStatement();
-                String sql = 
-                          "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES \n"
-                        + "           WHERE TABLE_NAME = N'" + TABLE + "')\n"
-                        + "BEGIN\n"
-                        + "       DROP TABLE " + TABLE
-                        + "END";
-                stmt.executeUpdate(sql);
+                // check if "SYSTEMCONF" table is there
+                DatabaseMetaData dbm = m_dbconn.getMetaData();
+                ResultSet tables = dbm.getTables(null, null, TABLE, null);
+                if (tables.next()) {
+                        // Table exists, drop it
+                        Statement stmt = m_dbconn.createStatement();
+                        stmt.executeUpdate("DROP TABLE " + TABLE);
+                }
         }
 }
