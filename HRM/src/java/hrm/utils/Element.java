@@ -17,6 +17,9 @@
  */
 package hrm.utils;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Represent an generic element.
  *
@@ -81,15 +84,8 @@ public class Element implements Serializable {
         public byte[] serialize() {
                 Serializer s = new Serializer();
                 s.write_string(m_name);
-                if (m_type == String.class) {
-                        s.write_int(0);
-                } else if (m_type == Integer.class) {
-                        s.write_int(1);
-                } else if (m_type == Float.class) {
-                        s.write_int(2);
-                } else {
-                        s.write_int(3);
-                }
+                if (m_type != null)     s.write_string(m_type.getName());
+                else                    s.write_string("null");
                 return s.to_byte_stream();
         }
 
@@ -98,23 +94,14 @@ public class Element implements Serializable {
                 Serializer s = new Serializer();
                 s.from_byte_stream(stream);
                 m_name = s.read_string();
-                int t = s.read_int();
-                switch (t) {
-                        case 0:
-                                m_type = String.class;
-                                break;
-                        case 1:
-                                m_type = Integer.class;
-                                break;
-                        case 2:
-                                m_type = Float.class;
-                                break;
-                        case 3:
-                                m_type = Object.class;
-                                break;
-                        default:
-                                m_type = Object.class;
-                                break;
+                String class_name = s.read_string();
+                try {
+                        if (!class_name.equals("null")) m_type = Class.forName(class_name);
+                        else                            m_type = null;
+                } catch (ClassNotFoundException ex) {
+                        Prompt.log(Prompt.ERROR, getClass().toString(), 
+                                "Class not found when deserializing element: (" + 
+                                        m_name + "," + class_name + ")");
                 }
         }
 }

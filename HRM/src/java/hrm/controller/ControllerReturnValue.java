@@ -15,12 +15,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.system;
+package hrm.controller;
+
+import hrm.utils.Attribute;
+import java.util.Set;
 
 /**
- * List of all configurable resources.
+ * Helper method to store returned information from a controller.
  * @author davis
  */
-public class ResourceInjection {
-        public static final String      DEFAULT_DBFORM_MODULE_PRESET = "DEFAULTSYSTEMDBFORMMODULEPRESET";
+public class ControllerReturnValue {
+        
+        public String get_redirected_page_uri() {
+                return null;
+        }
+        
+        public Set<Attribute> get_session_attribute() {
+                return null;
+        }
+        
+        public Set<Attribute> get_requst_attribute() {
+                return null;
+        }
+        
+        public Class<?> get_controller_class() {
+                return null;
+        }
 }

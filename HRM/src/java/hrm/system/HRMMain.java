@@ -17,9 +17,7 @@
  */
 package hrm.system;
 
-import hrm.model.SystemConfDatabase;
 import hrm.utils.Prompt;
-import java.sql.SQLException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -28,36 +26,21 @@ import javax.servlet.ServletContextListener;
  * @author davis
  */
 public class HRMMain implements ServletContextListener {
+        private HRMResource     m_res = null; 
 
         @Override
         public void contextInitialized(ServletContextEvent sce) {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing HRM...");
-                
-                hrm.model.DBFormModulePreset preset = 
-                        new hrm.model.DBFormModulePreset(
-                                hrm.system.ResourceInjection.DEFAULT_DBFORM_MODULE_PRESET);
-                preset.add_modules_from_directory("Conf/");
-                try {
-                        SystemConfDatabase.init();
-                        SystemConfDatabase.clear();
-                        SystemConfDatabase.add_preset(preset);
-                } catch (ClassNotFoundException | SQLException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "cannot load in default SystemConfDatabase; Details: " + 
-                                        ex.getMessage());
-                }
+                m_res = HRMResourceSingleton.get_instance();
+                // iniialize resources
+                m_res.init(sce.getServletContext());
         }
 
         @Override
         public void contextDestroyed(ServletContextEvent sce) {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Shutting down HRM...");
-                try {
-                        SystemConfDatabase.free();
-                } catch (SQLException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "cannot close resource associated with default SystemConfDatabase; Details: " + 
-                                        ex.getMessage());
-                }
+                // destroying resources
+                m_res.free();
         }
         
 }

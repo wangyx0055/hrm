@@ -5,7 +5,7 @@
     </listener>
     <servlet>
         <servlet-name>RegistrationFormServlet</servlet-name>
-        <servlet-class>hrm.servlets.RegistrationFormServlet</servlet-class>
+        <servlet-class>hrm.servlets.HRMDispatcherServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RegistrationFormServlet</servlet-name>
@@ -16,4 +16,6 @@
             30
         </session-timeout>
     </session-config>
+    <ResourceLink global="jdbc/HRMSystemConfiguration" name="jdbc/HRMSystemConfiguration" type="javax.sql.ConnectionPoolDataSource"/>
+    
 </web-app>

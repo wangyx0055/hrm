@@ -15,24 +15,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.view;
+package hrm.system;
 
 /**
- * Resolve page element to JSP page.
+ * Singleton to create resource view.
  * @author davis
  */
-public interface JSPResolver {
-
-        public enum PageElement {
-                Label,
-                Entry,
-                DropDownList,
-                LabeledEntry,
-                LargeLabeledEntry,
-                LineBreak
+public class HRMResourceSingleton {
+        
+        private HRMResourceSingleton() {
         }
         
-        public void add_resolvable(JSPResolver.PageElement type, String name);
-        public void add_non_resolvable(JSPResolver.PageElement type);
-        public String resolve_page_as_string();
+        public static HRMResource get_instance() {
+                return HRMResourceSingletonHolder.INSTANCE;
+        }
+        
+        private static class HRMResourceSingletonHolder {
+
+                private static final HRMResource INSTANCE = new HRMResource();
+        }
 }

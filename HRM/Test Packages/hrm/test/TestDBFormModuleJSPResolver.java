@@ -68,7 +68,7 @@ public class TestDBFormModuleJSPResolver {
                 hrm.view.DBFormModuleJSPResolver jsp_res = new hrm.view.DBFormModuleJSPResolver(module);
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
-                jsp_res.add_new_line();
+                jsp_res.add_non_resolvable(hrm.view.JSPResolver.PageElement.LineBreak);
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LabeledEntry, "Name");
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LargeLabeledEntry, "Resume");
                 

@@ -17,10 +17,25 @@
  */
 package hrm.business;
 
+import hrm.system.HRMBusinessImporter;
+import hrm.system.HRMBusinessImporterException;
+
 /**
  * Business specific project
  * @author davis
  */
-public class HRMBusiness_201512project {
+public class HRMBusiness_201512project implements HRMBusinessImporter {
         
+        public HRMBusiness_201512project() {
+        }
+        
+        @Override
+        public void init() throws HRMBusinessImporterException {
+                
+        }
+
+        @Override
+        public String get_name() {
+                return getClass().toString();
+        }
 }

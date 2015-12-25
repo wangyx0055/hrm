@@ -23,19 +23,22 @@ import hrm.model.DBFormModule;
  * Resolve Page Module data to jsp page.
  * @author davis
  */
-public class DBFormModuleJSPResolver extends JSPResolver {
+public class DBFormModuleJSPResolver implements JSPResolver {
 
         public DBFormModuleJSPResolver(DBFormModule m) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         
+        @Override
         public void add_resolvable(JSPResolver.PageElement type, String name) {
         }
 
-        public void add_new_line() {
+        @Override
+        public void add_non_resolvable(JSPResolver.PageElement type) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         
+        @Override
         public String resolve_page_as_string() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }

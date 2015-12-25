@@ -17,18 +17,31 @@
  */
 package hrm.servlets;
 
+import hrm.controller.ControllerCallContext;
+import hrm.controller.ControllerDispatcher;
+import hrm.controller.ControllerReturnValue;
+import hrm.utils.Attribute;
+import hrm.utils.Prompt;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Set;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
- * Handling a registration form request.
+ * Handling a form request.
+ * This servlet takes in request from JSP and dispatch it to the appropriate controller.
  * @author davis
  */
-public class RegistrationFormServlet extends HttpServlet {
+public class HRMDispatcherServlet extends HttpServlet {
+        private final ControllerDispatcher      m_dispatcher = new ControllerDispatcher();
+        
+        public HRMDispatcherServlet() {
+        }
 
         /**
          * Processes requests for both HTTP <code>GET</code> and
@@ -41,19 +54,39 @@ public class RegistrationFormServlet extends HttpServlet {
          */
         protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
-                response.setContentType("text/html;charset=UTF-8");
-                try (PrintWriter out = response.getWriter()) {
-                        /* TODO output your page here. You may use following sample code. */
-                        out.println("<!DOCTYPE html>");
-                        out.println("<html>");
-                        out.println("<head>");
-                        out.println("<title>Servlet RegistrationFormServlet</title>");                        
-                        out.println("</head>");
-                        out.println("<body>");
-                        out.println("<h1>Servlet RegistrationFormServlet at " + request.getContextPath() + "</h1>");
-                        out.println("</body>");
-                        out.println("</html>");
+                // construct a controller call
+                Map<String, String[]> params = request.getParameterMap();
+                ControllerCallContext context = new ControllerCallContext(request.getRequestURI());
+                for (String param : params.keySet()) {
+                        context.add_parameter(param, params.get(param));
                 }
+                // call the controller
+                ControllerReturnValue returned_value = m_dispatcher.dispatch_jsp(context);
+                // return the value back to the view
+                Set<Attribute> attris = returned_value.get_session_attribute();
+                if (attris != null) {
+                        HttpSession session = request.getSession();
+                        for (Attribute attri : attris) {
+                                session.setAttribute(attri.get_name(), attri.get_object());
+                        }
+                }
+                attris = returned_value.get_requst_attribute();
+                if (attris != null) {
+                        for (Attribute attri : attris) {
+                                request.setAttribute(attri.get_name(), attri.get_object());
+                        }
+                }
+                try {
+                        ServletContext ctx = getServletContext();
+                        if (ctx != null) ctx.getRequestDispatcher(returned_value.get_redirected_page_uri()).
+                                forward(request, response);
+                } catch (Exception e) {
+                        Prompt.log(Prompt.ERROR, getClass().toString(), "Caught by dispatcher servlet that " + 
+                                e.getMessage() + ", requested by: " + request.getRequestURI() +
+                                ", processed by: " + returned_value.getClass().toString());
+                        e.printStackTrace();
+                }
+                
         }
 
         // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
