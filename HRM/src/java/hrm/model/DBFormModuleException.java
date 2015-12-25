@@ -17,10 +17,48 @@
  */
 package hrm.model;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
- *
+ * Abnormal conditions produced by DBFormModule.
  * @author davis
  */
 public class DBFormModuleException extends Exception {
+        public enum Error {
+                UnknownError,
+                LoadingError,
+                StoringError
+        }
         
+        private final String            m_message;
+        private final String            m_stacktrace;
+        private String                  m_extrainfo = "";
+        
+        DBFormModuleException(Error error_type) {
+                switch (error_type) {
+                        case LoadingError:
+                                m_message = "DBFormModule Loading Error!";
+                                break;
+                        case StoringError:
+                                m_message = "DBFormModule Storing Error!";
+                                break;
+                        default:
+                                m_message = "Unknown error!";
+                }
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                this.printStackTrace(pw);
+                m_stacktrace = sw.toString();
+        }
+        
+        public DBFormModuleException add_extra_info(String info) {
+                m_extrainfo += info + ";";
+                return this;
+        }
+        
+        @Override
+        public String toString() {
+                return m_message + ", details: " + m_extrainfo + "\n" + m_stacktrace;
+        }
 }

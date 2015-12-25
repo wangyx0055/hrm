@@ -17,9 +17,12 @@
  */
 package hrm.model;
 
+import hrm.utils.AsciiStream;
 import hrm.utils.Element;
 import hrm.utils.NaryTree;
 import hrm.utils.Serializer;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +50,12 @@ public class DBFormModule extends NaryTree<Element> implements hrm.utils.Seriali
                                 } else {
                                         is_root = false;
                                 }
+                                path = path.next;
+                        }
+                        if (!is_root) {
+                                s.write_int(1);         // enable continue
+                                s.write_string(path.name);
+                                s.write_serialized_stream(path.value.serialize());
                         }
                         s.write_int(0);                 // disable continue
                 }
@@ -111,11 +120,44 @@ public class DBFormModule extends NaryTree<Element> implements hrm.utils.Seriali
                 return elm_set;
         }
         
+        /**
+         * Get the structure of the DBFormModule.
+         * @return the structural path of the form.
+         */
         public NaryTree<Element>.Path<Element>[] get_structure() {
                 return super.get_all_paths();
         }
-
-        public void build_from_file(String hrArchiveRegistrationconf) throws DBFormModuleException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        /**
+         * Construct a DBFormModule from file.
+         * @param stream the stream that contains the configuration..
+         * @throws DBFormModuleException 
+         */
+        public void build_from_file(InputStream stream) throws DBFormModuleException {
+                String content = null;
+                try {
+                        content = AsciiStream.extract(stream);
+                } catch (IOException ex) {
+                        throw new DBFormModuleException(DBFormModuleException.Error.LoadingError).
+                                add_extra_info("Failed to extract any content from the stream");
+                }
+                String[] lines = content.split(System.lineSeparator());
+                // parse the header first
+                if (!lines[0].startsWith("<?xml version=\"1.0\"")) {
+                        throw new DBFormModuleException(DBFormModuleException.Error.LoadingError).
+                                add_extra_info("The stream does not represent an xml: " + content);
+                }
+                if (!lines[0].contains("content=\"HRM-DBFORM-MODULE\"")) {
+                        throw new DBFormModuleException(DBFormModuleException.Error.LoadingError).
+                                add_extra_info("The stream does not represent a DBFormModule: " + content);
+                }
+                NaryTree<Element> current_node = this;
+                for (String line : lines) {
+                }
+        }
+        
+        @Override
+        public String toString() {
+                return "DatabaseFormModule = [\n" + super.toString() + "\n]";
         }
 }

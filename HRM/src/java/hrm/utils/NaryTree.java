@@ -19,8 +19,10 @@ package hrm.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 
 /**
  * Generic N-ary Tree data type.
@@ -68,6 +70,51 @@ public class NaryTree<T>  {
                         next = null;
                         previous = null;
                 }
+                
+                public Queue<T> to_value_sequence() {
+                        Queue<T> seq = new LinkedList<>();
+                        Path<T> p = this;
+                        while (p.next != null) {
+                                if (p.value != null) seq.add(p.value);
+                                p = p.next;
+                        }
+                        if (p.value != null) seq.add(p.value);
+                        return seq;
+                }
+                
+                @Override
+                public String toString() {
+                        String s = "";
+                        Path<T> p = this;
+                        while (p.next != null) {
+                                if (p.value != null) s += "(" + p.name + "," + p.value + "),";
+                                p = p.next;
+                        }
+                        if (p.value != null) s += "(" + p.name + "," + p.value + ")";
+                        return s;
+                }
+                
+                @Override
+                public Path clone() {
+                        Path p = this;
+                        Path clone = new Path();
+                        Path curr = clone;
+                        Path prev = null;
+                        while (p.next != null) {
+                                curr.name = p.name;
+                                curr.value = p.value;
+                                curr.previous = prev;
+                                
+                                curr.next = new Path();
+                                curr = curr.next;
+                                p = p.next;
+                        }
+                        curr.name = p.name;
+                        curr.value = p.value;
+                        curr.next = null;
+                        curr.previous = prev;
+                        return clone;
+                }
         }
         
         /**
@@ -78,13 +125,19 @@ public class NaryTree<T>  {
          * @return the child node inserted.
          */
         public NaryTree<T> add_child(String child, T value) {
-                NaryTree<T> child_node = new NaryTree<>();
-                child_node.m_value = value;
-                child_node.m_parent = this;
-                child_node.m_name = child;
-                
-                m_children.put(child, child_node);
-                return child_node;
+                if (m_children.containsKey(child)) {
+                        NaryTree<T> child_node = m_children.get(child);
+                        child_node.m_value = value;
+                        return child_node;
+                } else {
+                        NaryTree<T> child_node = new NaryTree<>();
+                        child_node.m_value = value;
+                        child_node.m_parent = this;
+                        child_node.m_name = child;
+
+                        m_children.put(child, child_node);
+                        return child_node;
+                }
         }
         
         /**
@@ -94,7 +147,7 @@ public class NaryTree<T>  {
                 return m_parent;
         }
         
-        private void __dfs(NaryTree<T> root, Path dummymem, HashSet<Path<T>> paths) {
+        private void __dfs(NaryTree<T> root, Path dummymem, LinkedList<Path<T>> paths) {
                 dummymem.name = root.m_name;
                 dummymem.value = root.m_value;
                 
@@ -102,15 +155,15 @@ public class NaryTree<T>  {
                         dummymem.next = null;
                         // go all the way back to the beginning
                         while (dummymem.previous != null) dummymem = dummymem.previous;
-                        paths.add(dummymem);
+                        paths.add(dummymem.clone());
                 } else {
                         Path dummmy2            = new Path();
                         dummymem.next           = dummmy2;
                         dummmy2.previous        = dummymem;
 
-                        root.m_children.values().stream().forEach((child) -> {
+                        for (NaryTree<T> child : root.m_children.values()) {
                                 __dfs(child, dummmy2, paths);
-                        });
+                        }
                 }
         }
         
@@ -118,10 +171,15 @@ public class NaryTree<T>  {
          * @return All the paths in starting from current node.
          */
         public Path<T>[] get_all_paths() {
-                HashSet<Path<T>> paths = new HashSet<>();
-                Path dummymem = new Path();
-                __dfs(this, dummymem, paths);
-                return (Path<T>[]) paths.toArray();
+                LinkedList<Path<T>> paths = new LinkedList<>();
+                __dfs(this, new Path(), paths);
+                
+                Path[] array = new Path[paths.size()];
+                int i = 0;
+                for (Path path : paths) {
+                        array[i ++] = path;
+                }
+                return array;
         }
         
         /**
@@ -149,11 +207,14 @@ public class NaryTree<T>  {
                 if (this == o) return true;
                 if (!(o instanceof NaryTree)) return false;
                 NaryTree<T> other = (NaryTree<T>) o;
-                return this.m_parent.equals(other.m_parent) && 
-                        this.m_value.equals(other.m_value) &&
+                return  (m_parent == null && other.m_parent == null || 
+                        this.m_parent.equals(other.m_parent)) && 
+                        (m_value == null && other.m_value == null || 
+                        this.m_value.equals(other.m_value)) &&
                         this.m_children.equals(other.m_children);
         }
-
+        
+        
         @Override
         public int hashCode() {
                 int hash = 3;
@@ -161,5 +222,16 @@ public class NaryTree<T>  {
                 hash = 11 * hash + Objects.hashCode(this.m_children);
                 hash = 11 * hash + Objects.hashCode(this.m_value);
                 return hash;
+        }
+        
+        @Override
+        public String toString() {
+                String s = "n-ary tree = [\n";
+                Path<T>[] paths = get_all_paths();
+                for (Path<T> path : paths) {
+                        s += "[" + path + "],\n";
+                }
+                s += "]";
+                return s;
         }
 }

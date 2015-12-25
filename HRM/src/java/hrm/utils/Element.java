@@ -68,6 +68,14 @@ public class Element implements Serializable {
         public Class<?> get_type() {
                 return m_type;
         }
+        
+        @Override
+        public String toString() {
+                String s = "";
+                if (m_name != null) s += m_name;
+                if (m_type != null) s += "-" + m_type.toString();
+                return s;
+        }
 
         @Override
         public byte[] serialize() {

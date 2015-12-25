@@ -18,6 +18,8 @@
 package hrm.test;
 
 import hrm.model.DBFormModuleException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -56,12 +58,12 @@ public class TestDBFormModuleJSPResolver {
         }
 
         @Test
-        public void page_module_to_jsp() throws DBFormModuleException {
+        public void page_module_to_jsp() throws DBFormModuleException, FileNotFoundException {
                 // Make the preset
                 hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
                 hrm.model.DBFormModule module = preset.add_module("Test HR Archive Registration");
                 
-                module.build_from_file("Conf/Test/Test.pageconf");
+                module.build_from_file(new FileInputStream("Conf/Test/test.xml"));
                 
                 hrm.view.DBFormModuleJSPResolver jsp_res = new hrm.view.DBFormModuleJSPResolver(module);
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
