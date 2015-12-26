@@ -15,20 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
+package hrm.model;
+
+import java.io.InputStream;
+import java.util.Set;
 
 /**
- * Helper method to generate a call with caller name and parameters.
+ * Interface for accessing SystemPreset.
  * @author davis
  */
-public class ControllerCallContext {
-        public ControllerCallContext(String caller) {
-        }
+public interface SystemPresetManager {
         
-        public void add_parameter(String param, Object value) {
-        }
+        public boolean add_system_preset(SystemPreset preset);
         
-        public Object get_paramter(String param) {
-                return null;
-        }
+        public boolean add_system_preset_from_file(InputStream in);
+        
+        public SystemPreset get_system_preset(String name);
+        
+        public Set<SystemPreset> get_all_system_presets();
 }

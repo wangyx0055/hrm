@@ -17,7 +17,11 @@
  */
 package hrm.deployment.utils;
 
-import hrm.model.SystemConfDatabase;
+import hrm.model.DBSystemPresetManager;
+import hrm.model.SystemPresetException;
+import hrm.model.SystemPresetManager;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -60,13 +64,12 @@ public class DeploySystemPresetsToDatabase {
         }
 
         @Test
-        public void system_page_presets() throws ClassNotFoundException, SQLException {
+        public void system_page_presets() 
+                throws ClassNotFoundException, SQLException, SystemPresetException, FileNotFoundException {
                 hrm.model.DBFormModulePreset preset = 
-                        new hrm.model.DBFormModulePreset(hrm.system.HRMResource.DBFORM_MODULE_PRESET);
-                preset.add_modules_from_directory("Conf/");
-                if (!m_is_mocked) SystemConfDatabase.init();
-                else SystemConfDatabase.init_with_mock_database();
-                SystemConfDatabase.clear();
-                SystemConfDatabase.add_preset(preset);
+                        new hrm.model.DBFormModulePreset(hrm.system.HRMDefaultName.dbformmodule());
+                preset.add_module_from_file(new FileInputStream("hr-archive.xml"));
+                SystemPresetManager mgr = new DBSystemPresetManager(false, true);
+                mgr.add_system_preset(preset);
         }
 }

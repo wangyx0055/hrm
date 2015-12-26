@@ -17,7 +17,7 @@
  */
 package hrm.test;
 
-import hrm.model.DBFormModuleException;
+import hrm.model.SystemPresetException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import org.junit.After;
@@ -58,7 +58,7 @@ public class TestDBFormModuleJSPResolver {
         }
 
         @Test
-        public void page_module_to_jsp() throws DBFormModuleException, FileNotFoundException {
+        public void page_module_to_jsp() throws SystemPresetException, FileNotFoundException {
                 // Make the preset
                 hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
                 hrm.model.DBFormModule module = preset.add_module("Test HR Archive Registration");

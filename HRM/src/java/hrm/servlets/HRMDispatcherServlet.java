@@ -17,9 +17,7 @@
  */
 package hrm.servlets;
 
-import hrm.controller.ControllerCallContext;
-import hrm.controller.ControllerDispatcher;
-import hrm.controller.ControllerReturnValue;
+import hrm.controller.Dispatcher;
 import hrm.utils.Attribute;
 import hrm.utils.Prompt;
 import java.io.IOException;
@@ -38,7 +36,7 @@ import javax.servlet.http.HttpSession;
  * @author davis
  */
 public class HRMDispatcherServlet extends HttpServlet {
-        private final ControllerDispatcher      m_dispatcher = new ControllerDispatcher();
+        private final Dispatcher      m_dispatcher = new Dispatcher();
         
         public HRMDispatcherServlet() {
         }
@@ -56,12 +54,13 @@ public class HRMDispatcherServlet extends HttpServlet {
                 throws ServletException, IOException {
                 // construct a controller call
                 Map<String, String[]> params = request.getParameterMap();
-                ControllerCallContext context = new ControllerCallContext(request.getRequestURI());
+                Dispatcher.CallerContext context = 
+                        m_dispatcher.get_caller_context(request.getRequestURI());
                 for (String param : params.keySet()) {
                         context.add_parameter(param, params.get(param));
                 }
                 // call the controller
-                ControllerReturnValue returned_value = m_dispatcher.dispatch_jsp(context);
+                Dispatcher.ReturnValue returned_value = m_dispatcher.dispatch_jsp(context);
                 // return the value back to the view
                 Set<Attribute> attris = returned_value.get_session_attribute();
                 if (attris != null) {

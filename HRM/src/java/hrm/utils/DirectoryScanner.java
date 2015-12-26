@@ -15,12 +15,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.system;
+package hrm.utils;
 
 /**
- *
+ * Utility to help scan a directory.
  * @author davis
  */
-public class HRMBusinessImporterException extends Exception {
-        
+public class DirectoryScanner {
 }

@@ -15,15 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.system;
+package hrm.controller;
 
 /**
- * Business plug-in importer protocol.
+ *
  * @author davis
  */
-public interface HRMBusinessImporter {
+public class DispatcherManager {
         
-        public void init() throws HRMBusinessImporterException;
-        
-        public String get_name();
 }

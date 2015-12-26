@@ -31,13 +31,19 @@ import java.util.Set;
  * Containing elements and hierarchical structure of a database form module.
  * @author davis
  */
-public class DBFormModule extends NaryTree<Element> implements hrm.utils.Serializable {
+public final class DBFormModule extends NaryTree<Element> implements hrm.utils.Serializable {
+        private String            m_module_name;
+        
         @Override
         public byte[] serialize() {
                 // serialize the structural path
                 Serializer s = new Serializer();
                 Path<Element>[] paths = super.get_all_paths();
                 
+                // the module name
+                s.write_string(m_module_name);
+                
+                // the tree structure
                 s.write_array_header(paths.length);
                 for (Path<Element> path : paths) {
                         // encode a path to the stream
@@ -64,10 +70,13 @@ public class DBFormModule extends NaryTree<Element> implements hrm.utils.Seriali
 
         @Override
         public void deserialize(byte[] stream) {
-                // deserialize all paths
                 Serializer s = new Serializer();
                 s.from_byte_stream(stream);
                 
+                // dserialize the module name
+                m_module_name = s.read_string();
+                
+                // deserialize all paths                
                 int l = s.read_array_header();
                 for (int i = 0; i < l; i ++) {
                         // extract a path from the stream
@@ -85,16 +94,28 @@ public class DBFormModule extends NaryTree<Element> implements hrm.utils.Seriali
         
         /**
          * Construct a database form module.
+         * @param module_name name of this module.
          */
-        public DBFormModule() {
+        public DBFormModule(String module_name) {
+                m_module_name = module_name;
+        }
+        
+        /**
+         * Construct a database form module from input stream.
+         * @param in the input stream that contains the formatted data.
+         * @throws hrm.model.SystemPresetException
+         */
+        public DBFormModule(InputStream in) throws SystemPresetException {
+                m_module_name = build_from_file(in);
         }
         
         /**
          * For internal use.
          * @param as_root root level.
          */
-        private DBFormModule(NaryTree<Element> as_root) {
+        private DBFormModule(NaryTree<Element> as_root, String module_name) {
                 super(as_root);
+                m_module_name = module_name;
         }
         
         /**
@@ -104,7 +125,7 @@ public class DBFormModule extends NaryTree<Element> implements hrm.utils.Seriali
          * @return module that contains the key.
          */
         public DBFormModule add_key(String child, Element elm) {
-                return new DBFormModule(super.add_child(child, elm));
+                return new DBFormModule(super.add_child(child, elm), m_module_name);
         }
         
         /**
@@ -131,33 +152,43 @@ public class DBFormModule extends NaryTree<Element> implements hrm.utils.Seriali
         /**
          * Construct a DBFormModule from file.
          * @param stream the stream that contains the configuration..
-         * @throws DBFormModuleException 
+         * @return the module name specified by the file.
+         * @throws SystemPresetException 
          */
-        public void build_from_file(InputStream stream) throws DBFormModuleException {
+        public String build_from_file(InputStream stream) throws SystemPresetException {
+                
                 String content = null;
                 try {
                         content = AsciiStream.extract(stream);
                 } catch (IOException ex) {
-                        throw new DBFormModuleException(DBFormModuleException.Error.LoadingError).
+                        throw new SystemPresetException(SystemPresetException.Error.LoadingError).
                                 add_extra_info("Failed to extract any content from the stream");
                 }
                 String[] lines = content.split(System.lineSeparator());
                 // parse the header first
                 if (!lines[0].startsWith("<?xml version=\"1.0\"")) {
-                        throw new DBFormModuleException(DBFormModuleException.Error.LoadingError).
+                        throw new SystemPresetException(SystemPresetException.Error.LoadingError).
                                 add_extra_info("The stream does not represent an xml: " + content);
                 }
                 if (!lines[0].contains("content=\"HRM-DBFORM-MODULE\"")) {
-                        throw new DBFormModuleException(DBFormModuleException.Error.LoadingError).
+                        throw new SystemPresetException(SystemPresetException.Error.LoadingError).
                                 add_extra_info("The stream does not represent a DBFormModule: " + content);
                 }
                 NaryTree<Element> current_node = this;
                 for (String line : lines) {
                 }
+                return null;
+        }
+        
+        /**
+         * @return name of the module.
+         */
+        public String get_module_name() {
+                return m_module_name;
         }
         
         @Override
         public String toString() {
-                return "DatabaseFormModule = [\n" + super.toString() + "\n]";
+                return "DatabaseFormModule:" + m_module_name + " = [\n" + super.toString() + "\n]";
         }
 }

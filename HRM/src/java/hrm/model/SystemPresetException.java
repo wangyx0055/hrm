@@ -24,7 +24,7 @@ import java.io.StringWriter;
  * Abnormal conditions produced by DBFormModule.
  * @author davis
  */
-public class DBFormModuleException extends Exception {
+public class SystemPresetException extends Exception {
         public enum Error {
                 UnknownError,
                 LoadingError,
@@ -35,7 +35,7 @@ public class DBFormModuleException extends Exception {
         private final String            m_stacktrace;
         private String                  m_extrainfo = "";
         
-        DBFormModuleException(Error error_type) {
+        SystemPresetException(Error error_type) {
                 switch (error_type) {
                         case LoadingError:
                                 m_message = "DBFormModule Loading Error!";
@@ -52,9 +52,14 @@ public class DBFormModuleException extends Exception {
                 m_stacktrace = sw.toString();
         }
         
-        public DBFormModuleException add_extra_info(String info) {
+        public SystemPresetException add_extra_info(String info) {
                 m_extrainfo += info + ";";
                 return this;
+        }
+        
+        @Override
+        public String getMessage() {
+                return toString();
         }
         
         @Override

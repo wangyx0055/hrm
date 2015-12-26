@@ -17,21 +17,33 @@
  */
 package hrm.system;
 
+import hrm.controller.DispatcherManager;
+import hrm.model.DBSystemPresetManager;
+import hrm.model.SystemPresetManager;
+
 /**
- * Singleton to create resource view.
+ * Holding useful context information for other module.
  * @author davis
  */
-public class HRMResourceSingleton {
+public class HRMSystemContext {
+        public final SystemPresetManager        m_preset_mgr;
+        public final DispatcherManager          m_disp_mgr;
         
-        private HRMResourceSingleton() {
+        public HRMSystemContext() {
+                m_preset_mgr = new DBSystemPresetManager(false, true);
+                m_disp_mgr = new DispatcherManager();
         }
         
-        public static HRMResource get_instance() {
-                return HRMResourceSingletonHolder.INSTANCE;
+        public void free() {
+                DBSystemPresetManager mgr = (DBSystemPresetManager) m_preset_mgr;
+                mgr.free();
         }
         
-        private static class HRMResourceSingletonHolder {
-
-                private static final HRMResource INSTANCE = new HRMResource();
+        public SystemPresetManager get_preset_manager() {
+                return m_preset_mgr;
+        }
+        
+        public DispatcherManager get_dispatcher_manager() {
+                return m_disp_mgr;
         }
 }

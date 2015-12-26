@@ -28,7 +28,7 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the SystemConfDatabase class.
+ * Test the SystemPresetManager class.
  * @author davis
  */
 public class TestSystemConfDatabase {
@@ -59,10 +59,11 @@ public class TestSystemConfDatabase {
         public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
                 hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
                 // Add presets to database
-                hrm.model.SystemConfDatabase.init_with_mock_database();
-                hrm.model.SystemConfDatabase.add_preset(preset);
+                hrm.model.DBSystemPresetManager dbmgr = new hrm.model.DBSystemPresetManager(true, true);
+                dbmgr.init_with_mock_database();
+                dbmgr.add_system_preset(preset);
                 // Fetch the preset back
-                hrm.model.SystemPreset preset_fetched = hrm.model.SystemConfDatabase.fetch("Test HRM System Preset");
+                hrm.model.SystemPreset preset_fetched = dbmgr.get_system_preset("Test HRM System Preset");
                 assertTrue(preset_fetched != null);
                 assertTrue(preset_fetched instanceof hrm.model.DBFormModulePreset);
                 hrm.model.DBFormModulePreset preset2 = (hrm.model.DBFormModulePreset) preset_fetched;

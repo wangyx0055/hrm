@@ -17,6 +17,8 @@
  */
 package hrm.model;
 
+import java.io.InputStream;
+
 /**
  * Factory to construct a SystemPreset.
  * @author davis
@@ -34,5 +36,9 @@ public class SystemPresetFactory {
                         default:
                                 return null;
                 }
+        }
+        
+        public static SystemPreset create_by_file(InputStream in) {
+                return null;
         }
 }

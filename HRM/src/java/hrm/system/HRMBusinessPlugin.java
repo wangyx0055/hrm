@@ -15,28 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.business;
-
-import hrm.system.HRMSystemContext;
-import hrm.system.HRMBusinessPluginException;
-import hrm.system.HRMBusinessPlugin;
+package hrm.system;
 
 /**
- * Business specific project
+ * Business plug-in importer protocol.
  * @author davis
  */
-public class HRMBusiness_201512project implements HRMBusinessPlugin {
+public interface HRMBusinessPlugin {
         
-        public HRMBusiness_201512project() {
-        }
-
-        @Override
-        public void init(HRMSystemContext context) throws HRMBusinessPluginException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        public void init(HRMSystemContext context) throws HRMBusinessPluginException;
         
-        @Override
-        public String get_name() {
-                return getClass().toString();
-        }
+        public String get_name();
 }

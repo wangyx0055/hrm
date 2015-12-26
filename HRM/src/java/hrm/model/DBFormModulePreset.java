@@ -18,6 +18,7 @@
 package hrm.model;
 
 import hrm.utils.Serializer;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -34,7 +35,15 @@ public class DBFormModulePreset extends SystemPreset {
 
         public DBFormModule add_module(String module_name) {
                 if (m_modules.containsKey(module_name)) return null;
-                DBFormModule module = new DBFormModule();
+                DBFormModule module = new DBFormModule(module_name);
+                m_modules.put(module_name, module);
+                return module;
+        }
+        
+        public DBFormModule add_module_from_file(InputStream in) throws SystemPresetException {
+                DBFormModule module = new DBFormModule(in);
+                String module_name = module.get_module_name();
+                if (m_modules.containsKey(module_name)) return null;
                 m_modules.put(module_name, module);
                 return module;
         }
@@ -46,10 +55,7 @@ public class DBFormModulePreset extends SystemPreset {
         public Collection<DBFormModule> export_all_modules() {
                 return m_modules.values();
         }
-
-        public void add_modules_from_directory(String dir) {
-        }
-
+        
         @Override
         public byte[] serialize() {
                 Serializer s = new Serializer();
@@ -77,5 +83,10 @@ public class DBFormModulePreset extends SystemPreset {
         @Override
         public String toString() {
                 return m_modules.toString();
+        }
+
+        @Override
+        public void load_from_file(InputStream in) throws SystemPresetException {
+                add_module_from_file(in);
         }
 }

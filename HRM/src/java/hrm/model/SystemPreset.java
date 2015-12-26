@@ -17,6 +17,8 @@
  */
 package hrm.model;
 
+import java.io.InputStream;
+
 /**
  * Define a system preset.
  * @author davis
@@ -24,6 +26,8 @@ package hrm.model;
 public abstract class SystemPreset implements hrm.utils.Serializable {
         private final String    m_name;
         private final int       m_type;
+        
+        public abstract void load_from_file(InputStream in) throws SystemPresetException;
         
         /**
          * Construct the system preset with a name constant.

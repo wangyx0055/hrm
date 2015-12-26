@@ -17,8 +17,10 @@
  */
 package hrm.model;
 
+import java.io.InputStream;
+
 /**
- *
+ * Representing a authentication system preset.
  * @author davis
  */
 public class AuthenPreset extends SystemPreset {
@@ -34,6 +36,11 @@ public class AuthenPreset extends SystemPreset {
 
         @Override
         public void deserialize(byte[] stream) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void load_from_file(InputStream in) throws SystemPresetException {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

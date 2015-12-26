@@ -15,20 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
-
-import hrm.utils.Attribute;
-import java.util.Map;
-import java.util.Set;
+package hrm.system;
 
 /**
  *
  * @author davis
  */
-public class ControllerDispatcher {
-
-        public ControllerReturnValue dispatch_jsp(ControllerCallContext call) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+public class HRMBusinessPluginException extends Exception {
         
 }
