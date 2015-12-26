@@ -18,9 +18,9 @@
 package hrm.model;
 
 /**
- * A database dedicated for form data.
+ *
  * @author davis
  */
-public class SystemFormDatabase {
+public class SystemFormException extends Exception {
         
 }

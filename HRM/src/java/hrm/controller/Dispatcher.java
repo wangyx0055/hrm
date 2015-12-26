@@ -18,6 +18,7 @@
 package hrm.controller;
 
 import hrm.utils.Attribute;
+import hrm.view.JSPResolver;
 import java.util.Set;
 
 /**
@@ -49,7 +50,7 @@ public class Dispatcher {
                         return null;
                 }
 
-                public Class<?> get_controller_class() {
+                public JSPResolver get_resolver() {
                         return null;
                 }
         }
@@ -64,11 +65,7 @@ public class Dispatcher {
                 public CallerContext(String caller) {
                 }
 
-                public void add_parameter(String param, Object value) {
-                }
-
-                public Object get_paramter(String param) {
-                        return null;
+                public void add_parameter(Attribute attri) {
                 }
         }
 
@@ -76,31 +73,25 @@ public class Dispatcher {
          * Helper method to generate a call with callee name and parameters.
          * @author davis
          */
-        public class CalleeContext {
+        public interface CalleeContext {
 
-                public CalleeContext(String callee) {
-                }
-
-                public void add_param_name(String name, Class<?> type) {
-                }
-
-                public Object get_param(String name) {
-                        return null;
-                }
+                public void add_params(Set<Attribute> attri);
+                
+                public ReturnValue get_return_value();
         }
 
         public ReturnValue dispatch_jsp(CallerContext call) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
-        public void register_controller_call(CalleeContext context, String mapped_page, PageCategory cate) {
+        public void register_controller_call(CalleeContext context, String mapped_call, PageCategory cate) {
         }
         
         public CallerContext get_caller_context(String caller) {
                 return new CallerContext(caller);
         }
         
-        public CalleeContext get_callee_context(String callee) {
-                return new CalleeContext(callee);
-        }
+//        public CalleeContext get_callee_context(String callee) {
+//                return new CalleeContext(callee);
+//        }
 }

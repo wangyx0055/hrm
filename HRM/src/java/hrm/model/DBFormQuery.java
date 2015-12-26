@@ -15,21 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
-
-import java.util.List;
+package hrm.model;
 
 /**
  *
  * @author davis
  */
-public class DispatcherManager {
-        
-        public void add_dispatcher(Dispatcher dp) {
-        } 
-
-        public List<Dispatcher> get_all_dispatchers() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+public class DBFormQuery {
+        public DBFormQuery(String cond_clause) {
         }
-        
 }

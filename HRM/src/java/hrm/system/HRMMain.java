@@ -41,9 +41,13 @@ import javax.servlet.ServletContextListener;
  */
 public class HRMMain implements ServletContextListener {
         
+        private static HRMSystemContext m_ctrl_ctx = null;
         private ServletContext          m_servlet_ctx;
-        private HRMSystemContext        m_ctrl_ctx;
         private List<HRMBusinessPlugin> m_plugins;
+        
+        public static HRMSystemContext get_system_context() {
+                return m_ctrl_ctx;
+        }
         
         @Override
         public void contextInitialized(ServletContextEvent sce) {

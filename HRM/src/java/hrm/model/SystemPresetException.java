@@ -38,10 +38,10 @@ public class SystemPresetException extends Exception {
         SystemPresetException(Error error_type) {
                 switch (error_type) {
                         case LoadingError:
-                                m_message = "DBFormModule Loading Error!";
+                                m_message = "SystemPreset Loading Error!";
                                 break;
                         case StoringError:
-                                m_message = "DBFormModule Storing Error!";
+                                m_message = "SystemPreset Storing Error!";
                                 break;
                         default:
                                 m_message = "Unknown error!";

@@ -17,6 +17,8 @@
  */
 package hrm.business;
 
+import hrm.business.business201512.*;
+import hrm.controller.Dispatcher;
 import hrm.system.HRMSystemContext;
 import hrm.system.HRMBusinessPluginException;
 import hrm.system.HRMBusinessPlugin;
@@ -32,7 +34,14 @@ public class HRMBusiness_201512project implements HRMBusinessPlugin {
 
         @Override
         public void init(HRMSystemContext context) throws HRMBusinessPluginException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                // construct a dispatcher
+                Dispatcher dp = new Dispatcher();
+                dp.register_controller_call(new ReturnRegistrationForm(), 
+                        "return-registration-form", Dispatcher.PageCategory.JspPage);
+                dp.register_controller_call(new SubmitRegistrationForm(), 
+                        "submit-registration-form", Dispatcher.PageCategory.JspPage);
+                // upload the dispatcher
+                context.get_dispatcher_manager().add_dispatcher(dp);
         }
         
         @Override

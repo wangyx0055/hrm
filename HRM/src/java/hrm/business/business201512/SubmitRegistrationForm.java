@@ -15,20 +15,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
+package hrm.business.business201512;
 
-import java.util.List;
+import hrm.controller.Dispatcher;
+import hrm.utils.Attribute;
+import java.util.Set;
 
 /**
  *
  * @author davis
  */
-public class DispatcherManager {
-        
-        public void add_dispatcher(Dispatcher dp) {
-        } 
+public class SubmitRegistrationForm implements Dispatcher.CalleeContext {
 
-        public List<Dispatcher> get_all_dispatchers() {
+        @Override
+        public void add_params(Set<Attribute> attri) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public Dispatcher.ReturnValue get_return_value() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

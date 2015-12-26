@@ -26,6 +26,7 @@ import java.io.InputStream;
 public class SystemPresetFactory {
         public static final int         DBFORM_MODULE_PRESET = 1;
         public static final int         AUTHEN_PRESET = 2;
+        public static final int         DBFORM_QUERY_PRESET = 3;
         
         public static SystemPreset create_by_type_and_name(int type, String name) {
                 switch (type) {

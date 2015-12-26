@@ -17,7 +17,6 @@
  */
 package hrm.test;
 
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,13 +27,13 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the SystemPresetManager class.
+ * Test the Dispatcher.
  * @author davis
  */
-public class TestSystemConfDatabase {
+public class TestDispatcher {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestSystemConfDatabase() {
+        public TestDispatcher() {
         }
         
         @BeforeClass
@@ -56,19 +55,6 @@ public class TestSystemConfDatabase {
         }
 
         @Test
-        public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
-                hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
-                // Add presets to database
-                hrm.model.DBSystemPresetManager dbmgr = new hrm.model.DBSystemPresetManager(true, true);
-                dbmgr.init_with_mock_database();
-                dbmgr.add_system_preset(preset);
-                // Fetch the preset back
-                hrm.model.SystemPreset preset_fetched = dbmgr.get_system_preset("Test HRM System Preset");
-                assertTrue(preset_fetched != null);
-                assertTrue(preset_fetched instanceof hrm.model.DBFormModulePreset);
-                hrm.model.DBFormModulePreset preset2 = (hrm.model.DBFormModulePreset) preset_fetched;
-                System.out.println("System page preset: " + preset);
-                System.out.println("System page preset2:" + preset2);
-                assertEquals(preset, preset2);
+        public void dispatch_and_returned() {
         }
 }

@@ -19,6 +19,7 @@ package hrm.system;
 
 import hrm.controller.DispatcherManager;
 import hrm.model.DBSystemPresetManager;
+import hrm.model.SystemFormManager;
 import hrm.model.SystemPresetManager;
 
 /**
@@ -45,5 +46,9 @@ public class HRMSystemContext {
         
         public DispatcherManager get_dispatcher_manager() {
                 return m_disp_mgr;
+        }
+        
+        public SystemFormManager get_system_form_manager() {
+                return null;
         }
 }

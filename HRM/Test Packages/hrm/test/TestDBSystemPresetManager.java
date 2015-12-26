@@ -23,18 +23,18 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the HR Achieve Registration process.
+ * Test the SystemPresetManager class.
  * @author davis
  */
-public class TestHRAchieveRegistration {
-        
+public class TestDBSystemPresetManager {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestHRAchieveRegistration() {
+        public TestDBSystemPresetManager() {
         }
         
         @BeforeClass
@@ -56,10 +56,19 @@ public class TestHRAchieveRegistration {
         }
 
         @Test
-        public void register_new_achieve() throws ClassNotFoundException, SQLException {
-                hrm.deployment.utils.DeploySystemPresetsToDatabase deploy_preset = 
-                        new hrm.deployment.utils.DeploySystemPresetsToDatabase();
-                deploy_preset.m_is_mocked = true;
-                deploy_preset.system_page_presets();
+        public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
+                hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
+                // Add presets to database
+                hrm.model.DBSystemPresetManager dbmgr = new hrm.model.DBSystemPresetManager(true, true);
+                dbmgr.init_with_mock_database();
+                dbmgr.add_system_preset(preset);
+                // Fetch the preset back
+                hrm.model.SystemPreset preset_fetched = dbmgr.get_system_preset("Test HRM System Preset");
+                assertTrue(preset_fetched != null);
+                assertTrue(preset_fetched instanceof hrm.model.DBFormModulePreset);
+                hrm.model.DBFormModulePreset preset2 = (hrm.model.DBFormModulePreset) preset_fetched;
+                System.out.println("System page preset: " + preset);
+                System.out.println("System page preset2:" + preset2);
+                assertEquals(preset, preset2);
         }
 }

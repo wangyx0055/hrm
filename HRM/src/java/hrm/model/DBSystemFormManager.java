@@ -15,20 +15,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
+package hrm.model;
 
-import java.util.List;
+import hrm.utils.Attribute;
+import java.util.Set;
 
 /**
- *
+ * A database implementation of the SystemFormManager
  * @author davis
  */
-public class DispatcherManager {
-        
-        public void add_dispatcher(Dispatcher dp) {
-        } 
+public class DBSystemFormManager implements SystemFormManager {
 
-        public List<Dispatcher> get_all_dispatchers() {
+        @Override
+        public void update(DBFormModule module, Set<Attribute> attris) throws SystemFormException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public Set<Attribute> query(DBFormModule module, DBFormQuery query, Set<Attribute> attris) throws SystemFormException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void remove(DBFormModule module, DBFormQuery query, Set<Attribute> attris) throws SystemFormException {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

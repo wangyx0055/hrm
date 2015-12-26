@@ -18,9 +18,13 @@
 package hrm.servlets;
 
 import hrm.controller.Dispatcher;
+import hrm.controller.DispatcherManager;
+import hrm.system.HRMMain;
 import hrm.utils.Attribute;
 import hrm.utils.Prompt;
+import hrm.view.JSPResolver;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletContext;
@@ -31,13 +35,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Handling a form request.
- * This servlet takes in request from JSP and dispatch it to the appropriate controller.
+ * Handling a form request. This servlet takes in request from JSP and dispatch
+ * it to the appropriate controller.
+ *
  * @author davis
  */
 public class HRMDispatcherServlet extends HttpServlet {
-        private final Dispatcher      m_dispatcher = new Dispatcher();
-        
+
         public HRMDispatcherServlet() {
         }
 
@@ -52,40 +56,52 @@ public class HRMDispatcherServlet extends HttpServlet {
          */
         protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
+                DispatcherManager mgr = HRMMain.get_system_context().get_dispatcher_manager();
+                List<Dispatcher> dispatchers = mgr.get_all_dispatchers();
+
                 // construct a controller call
                 Map<String, String[]> params = request.getParameterMap();
-                Dispatcher.CallerContext context = 
-                        m_dispatcher.get_caller_context(request.getRequestURI());
+                Dispatcher.CallerContext context
+                        = new Dispatcher().get_caller_context((String) request.getAttribute("callee"));
                 for (String param : params.keySet()) {
-                        context.add_parameter(param, params.get(param));
+                        context.add_parameter(new Attribute(param, params.get(param)));
                 }
-                // call the controller
-                Dispatcher.ReturnValue returned_value = m_dispatcher.dispatch_jsp(context);
-                // return the value back to the view
-                Set<Attribute> attris = returned_value.get_session_attribute();
-                if (attris != null) {
-                        HttpSession session = request.getSession();
-                        for (Attribute attri : attris) {
-                                session.setAttribute(attri.get_name(), attri.get_object());
+
+                for (Dispatcher dp : dispatchers) {
+                        // call the controller
+                        Dispatcher.ReturnValue returned_value = dp.dispatch_jsp(context);
+                        if (returned_value == null) continue;
+                        
+                        // return the value back to the view
+                        Set<Attribute> attris = returned_value.get_session_attribute();
+                        if (attris != null) {
+                                HttpSession session = request.getSession();
+                                for (Attribute attri : attris) {
+                                        session.setAttribute(attri.get_name(), attri.get_object());
+                                }
                         }
-                }
-                attris = returned_value.get_requst_attribute();
-                if (attris != null) {
-                        for (Attribute attri : attris) {
-                                request.setAttribute(attri.get_name(), attri.get_object());
+                        attris = returned_value.get_requst_attribute();
+                        if (attris != null) {
+                                for (Attribute attri : attris) {
+                                        request.setAttribute(attri.get_name(), attri.get_object());
+                                }
                         }
+                        try {
+                                ServletContext ctx = getServletContext();
+                                if (ctx != null) {
+                                        String uri = returned_value.get_redirected_page_uri();
+                                        if (uri != null) ctx.getRequestDispatcher(uri).forward(request, response);
+                                }
+                        } catch (Exception e) {
+                                Prompt.log(Prompt.ERROR, getClass().toString(), "Caught by dispatcher servlet that "
+                                        + e.getMessage() + ", requested by: " + request.getRequestURI()
+                                        + ", processed by: " + returned_value.getClass().toString());
+                                e.printStackTrace();
+                        }
+                        JSPResolver resolver = returned_value.get_resolver();
+                        if (resolver != null) request.setAttribute("jsp-resolver", resolver);
                 }
-                try {
-                        ServletContext ctx = getServletContext();
-                        if (ctx != null) ctx.getRequestDispatcher(returned_value.get_redirected_page_uri()).
-                                forward(request, response);
-                } catch (Exception e) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), "Caught by dispatcher servlet that " + 
-                                e.getMessage() + ", requested by: " + request.getRequestURI() +
-                                ", processed by: " + returned_value.getClass().toString());
-                        e.printStackTrace();
-                }
-                
+
         }
 
         // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
