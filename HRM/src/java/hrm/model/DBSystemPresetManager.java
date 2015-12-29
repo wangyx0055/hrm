@@ -28,8 +28,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Database Implementation of the SystemPresetManger by using a dedicated database for system configurations. 
@@ -208,6 +206,16 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
                                 pstmt.setString(1, preset.get_name());
                                 ResultSet rs = pstmt.executeQuery();
+                                if (!rs.next()) {
+                                        // Never seen this record before, then insert it
+                                        pstmt = m_dbconn.prepareStatement(
+                                                "INSERT INTO " + TABLE + " VALUES (?,?,?)");
+                                        pstmt.setString(1, preset.get_name());
+                                        pstmt.setBlob(2, new ByteArrayInputStream(preset.serialize()));
+                                        pstmt.setInt(3, preset.get_type());
+                                        pstmt.executeUpdate();
+                                        return ;
+                                }
                                 // update the record if it already exists
                                 sql = "UPDATE " + TABLE + " \n"
                                         + "SET PRESETNAME=?,OBJECT=?,OBJECTTYPE=? \n"
@@ -219,13 +227,8 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                                 pstmt.setString(4, preset.get_name());
                                 pstmt.executeUpdate();
                         } catch (SQLException e) {
-                                // Never seen this record before, then insert it
-                                PreparedStatement pstmt = m_dbconn.prepareStatement(
-                                        "INSERT INTO " + TABLE + " VALUES (?,?,?)");
-                                pstmt.setString(1, preset.get_name());
-                                pstmt.setBlob(2, new ByteArrayInputStream(preset.serialize()));
-                                pstmt.setInt(3, preset.get_type());
-                                pstmt.executeUpdate();
+                                Prompt.log(Prompt.ERROR, "preset: " + preset.get_name(), 
+                                        "Failed to add preset to the database, Details: " + e.getMessage());
                         }
 
                 }
@@ -273,6 +276,11 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                                 // Table exists, drop it
                                 Statement stmt = m_dbconn.createStatement();
                                 stmt.executeUpdate("DROP TABLE " + TABLE);
+                                stmt.executeUpdate("CREATE TABLE " + TABLE + " ("
+                                        + "PRESETNAME VARCHAR(255) not NULL, "
+                                        + "OBJECT BLOB(1M), "
+                                        + "OBJECTTYPE INTEGER, "
+                                        + "PRIMARY KEY(PRESETNAME))");
                         }
                 }
         }

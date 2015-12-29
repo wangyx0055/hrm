@@ -15,32 +15,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.business.business201512;
+package hrm.test;
 
-import hrm.controller.Dispatcher;
+import hrm.system.HRMMain;
 import hrm.system.HRMSystemContext;
-import hrm.utils.Attribute;
-import java.util.Set;
+import hrm.system.MockHRMSystemContext;
+import javax.servlet.ServletContextEvent;
+import org.springframework.mock.web.MockServletContext;
 
 /**
- *
+ * Mock and initialize the system context.
  * @author davis
  */
-public class SubmitRegistrationForm implements Dispatcher.CalleeContext {
-        private final HRMSystemContext  m_ctx;
+public class MockInitSystemContext {
+        HRMMain                 m_main = new HRMMain(new MockHRMSystemContext());
+        MockServletContext      m_sc = new MockServletContext();
         
-        public SubmitRegistrationForm(HRMSystemContext ctx) {
-                m_ctx = ctx;
+        public MockInitSystemContext(String context_path) {
+                m_sc.setContextPath(context_path);
         }
         
-        @Override
-        public void add_params(Set<Attribute> attri) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public Dispatcher.ReturnValue get_return_value() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public HRMSystemContext init() {
+                m_main.contextInitialized(new ServletContextEvent(m_sc));
+                return HRMMain.get_system_context();
         }
         
+        public void free() {
+                m_main.contextDestroyed(new ServletContextEvent(m_sc));
+        }
 }

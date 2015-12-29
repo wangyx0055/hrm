@@ -16,6 +16,5 @@
             30
         </session-timeout>
     </session-config>
-    <ResourceLink global="jdbc/HRMSystemConfiguration" name="jdbc/HRMSystemConfiguration" type="javax.sql.ConnectionPoolDataSource"/>
     
 </web-app>

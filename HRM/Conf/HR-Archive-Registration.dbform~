@@ -1,7 +1,0 @@
-$hrm-page-conf$:[0.1]
-
-# Define what level I facility contains
-<elm name = "Level I Facility"><pre-data></pre-data></elm>
-
-# Define what level II facility contains
-<elm name = "Level I Facility"><pre-data></pre-data></elm>

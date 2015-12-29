@@ -26,6 +26,10 @@ import java.util.Set;
  */
 public class DBSystemFormManager implements SystemFormManager {
 
+        public DBSystemFormManager(boolean b, boolean b0) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
         @Override
         public void update(DBFormModule module, Set<Attribute> attris) throws SystemFormException {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

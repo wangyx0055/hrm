@@ -67,7 +67,7 @@ public class DeploySystemPresetsToDatabase {
         public void system_page_presets() 
                 throws ClassNotFoundException, SQLException, SystemPresetException, FileNotFoundException {
                 hrm.model.DBFormModulePreset preset = 
-                        new hrm.model.DBFormModulePreset(hrm.system.HRMDefaultName.dbformmodule());
+                        new hrm.model.DBFormModulePreset(hrm.system.HRMDefaultName.dbformmodulepreset());
                 preset.add_module_from_file(new FileInputStream("hr-archive.xml"));
                 SystemPresetManager mgr = new DBSystemPresetManager(false, true);
                 mgr.add_system_preset(preset);

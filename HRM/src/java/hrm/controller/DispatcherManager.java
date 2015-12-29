@@ -17,19 +17,23 @@
  */
 package hrm.controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- *
+ * A container for Dispatcher objects.
  * @author davis
  */
 public class DispatcherManager {
+        private final Set<Dispatcher> set = new HashSet();
         
         public void add_dispatcher(Dispatcher dp) {
+                set.add(dp);
         } 
 
-        public List<Dispatcher> get_all_dispatchers() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public Set<Dispatcher> get_all_dispatchers() {
+                return set;
         }
         
 }

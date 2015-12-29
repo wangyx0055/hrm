@@ -36,9 +36,9 @@ public class HRMBusiness_201512project implements HRMBusinessPlugin {
         public void init(HRMSystemContext context) throws HRMBusinessPluginException {
                 // construct a dispatcher
                 Dispatcher dp = new Dispatcher();
-                dp.register_controller_call(new ReturnRegistrationForm(), 
+                dp.register_controller_call(new ReturnRegistrationForm(context), 
                         "return-registration-form", Dispatcher.PageCategory.JspPage);
-                dp.register_controller_call(new SubmitRegistrationForm(), 
+                dp.register_controller_call(new SubmitRegistrationForm(context), 
                         "submit-registration-form", Dispatcher.PageCategory.JspPage);
                 // upload the dispatcher
                 context.get_dispatcher_manager().add_dispatcher(dp);

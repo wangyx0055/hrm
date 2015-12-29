@@ -19,16 +19,30 @@ package hrm.controller;
 
 import hrm.utils.Attribute;
 import hrm.view.JSPResolver;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * This will dispatch the call with caller information to the correct callee.
  * @author davis
  */
 public class Dispatcher {
-
+        
+        private final Map<String, CalleeContext>[]      m_call_map;
+        
         public enum PageCategory {
-                JspPage
+                JspPage,
+                NUM_PAGE_CATEGORIES
+        }
+        
+        public Dispatcher() {
+                int num_page_cate = PageCategory.NUM_PAGE_CATEGORIES.ordinal();
+                m_call_map = new Map [num_page_cate];
+                for (int i = 0; i < num_page_cate; i ++) {
+                        m_call_map[i] = new HashMap<> ();
+                }
         }
 
         /**
@@ -36,23 +50,15 @@ public class Dispatcher {
          *
          * @author davis
          */
-        public class ReturnValue {
+        public interface ReturnValue {
 
-                public String get_redirected_page_uri() {
-                        return null;
-                }
+                public String get_redirected_page_uri();
 
-                public Set<Attribute> get_session_attribute() {
-                        return null;
-                }
+                public Set<Attribute> get_session_attribute();
 
-                public Set<Attribute> get_requst_attribute() {
-                        return null;
-                }
+                public Set<Attribute> get_requst_attribute();
 
-                public JSPResolver get_resolver() {
-                        return null;
-                }
+                public JSPResolver get_resolver();
         }
 
         /**
@@ -61,11 +67,15 @@ public class Dispatcher {
          * @author davis
          */
         public class CallerContext {
+                private final String            m_caller;
+                private final Set<Attribute>    m_attri = new HashSet();
 
                 public CallerContext(String caller) {
+                        m_caller = caller;
                 }
 
                 public void add_parameter(Attribute attri) {
+                        m_attri.add(attri);
                 }
         }
 
@@ -81,17 +91,17 @@ public class Dispatcher {
         }
 
         public ReturnValue dispatch_jsp(CallerContext call) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                CalleeContext callee = m_call_map[PageCategory.JspPage.ordinal()].get(call.m_caller);
+                if (callee == null) return null;
+                callee.add_params(call.m_attri);
+                return callee.get_return_value();
         }
 
         public void register_controller_call(CalleeContext context, String mapped_call, PageCategory cate) {
+                m_call_map[cate.ordinal()].put(mapped_call, context);
         }
         
         public CallerContext get_caller_context(String caller) {
                 return new CallerContext(caller);
         }
-        
-//        public CalleeContext get_callee_context(String callee) {
-//                return new CalleeContext(callee);
-//        }
 }

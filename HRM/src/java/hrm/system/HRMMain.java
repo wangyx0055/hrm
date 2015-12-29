@@ -21,6 +21,7 @@ import hrm.model.SystemPresetException;
 import hrm.model.SystemPresetManager;
 import hrm.utils.AsciiStream;
 import hrm.utils.Prompt;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +46,15 @@ public class HRMMain implements ServletContextListener {
         private ServletContext          m_servlet_ctx;
         private List<HRMBusinessPlugin> m_plugins;
         
+        public HRMMain() {
+                // normal initialization
+        }
+        
+        public HRMMain(HRMSystemContext ctximpl) {
+                // mock initialization
+                m_ctrl_ctx = ctximpl;
+        }
+        
         public static HRMSystemContext get_system_context() {
                 return m_ctrl_ctx;
         }
@@ -54,7 +64,7 @@ public class HRMMain implements ServletContextListener {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing HRM...");
                 // iniialize resources
                 m_servlet_ctx = sce.getServletContext();
-                m_ctrl_ctx = new HRMSystemContext();
+                if (m_ctrl_ctx == null) m_ctrl_ctx = new InternalHRMSystemContext();
                 init();
         }
 
@@ -65,11 +75,10 @@ public class HRMMain implements ServletContextListener {
                 free();
         }
         
-        private List<HRMBusinessPlugin> load_plugin(String plugin_conf) {
+        private List<HRMBusinessPlugin> load_plugin(InputStream in, String plugin_conf) {
                 ArrayList<HRMBusinessPlugin> importers = new ArrayList();
                 String entrance = "";
                 try {
-                        InputStream in = m_servlet_ctx.getResourceAsStream(plugin_conf);
                         String content = AsciiStream.extract(in);
                         String[] entrances = content.split(System.lineSeparator());
                         for (String e : entrances) {
@@ -109,20 +118,28 @@ public class HRMMain implements ServletContextListener {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing System preset...");
                 // constructing DBFormPreset
                 hrm.model.DBFormModulePreset dbform_preset = 
-                        new hrm.model.DBFormModulePreset(HRMDefaultName.dbformmodule());
-                try {
-                        dbform_preset.add_module_from_file(
-                                m_servlet_ctx.getResourceAsStream("hr-archive.xml"));
-                } catch (SystemPresetException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Failed to load in DBFormModulePreset, Details: " + ex.getMessage());
+                        new hrm.model.DBFormModulePreset(HRMDefaultName.dbformmodulepreset());
+                
+                String[] files = {"CONF/hr-archive-module.xml"};
+                for (String file : files) {
+                        InputStream in = AsciiStream.get_stream_from_resource(m_servlet_ctx, file, 
+                                m_servlet_ctx.getContextPath() + file);
+                        if (in == null) continue;
+                        try {
+                                dbform_preset.add_module_from_file(in);
+                        } catch (SystemPresetException ex) {
+                                Prompt.log(Prompt.WARNING, getClass().toString(), 
+                                        "Failed to load in DBFormModulePreset, Details: " + ex.getMessage());
+                        }
                 }
                 // add presets to manager
                 SystemPresetManager mgr = m_ctrl_ctx.get_preset_manager();
                 mgr.add_system_preset(dbform_preset);
                 
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Loading plugins...");
-                m_plugins = load_plugin("CONF/hrm-plugin");
+                InputStream in = AsciiStream.get_stream_from_resource(m_servlet_ctx, "CONF/hrm-plugin", 
+                                m_servlet_ctx.getContextPath() + "CONF/hrm-plugin");
+                m_plugins = load_plugin(in, "CONF/hrm-plugin");
                 
                 // Initialize the plugins through importer
                 for (HRMBusinessPlugin plugin : m_plugins) {

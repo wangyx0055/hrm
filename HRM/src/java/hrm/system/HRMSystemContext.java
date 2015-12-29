@@ -18,6 +18,7 @@
 package hrm.system;
 
 import hrm.controller.DispatcherManager;
+import hrm.model.DBSystemFormManager;
 import hrm.model.DBSystemPresetManager;
 import hrm.model.SystemFormManager;
 import hrm.model.SystemPresetManager;
@@ -26,29 +27,13 @@ import hrm.model.SystemPresetManager;
  * Holding useful context information for other module.
  * @author davis
  */
-public class HRMSystemContext {
-        public final SystemPresetManager        m_preset_mgr;
-        public final DispatcherManager          m_disp_mgr;
+public interface HRMSystemContext {
         
-        public HRMSystemContext() {
-                m_preset_mgr = new DBSystemPresetManager(false, true);
-                m_disp_mgr = new DispatcherManager();
-        }
+        public void free();
         
-        public void free() {
-                DBSystemPresetManager mgr = (DBSystemPresetManager) m_preset_mgr;
-                mgr.free();
-        }
+        public SystemPresetManager get_preset_manager();
         
-        public SystemPresetManager get_preset_manager() {
-                return m_preset_mgr;
-        }
+        public DispatcherManager get_dispatcher_manager();
         
-        public DispatcherManager get_dispatcher_manager() {
-                return m_disp_mgr;
-        }
-        
-        public SystemFormManager get_system_form_manager() {
-                return null;
-        }
+        public SystemFormManager get_system_form_manager();
 }

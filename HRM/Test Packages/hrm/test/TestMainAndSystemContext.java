@@ -17,6 +17,7 @@
  */
 package hrm.test;
 
+import hrm.system.HRMSystemContext;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,15 +26,19 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.springframework.util.Assert;
 
 /**
- * Test the Dispatcher.
+ * Test HRMMain and MRMSystemContext.
  * @author davis
  */
-public class TestDispatcher {
+public class TestMainAndSystemContext {
+        
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestDispatcher() {
+        
+        
+        public TestMainAndSystemContext() {
         }
         
         @BeforeClass
@@ -55,6 +60,14 @@ public class TestDispatcher {
         }
 
         @Test
-        public void dispatch_and_returned() {
+        public void launch_main() {
+                MockInitSystemContext sysmock = 
+                        new MockInitSystemContext("/home/davis/human-resource-management-code/HRM/web/");
+                HRMSystemContext ctx = sysmock.init();
+                Assert.notNull(ctx);
+                Assert.notNull(ctx.get_dispatcher_manager());
+                Assert.notNull(ctx.get_preset_manager());
+                Assert.notNull(ctx.get_system_form_manager());
+                sysmock.free();
         }
 }

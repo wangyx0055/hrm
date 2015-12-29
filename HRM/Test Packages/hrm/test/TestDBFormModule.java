@@ -98,7 +98,7 @@ public class TestDBFormModule {
                 
                 // Load from .conf file
                 try {
-                        module2.build_from_file(new FileInputStream("Conf/Test/test.xml"));
+                        module2.build_from_file(new FileInputStream("web/CONF/hr-archive-module.xml"));
                 } catch(FileNotFoundException | hrm.model.SystemPresetException e) {
                         System.out.println("Load-module-from-file test failed. Error: " + e);
                         fail();

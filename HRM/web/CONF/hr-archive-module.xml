@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" content="HRM-DBFORM-MODULE"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Copyright (C) 2015 davis
 
@@ -19,41 +19,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <!--hr-archive database form module-->
 <module name="hr-archive">
-    <key name="一级机构" type="String.class">
-        <attribute name="机构A_i" type="null">
-        </attribute>
-        <attribute name="机构B_i" type="null">
-        </attribute>
-        <attribute name="机构C_i" type="null">
-        </attribute>
-        <attribute name="机构D_i" type="null">
-        </attribute>
+    <key name="Level I Facility" type="java.lang.String">
+        <attribute name="Facility A_i" type="null"/>
+        <attribute name="Facility B_i" type="null"/>
+        <attribute name="Facility C_i" type="null"/>
+        <attribute name="Facility D_i" type="null"/>
     </key>
 	
-    <key name="档案编号" type="Integer.class" unique="true">
+    <key name="Document#" type="java.lang.Integer" unique="true">
     </key>
 	
-    <key name="二级机构" type="String.class">
-        <attribute name="机构A_ii" type="null">
-        </attribute>
-        <attribute name="机构B_ii" type="null">
-        </attribute>
-        <attribute name="机构C_ii" type="null">
-        </attribute>
-        <attribute name="机构D_ii" type="null">
-        </attribute>
+    <key name="Level II Facility" type="java.lang.String">
+        <attribute name="Facility A_ii" type="null"/>
+        <attribute name="Facility B_ii" type="null"/>
+        <attribute name="Facility C_ii" type="null"/>
+        <attribute name="Facility D_ii" type="null"/>
     </key>
 	
-    <key name="三级机构" type="String.class">
-        <attribute name="机构A_ii" type="null">
-        </attribute>
-        <attribute name="机构B_ii" type="null">
-        </attribute>
-        <attribute name="机构C_ii" type="null">
-        </attribute>
-        <attribute name="机构D_ii" type="null">
-        </attribute>
+    <key name="Level III Facility" type="java.lang.String">
+        <attribute name="Facility A_iii" type="null"/>
+        <attribute name="Facility B_iii" type="null"/>
+        <attribute name="Facility C_iii" type="null"/>
+        <attribute name="Facility D_iii" type="null"/>
     </key>
     
-    <attribute name="something" type="null"></attribute>
+    <attribute name="something" type="null"/>
 </module>

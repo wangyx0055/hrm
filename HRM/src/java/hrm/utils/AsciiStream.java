@@ -18,6 +18,8 @@
 package hrm.utils;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,22 +27,41 @@ import java.io.StringWriter;
 
 /**
  * Extract lines from an ASCII stream.
+ *
  * @author davis
  */
 public class AsciiStream {
-        
+
         private static final int MAX_BUFFERING = 16384;
-        
+
+        public static InputStream get_stream_from_resource(Object obj, String file, String backup) {
+                InputStream in = obj.getClass().getResourceAsStream(file);
+                if (in == null) {
+                        Prompt.log(Prompt.WARNING, obj.getClass().toString(),
+                                "while loading " + file + " resource stream not found. Engaging backup plan...");
+                        try {
+                                // backup
+                                in = new FileInputStream(backup);
+                        } catch (FileNotFoundException ex) {
+                                Prompt.log(Prompt.ERROR, obj.getClass().toString(),
+                                        "while loading " + file + " backup plan failed" + ex.getMessage());
+                        }
+                        Prompt.log(Prompt.NORMAL, obj.getClass().toString(), 
+                                "backup plan succeeded.");
+                }
+                return in;
+        }
+
         public static String extract(InputStream source) throws IOException {
                 StringWriter writer = new StringWriter();
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(source))) {
-			char[] buffer = new char[MAX_BUFFERING];
-			int n_bytes = reader.read(buffer, 0, buffer.length);
-			while (n_bytes != -1) {
-				writer.write(buffer, 0, n_bytes);
-				n_bytes = reader.read(buffer, 0, buffer.length);
-			}
-		}
-		return writer.toString();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(source))) {
+                        char[] buffer = new char[MAX_BUFFERING];
+                        int n_bytes = reader.read(buffer, 0, buffer.length);
+                        while (n_bytes != -1) {
+                                writer.write(buffer, 0, n_bytes);
+                                n_bytes = reader.read(buffer, 0, buffer.length);
+                        }
+                }
+                return writer.toString();
         }
 }

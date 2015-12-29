@@ -22,7 +22,7 @@ package hrm.system;
  * @author davis
  */
 public class HRMDefaultName {
-        public static String dbformmodule() {
+        public static String dbformmodulepreset() {
                 return "HRMSYSTEMDEFAULTDBFORMMODULE";
         }
 }

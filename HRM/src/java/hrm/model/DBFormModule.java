@@ -17,15 +17,23 @@
  */
 package hrm.model;
 
-import hrm.utils.AsciiStream;
 import hrm.utils.Element;
 import hrm.utils.NaryTree;
+import hrm.utils.Prompt;
 import hrm.utils.Serializer;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * Containing elements and hierarchical structure of a database form module.
@@ -156,28 +164,92 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
          * @throws SystemPresetException 
          */
         public String build_from_file(InputStream stream) throws SystemPresetException {
-                
-                String content = null;
+                String module_name = null;
+                SAXBuilder builder = new SAXBuilder();
                 try {
-                        content = AsciiStream.extract(stream);
-                } catch (IOException ex) {
+                        Document document = (Document) builder.build(stream);
+                        org.jdom2.Element root_node = document.getRootElement();
+                        if (!root_node.getName().equals("module")) {
+                                throw new JDOMException("Invalid DBFormModule file: <module> block not found");
+                        }
+                        module_name = root_node.getAttributeValue("name");
+                        if (module_name == null) {
+                                throw new JDOMException("Invalid DBFormModule file: <name> attribute for "
+                                                + "module tag is mandatory");
+                        }
+                        m_module_name = module_name;
+                        
+                        // extract keys
+                        List<org.jdom2.Element> keys = root_node.getChildren("key");
+                        if (keys == null || keys.isEmpty()) {
+                                throw new JDOMException("Invalid DBFormModule file: <module> block not found");
+                        }
+                        for (org.jdom2.Element key : keys) {
+                                String name = key.getAttributeValue("name");
+                                String type = key.getAttributeValue("type");
+                                if (name == null) {
+                                        throw new JDOMException("Invalid DBFormModule file: <name> attribute for "
+                                                + "key tag is mandatory");
+                                }
+                                Class<?> class_type;
+                                try {
+                                        class_type = Class.forName(type);
+                                        add_key(name, new Element(name, class_type));
+                                } catch (ClassNotFoundException ex) {
+                                        throw new JDOMException("type:" + type + " for key:" + name + 
+                                                " couldn't be found");
+                                }
+                        }
+                        // extract all attributes
+                        Map<List<org.jdom2.Element>, Integer> attris = new HashMap<>();
+                        attris.put(root_node.getChildren("attribute"), 0);
+                        
+                        Map<List<org.jdom2.Element>, Integer> tmp = new HashMap<>();
+                        
+                        List<NaryTree<Element>> parent  = new LinkedList<>();
+                        parent.add(this);
+                        List<NaryTree<Element>> children  = new LinkedList<>();
+                        while (!attris.isEmpty()) {
+                                int i = 0;
+                                int iparent;
+                                for (List<org.jdom2.Element> nodes : attris.keySet()) {
+                                        iparent = attris.get(nodes);
+                                        for (org.jdom2.Element node : nodes) {
+                                                String name = node.getAttributeValue("name");
+                                                String type = node.getAttributeValue("type");
+                                                if (name == null) {
+                                                        throw new JDOMException("Invalid DBFormModule file: <name> attribute for "
+                                                                + "attribute tag is mandatory");
+                                                }
+                                                Class<?> class_type;
+                                                NaryTree<Element> child;
+                                                try {
+                                                        class_type = Class.forName(type);
+                                                        child = parent.get(iparent).
+                                                                add_child(name, new Element(name, class_type));
+                                                } catch (ClassNotFoundException ex) {
+                                                        child = parent.get(iparent).
+                                                                add_child(name, new Element(name));
+                                                }
+                                                children.add(child);
+                                                List<org.jdom2.Element> child_attris = node.getChildren("attribute");
+                                                tmp.put(child_attris, i ++);
+                                        }
+                                        
+                                }
+                                attris.clear();
+                                attris = new HashMap<>(tmp);
+                                tmp.clear();
+                                        
+                                parent.clear();
+                                parent.addAll(children);
+                                children.clear();
+                        }
+                } catch (JDOMException | IOException ex) {
                         throw new SystemPresetException(SystemPresetException.Error.LoadingError).
-                                add_extra_info("Failed to extract any content from the stream");
+                                        add_extra_info(ex.getMessage());
                 }
-                String[] lines = content.split(System.lineSeparator());
-                // parse the header first
-                if (!lines[0].startsWith("<?xml version=\"1.0\"")) {
-                        throw new SystemPresetException(SystemPresetException.Error.LoadingError).
-                                add_extra_info("The stream does not represent an xml: " + content);
-                }
-                if (!lines[0].contains("content=\"HRM-DBFORM-MODULE\"")) {
-                        throw new SystemPresetException(SystemPresetException.Error.LoadingError).
-                                add_extra_info("The stream does not represent a DBFormModule: " + content);
-                }
-                NaryTree<Element> current_node = this;
-                for (String line : lines) {
-                }
-                return null;
+                return module_name;
         }
         
         /**
