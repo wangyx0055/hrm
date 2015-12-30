@@ -27,7 +27,7 @@ import java.util.HashMap;
  * @author davis
  */
 public class DBFormModulePreset extends SystemPreset {
-        private final HashMap<String, DBFormModule> m_modules = new HashMap<>();
+        private HashMap<String, DBFormModule> m_modules = new HashMap<>();
 
         public DBFormModulePreset(String name) {
                 super(name, SystemPresetFactory.DBFORM_MODULE_PRESET);
@@ -59,6 +59,11 @@ public class DBFormModulePreset extends SystemPreset {
         @Override
         public byte[] serialize() {
                 Serializer s = new Serializer();
+                s.write_array_header(m_modules.size());
+                for (String module_name : m_modules.keySet()) {
+                        DBFormModule module = m_modules.get(module_name);
+                        s.write_serialized_stream(module.serialize());
+                }
                 return s.to_byte_stream();
         }
 
@@ -66,6 +71,15 @@ public class DBFormModulePreset extends SystemPreset {
         public void deserialize(byte[] stream) {
                 Serializer s = new Serializer();
                 s.from_byte_stream(stream);
+                
+                int l = s.read_array_header();
+                m_modules = new HashMap<>(l);
+                for (int i = 0; i < l; i ++) {
+                        byte[] obj = s.read_serialized_stream();
+                        DBFormModule module = new DBFormModule("");
+                        module.deserialize(obj);
+                        m_modules.put(module.get_module_name(), module);
+                }
         }
         
         @Override

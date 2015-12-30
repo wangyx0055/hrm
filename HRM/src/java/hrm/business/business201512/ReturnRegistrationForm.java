@@ -86,6 +86,9 @@ public class ReturnRegistrationForm implements Dispatcher.CalleeContext {
                 }
                 DBFormModule module = preset.get_module("hr-archive");
                 JSPResolver resolver = new DBFormModuleJSPResolver(module);
+                resolver.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
+                resolver.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
+                resolver.add_non_resolvable(hrm.view.JSPResolver.PageElement.LineBreak);
                 return new ReturnValue(resolver);
         }
         

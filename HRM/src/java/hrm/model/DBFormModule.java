@@ -203,6 +203,7 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
                         // extract all attributes
                         Map<List<org.jdom2.Element>, Integer> attris = new HashMap<>();
                         attris.put(root_node.getChildren("attribute"), 0);
+                        attris.put(root_node.getChildren("key"), 0);
                         
                         Map<List<org.jdom2.Element>, Integer> tmp = new HashMap<>();
                         

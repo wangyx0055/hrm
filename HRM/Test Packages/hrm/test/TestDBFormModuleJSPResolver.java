@@ -63,18 +63,19 @@ public class TestDBFormModuleJSPResolver {
                 hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
                 hrm.model.DBFormModule module = preset.add_module("Test HR Archive Registration");
                 
-                module.build_from_file(new FileInputStream("Conf/Test/test.xml"));
+                module.build_from_file(new FileInputStream("web/CONF/hr-archive-module.xml"));
+                System.out.println("Loaded module: " + module.toString());
                 
                 hrm.view.DBFormModuleJSPResolver jsp_res = new hrm.view.DBFormModuleJSPResolver(module);
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
                 jsp_res.add_non_resolvable(hrm.view.JSPResolver.PageElement.LineBreak);
-                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LabeledEntry, "Name");
-                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LargeLabeledEntry, "Resume");
+//                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LabeledEntry, "Name");
+//                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LargeLabeledEntry, "Resume");
                 
                 String str_page = jsp_res.resolve_page_as_string();
                 String expected_page_str = "";
-                System.out.println("Resolved page string: " + str_page);
+                System.out.println("Resolved page string: \n" + str_page);
                 assertEquals(str_page, expected_page_str);
         }
 }

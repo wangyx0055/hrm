@@ -76,7 +76,8 @@ public class Element implements Serializable {
         public String toString() {
                 String s = "";
                 if (m_name != null) s += m_name;
-                if (m_type != null) s += "-" + m_type.toString();
+                if (m_type != null) s += "<" + m_type.toString() + ">";
+                else                s += "<?>";
                 return s;
         }
 
