@@ -26,12 +26,12 @@ import java.util.Set;
  */
 public interface SystemFormManager {
         
-        public void update(DBFormModule module, Set<Attribute> attris) 
+        public void update(DBFormModule module, DBFormData data) 
                 throws SystemFormException;
         
-        public Set<Attribute> query(DBFormModule module, DBFormQuery query, Set<Attribute> attris) 
+        public DBFormData query(DBFormModule module, DBFormQuery query, DBFormData info) 
                 throws SystemFormException;
         
-        public void remove(DBFormModule module, DBFormQuery query, Set<Attribute> attris)
+        public void remove(DBFormModule module, DBFormQuery query, DBFormData info)
                 throws SystemFormException;
 }

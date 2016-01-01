@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdom2.Document;
@@ -140,9 +141,9 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
          * All keys that are in this database form module.
          * @return set of keys
          */
-        public Set<Element> get_keys() {
+        public TreeSet<Element> get_keys() {
                 Map<String, NaryTree<Element>> children = super.get_all_children();
-                HashSet<Element> elm_set = new HashSet<>();
+                TreeSet<Element> elm_set = new TreeSet<>();
                 children.values().stream().forEach((node) -> {
                         elm_set.add(node.get_value());
                 });

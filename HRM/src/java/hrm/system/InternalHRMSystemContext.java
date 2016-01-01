@@ -22,19 +22,28 @@ import hrm.model.DBSystemFormManager;
 import hrm.model.DBSystemPresetManager;
 import hrm.model.SystemFormManager;
 import hrm.model.SystemPresetManager;
+import hrm.utils.Prompt;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Internal implementation of the SystemContext.
  * @author davis
  */
 public class InternalHRMSystemContext implements HRMSystemContext {
-        public final SystemPresetManager        m_preset_mgr;
-        public final SystemFormManager          m_form_mgr;
-        public final DispatcherManager          m_disp_mgr;
+        public SystemPresetManager        m_preset_mgr = null;
+        public SystemFormManager          m_form_mgr = null;
+        public DispatcherManager          m_disp_mgr = null;
         
         public InternalHRMSystemContext() {
                 m_preset_mgr = new DBSystemPresetManager(false, true);
-                m_form_mgr = new DBSystemFormManager(false, true);
+                try {
+                        m_form_mgr = new DBSystemFormManager(false, false);
+                } catch (SQLException ex) {
+                        Prompt.log(Prompt.ERROR, getClass().toString(), 
+                                "Failed to initialize DBSystemFormManager, Details: " + ex.getMessage());
+                }
                 m_disp_mgr = new DispatcherManager();
         }
         

@@ -18,10 +18,17 @@
 package hrm.model;
 
 /**
- *
+ * Construct a query.
  * @author davis
  */
 public class DBFormQuery {
+        private final String    m_cond_clause;
+        
         public DBFormQuery(String cond_clause) {
+                m_cond_clause = cond_clause;
+        }
+        
+        public String get_conditional_clause() {
+                return m_cond_clause;
         }
 }

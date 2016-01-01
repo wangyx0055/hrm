@@ -148,7 +148,7 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                         } else {
                                 // Create a table as it doesn't exist yet
                                 Statement stmt = m_dbconn.createStatement();
-                                stmt.executeUpdate("CREATE TABLE SYSTEMCONF ("
+                                stmt.executeUpdate("CREATE TABLE " + TABLE + " ("
                                         + "PRESETNAME VARCHAR(255) not NULL, "
                                         + "OBJECT BLOB(1M), "
                                         + "OBJECTTYPE INTEGER, "
@@ -273,14 +273,9 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                         DatabaseMetaData dbm = m_dbconn.getMetaData();
                         ResultSet tables = dbm.getTables(null, null, TABLE, null);
                         if (tables.next()) {
-                                // Table exists, drop it
+                                // Table exists, truncate the content of it
                                 Statement stmt = m_dbconn.createStatement();
-                                stmt.executeUpdate("DROP TABLE " + TABLE);
-                                stmt.executeUpdate("CREATE TABLE " + TABLE + " ("
-                                        + "PRESETNAME VARCHAR(255) not NULL, "
-                                        + "OBJECT BLOB(1M), "
-                                        + "OBJECTTYPE INTEGER, "
-                                        + "PRIMARY KEY(PRESETNAME))");
+                                stmt.executeUpdate("TRUNCATE TABLE " + TABLE);
                         }
                 }
         }

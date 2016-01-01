@@ -44,7 +44,39 @@ public class Serializer {
                 byte n1 = m_stream.poll();
                 byte n2 = m_stream.poll();
                 byte n3 = m_stream.poll();
-                return (n3 << 24) | (n2 << 16) | (n1 << 8) | (n0);
+                return (((int) n3) << 24) | (((int) n2) << 16) | (((int) n1) << 8) | (((int) n0));
+        }
+        
+        public void write_long(long n) {
+                byte n7 = (byte) (n >>> 56);
+                byte n6 = (byte) ((n >>> 48) & 0XFF);
+                byte n5 = (byte) ((n >>> 40) & 0XFF);
+                byte n4 = (byte) ((n >>> 32) & 0XFF);
+                byte n3 = (byte) ((n >>> 24) & 0XFF);
+                byte n2 = (byte) ((n >>> 16) & 0XFF);
+                byte n1 = (byte) ((n >>> 8) & 0XFF);
+                byte n0 = (byte) (n & 0XFF);
+                m_stream.add(n0);
+                m_stream.add(n1);
+                m_stream.add(n2);
+                m_stream.add(n3);
+                m_stream.add(n4);
+                m_stream.add(n5);
+                m_stream.add(n6);
+                m_stream.add(n7);
+        }
+        
+        public long read_long() {
+                byte n0 = m_stream.poll();
+                byte n1 = m_stream.poll();
+                byte n2 = m_stream.poll();
+                byte n3 = m_stream.poll();
+                byte n4 = m_stream.poll();
+                byte n5 = m_stream.poll();
+                byte n6 = m_stream.poll();
+                byte n7 = m_stream.poll();
+                return (((long) n7) << 56) | (((long) n6) << 48) | (((long) n5) << 40) | (((long) n4) << 32) |
+                       (((long) n3) << 24) | (((long) n2) << 16) | (((long) n1) << 8) | (((long) n0));
         }
         
         public void write_string(String s) {
