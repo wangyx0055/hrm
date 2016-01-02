@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public interface SystemFormManager {
         
-        public void update(DBFormModule module, DBFormData data) 
+        public void update(DBFormModule module, DBFormQuery query, DBFormData info) 
                 throws SystemFormException;
         
         public DBFormData query(DBFormModule module, DBFormQuery query, DBFormData info) 

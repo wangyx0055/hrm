@@ -17,6 +17,8 @@
  */
 package hrm.model;
 
+import java.util.List;
+
 /**
  * Construct a query.
  * @author davis
@@ -30,5 +32,13 @@ public class DBFormQuery {
         
         public String get_conditional_clause() {
                 return m_cond_clause;
+        }
+        
+        public String sql_where_clause() {
+                throw new UnsupportedOperationException();
+        }
+        
+        public List<String> get_attribute_names() {
+                throw new UnsupportedOperationException();
         }
 }

@@ -17,10 +17,69 @@
  */
 package hrm.model;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
- *
+ * Indicate errors associated with manipulating a system form.
  * @author davis
  */
 public class SystemFormException extends Exception {
+        public enum Error {
+                UnknownError,
+                InitializationError,
+                FetchingError,
+                UpdateError,
+                QueryError,
+                StoringError,
+                InvalidParameterError
+        }
         
+        private final String            m_message;
+        private final String            m_stacktrace;
+        private String                  m_extrainfo = "";
+        
+        SystemFormException(Error error_type) {
+                switch (error_type) {
+                        case InitializationError:
+                                m_message = "SystemPreset Initialization Error!";
+                                break;
+                        case FetchingError:
+                                m_message = "SystemPreset Fetching Error!";
+                                break;
+                        case UpdateError:
+                                m_message = "SystemForm Update Error!";
+                                break;
+                        case QueryError:
+                                m_message = "SystemForm qeury Error!";
+                                break;
+                        case StoringError:
+                                m_message = "SystemForm Storing Error!";
+                                break;
+                        case InvalidParameterError:
+                                m_message = "SystemForm Invalid Parameter(s) Error!";
+                                break;
+                        default:
+                                m_message = "Unknown error!";
+                }
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                this.printStackTrace(pw);
+                m_stacktrace = sw.toString();
+        }
+        
+        public SystemFormException add_extra_info(String info) {
+                m_extrainfo += info + ";";
+                return this;
+        }
+        
+        @Override
+        public String getMessage() {
+                return toString();
+        }
+        
+        @Override
+        public String toString() {
+                return m_message + ", details: " + m_extrainfo + "\n" + m_stacktrace;
+        }
 }

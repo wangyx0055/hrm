@@ -18,8 +18,12 @@
 package hrm.model;
 
 import hrm.utils.Attribute;
+import hrm.utils.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +31,7 @@ import java.util.Set;
  * To store form data.
  * @author davis
  */
-public class DBFormData {
+public class DBFormData implements Serializable {
         private final Map<String, Attribute>  m_attris = new HashMap();
         
         public DBFormData() {
@@ -51,11 +55,35 @@ public class DBFormData {
                 m_attris.remove(name);
         }
         
+        public Attribute get_attribute(String name) {
+                return m_attris.get(name);
+        }
+        
         public Set<Attribute> get_attributes() {
                 HashSet<Attribute> attris = new HashSet<>();
                 for (Attribute attri : m_attris.values()) {
                         attris.add(attri);
                 }
                 return attris;
+        }
+        
+        public List<Attribute> get_ordered_attribute(List<String> names) {
+                List<Attribute> attris = new LinkedList<>();
+                for (String name : names) {
+                        Attribute attri = m_attris.get(name);
+                        if (attri == null) return null;
+                        attris.add(attri);
+                }
+                return attris;
+        }
+
+        @Override
+        public byte[] serialize() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void deserialize(byte[] stream) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 }

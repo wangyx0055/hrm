@@ -17,6 +17,7 @@
  */
 package hrm.model;
 
+import hrm.utils.Attribute;
 import hrm.utils.Element;
 import hrm.utils.NaryTree;
 import hrm.utils.Prompt;
@@ -139,7 +140,8 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
         
         /**
          * All keys that are in this database form module.
-         * @return set of keys
+         * @return set of keys. The key set is guaranteed to have fixed traversal order if
+         * the set of elements are the same.
          */
         public TreeSet<Element> get_keys() {
                 Map<String, NaryTree<Element>> children = super.get_all_children();
@@ -148,6 +150,17 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
                         elm_set.add(node.get_value());
                 });
                 return elm_set;
+        }
+        
+        public List<Element> get_ordered_keys(List<String> key_names) {
+                List<Element> elms = new LinkedList<>();
+                Map<String, NaryTree<Element>> children = super.get_all_children();
+                for (String name : key_names) {
+                        NaryTree<Element> elm = children.get(name);
+                        if (elm == null) return null;
+                        elms.add(elm.get_value());
+                }
+                return elms;
         }
         
         /**
