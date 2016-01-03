@@ -117,8 +117,8 @@ public class HRMMain implements ServletContextListener {
                 
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing System preset...");
                 // constructing DBFormPreset
-                hrm.model.DBFormModulePreset dbform_preset = 
-                        new hrm.model.DBFormModulePreset(HRMDefaultName.dbformmodulepreset());
+                hrm.model.FormModulePreset dbform_preset = 
+                        new hrm.model.FormModulePreset(HRMDefaultName.dbformmodulepreset());
                 
                 String[] files = {"CONF/hr-archive-module.xml"};
                 for (String file : files) {

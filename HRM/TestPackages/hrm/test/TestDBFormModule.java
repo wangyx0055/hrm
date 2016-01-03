@@ -29,21 +29,21 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the DBFormModule class.
+ * Test the FormModule class.
  * @author davis
  */
 public class TestDBFormModule {
         @Rule public final TestName m_test_name = new TestName();
         
-        private static hrm.model.DBFormModule module;
-        private static hrm.model.DBFormModule module2;
+        private static hrm.model.FormModule module;
+        private static hrm.model.FormModule module2;
         
         public TestDBFormModule() {
         }
         
         @BeforeClass
         public static void setUpClass() {
-                hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
+                hrm.model.FormModulePreset preset = new hrm.model.FormModulePreset("Test HRM System Preset");
                 module = preset.add_module("Test HR Archive Registration");
                 module2 = preset.add_module("HR Archive Registration(Loading from file)");
         }
@@ -66,17 +66,17 @@ public class TestDBFormModule {
         public void add_info() {
                 assertTrue(module != null);
                 // Hand setting the form data;
-                hrm.model.DBFormModule key = module.add_key("Level I Facility", 
+                hrm.model.FormModule key = module.add_key("Level I Facility", 
                         new hrm.utils.Element("Level I Facility", String.class));
                 key.add_child("facility I A", new hrm.utils.Element("facility I A"));
                 key.add_child("facility I B", new hrm.utils.Element("facility I B"));
                 key.add_child("facility I C", new hrm.utils.Element("facility I C"));
                 assertEquals(key.parent(), module);
                 
-                hrm.model.DBFormModule key2 = module.add_key("Level II Facility", 
+                hrm.model.FormModule key2 = module.add_key("Level II Facility", 
                         new hrm.utils.Element("Level II Facility", String.class));
                 // add_child level III facility first
-                hrm.model.DBFormModule key3 = module.add_key("Level III Facility", 
+                hrm.model.FormModule key3 = module.add_key("Level III Facility", 
                                 new hrm.utils.Element("Level III Facility", String.class));
                 key3.add_child("facility III A", new hrm.utils.Element("facility III A"));
                 key3.add_child("facility III B", new hrm.utils.Element("facility III B"));
@@ -89,7 +89,7 @@ public class TestDBFormModule {
                 key2.add_child("facility II D", new hrm.utils.Element("facility II D"));
                 assertEquals(key2.parent(), module);
                 // add_child Name
-                hrm.model.DBFormModule key4 = module.add_key("Name", new hrm.utils.Element("Name", String.class));
+                hrm.model.FormModule key4 = module.add_key("Name", new hrm.utils.Element("Name", String.class));
                 assertNotEquals(key4, key);
                 key4.add_child("Name hint", new hrm.utils.Element("Last Name, First Name"));
                 assertEquals(key4.parent(), module);

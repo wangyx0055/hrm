@@ -60,13 +60,13 @@ public class TestDBFormModuleJSPResolver {
         @Test
         public void page_module_to_jsp() throws SystemPresetException, FileNotFoundException {
                 // Make the preset
-                hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
-                hrm.model.DBFormModule module = preset.add_module("Test HR Archive Registration");
+                hrm.model.FormModulePreset preset = new hrm.model.FormModulePreset("Test HRM System Preset");
+                hrm.model.FormModule module = preset.add_module("Test HR Archive Registration");
                 
                 module.build_from_file(new FileInputStream("web/CONF/hr-archive-module.xml"));
                 System.out.println("Loaded module: " + module.toString());
                 
-                hrm.view.DBFormModuleJSPResolver jsp_res = new hrm.view.DBFormModuleJSPResolver(module);
+                hrm.view.FormModuleJSPResolver jsp_res = new hrm.view.FormModuleJSPResolver(module);
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
                 jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
                 jsp_res.add_non_resolvable(hrm.view.JSPResolver.PageElement.LineBreak);

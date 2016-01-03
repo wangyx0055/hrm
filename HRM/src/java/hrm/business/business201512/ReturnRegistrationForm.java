@@ -18,13 +18,13 @@
 package hrm.business.business201512;
 
 import hrm.controller.Dispatcher;
-import hrm.model.DBFormModule;
-import hrm.model.DBFormModulePreset;
+import hrm.model.FormModule;
+import hrm.model.FormModulePreset;
 import hrm.model.SystemPresetManager;
 import hrm.system.HRMSystemContext;
 import hrm.utils.Attribute;
 import hrm.utils.Prompt;
-import hrm.view.DBFormModuleJSPResolver;
+import hrm.view.FormModuleJSPResolver;
 import hrm.view.JSPResolver;
 import java.util.Set;
 import org.springframework.util.Assert;
@@ -77,15 +77,15 @@ public class ReturnRegistrationForm implements Dispatcher.CalleeContext {
         @Override
         public Dispatcher.ReturnValue get_return_value() {
                 SystemPresetManager presets = m_ctx.get_preset_manager();
-                DBFormModulePreset preset = (DBFormModulePreset) presets.get_system_preset(
+                FormModulePreset preset = (FormModulePreset) presets.get_system_preset(
                         hrm.system.HRMDefaultName.dbformmodulepreset());
                 if (preset == null) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), 
                                 "cannot load in deform module preset");
                         return null;
                 }
-                DBFormModule module = preset.get_module("hr-archive");
-                JSPResolver resolver = new DBFormModuleJSPResolver(module);
+                FormModule module = preset.get_module("hr-archive");
+                JSPResolver resolver = new FormModuleJSPResolver(module);
                 resolver.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
                 resolver.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
                 resolver.add_non_resolvable(hrm.view.JSPResolver.PageElement.LineBreak);

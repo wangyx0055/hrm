@@ -17,7 +17,7 @@
  */
 package hrm.view;
 
-import hrm.model.DBFormModule;
+import hrm.model.FormModule;
 import hrm.utils.Element;
 import hrm.utils.NaryTree;
 import static hrm.view.JSPResolver.PageElement.*;
@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author davis
  */
-public class DBFormModuleJSPResolver implements JSPResolver {
+public class FormModuleJSPResolver implements JSPResolver {
 
         private class PageObject {
 
@@ -53,12 +53,12 @@ public class DBFormModuleJSPResolver implements JSPResolver {
         private final List<PageObject> m_pageobjs = new LinkedList<>();
 
         /**
-         * Construct a resolver using DBFormModule. Page object data will be
+         * Construct a resolver using FormModule. Page object data will be
          * obtained from this module.
          *
-         * @param m the DBFormModule.
+         * @param m the FormModule.
          */
-        public DBFormModuleJSPResolver(DBFormModule m) {
+        public FormModuleJSPResolver(FormModule m) {
                 // extract the structure as equivalence classes of the same secondary root
                 NaryTree.Path[] paths = m.get_structure();
                 for (NaryTree<Element>.Path<Element> path : paths) {
@@ -81,7 +81,7 @@ public class DBFormModuleJSPResolver implements JSPResolver {
         }
 
         /**
-         * Object that is resolvable from the DBFormModule.
+         * Object that is resolvable from the FormModule.
          *
          * @param type type of page element.
          * @param name name of the resolvable.
@@ -92,8 +92,8 @@ public class DBFormModuleJSPResolver implements JSPResolver {
         }
 
         /**
-         * Object that is not resolvable from the DBFormModule but is still
-         * displayable.
+         * Object that is not resolvable from the FormModule but is still
+ displayable.
          *
          * @param type type of page element.
          */

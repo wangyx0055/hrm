@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,21 +17,10 @@
  */
 package hrm.model;
 
-import hrm.utils.Attribute;
-import java.util.Set;
-
 /**
- * Storage dedicated for form data.
+ *
  * @author davis
  */
-public interface SystemFormManager {
+public class FormQueryPreset {
         
-        public void update(FormModule module, FormQuery query, FormData info) 
-                throws SystemFormException;
-        
-        public FormData query(FormModule module, FormQuery query, FormData info) 
-                throws SystemFormException;
-        
-        public void remove(FormModule module, FormQuery query, FormData info)
-                throws SystemFormException;
 }

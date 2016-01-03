@@ -188,18 +188,18 @@ public class DBSystemFormManager implements SystemFormManager {
         }
 
         @Override
-        public void update(DBFormModule module, DBFormQuery query, DBFormData info) throws SystemFormException {
+        public void update(FormModule module, FormQuery query, FormData info) throws SystemFormException {
                 Database.store(module, query, info);
 
         }
 
         @Override
-        public DBFormData query(DBFormModule module, DBFormQuery query, DBFormData info) throws SystemFormException {
+        public FormData query(FormModule module, FormQuery query, FormData info) throws SystemFormException {
                 return Database.fetch(module, query, info);
         }
 
         @Override
-        public void remove(DBFormModule module, DBFormQuery query, DBFormData info) throws SystemFormException {
+        public void remove(FormModule module, FormQuery query, FormData info) throws SystemFormException {
         }
 
         private static class Database {
@@ -318,8 +318,8 @@ public class DBSystemFormManager implements SystemFormManager {
                 }
 
                 private static PreparedStatement generate_select_statement(String table,
-                        DBFormModule module,
-                        DBFormQuery query) throws SystemFormException {
+                        FormModule module,
+                        FormQuery query) throws SystemFormException {
                         try {
                                 String sql = "SELECT * FROM " + table + " WHERE " + query.sql_where_clause();
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
@@ -361,7 +361,7 @@ public class DBSystemFormManager implements SystemFormManager {
                 }
 
                 private static PreparedStatement generate_insert_statement(String table,
-                        DBFormModule module, DBFormData info) throws SystemFormException, SQLException {
+                        FormModule module, FormData info) throws SystemFormException, SQLException {
                         // Form the sql template
                         String sql = "INSERT INTO " + table + " VALUES (?";
                         TreeSet<Element> keys = module.get_keys();
@@ -397,9 +397,9 @@ public class DBSystemFormManager implements SystemFormManager {
                 }
 
                 private static PreparedStatement generate_update_statement(String table,
-                        DBFormModule module,
-                        DBFormQuery query,
-                        DBFormData info) throws SystemFormException {
+                        FormModule module,
+                        FormQuery query,
+                        FormData info) throws SystemFormException {
                         String sql = "UPDATE " + table + " SET FORMDATAOBJECT=?";
                         // Check the parameters
                         List<String> query_key_names = query.get_involved_key_names();
@@ -481,7 +481,7 @@ public class DBSystemFormManager implements SystemFormManager {
                 }
 
                 private static PreparedStatement generate_table_creation_statement(String table,
-                        DBFormModule module) throws SystemFormException, SQLException {
+                        FormModule module) throws SystemFormException, SQLException {
                         String sql = "CREATE TABLE " + table + "(";
                         // first column has to be the form data itself.
                         sql += "FORMDATAOBJECT BLOB(1M)";
@@ -513,9 +513,9 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @param preset preset that are to be added.
                  * @throws java.sql.SQLException
                  */
-                public static void store(DBFormModule module,
-                        DBFormQuery query,
-                        DBFormData info) throws SystemFormException {
+                public static void store(FormModule module,
+                        FormQuery query,
+                        FormData info) throws SystemFormException {
                         KeyDefn key_defn = new KeyDefn(module.get_keys(), module.get_module_name());
                         String table = m_table_mapper.get_table(key_defn);
                         if (table == null) {
@@ -561,9 +561,9 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @return the SystemPreset, if the entry exists, or null if the
                  * otherwise.
                  */
-                public static DBFormData fetch(DBFormModule module,
-                        DBFormQuery query,
-                        DBFormData info) throws SystemFormException {
+                public static FormData fetch(FormModule module,
+                        FormQuery query,
+                        FormData info) throws SystemFormException {
                         KeyDefn key_defn = new KeyDefn(module.get_keys(), module.get_module_name());
                         String table = m_table_mapper.get_table(key_defn);
                         if (table == null) {
@@ -575,8 +575,8 @@ public class DBSystemFormManager implements SystemFormManager {
                                 // query
                                 ResultSet rs = pstmt.executeQuery();
                                 if (rs.next()) {
-                                        byte[] stream = rs.getBytes(1); // DBFormData is guaranteed to be at the first column
-                                        DBFormData dbform = new DBFormData();
+                                        byte[] stream = rs.getBytes(1); // FormData is guaranteed to be at the first column
+                                        FormData dbform = new FormData();
                                         dbform.deserialize(stream);
                                         return dbform;
                                 } else {
@@ -594,7 +594,7 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @param query
                  * @param info
                  */
-                public static void remove(DBFormModule module, DBFormQuery query, DBFormData info) {
+                public static void remove(FormModule module, FormQuery query, FormData info) {
                         throw new UnsupportedOperationException();
                 }
 

@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * @author davis
  */
-public class DBFormQuery {
+public class FormQuery {
 
         private final String m_cond_clause;
         private final String m_sql_clause;
@@ -40,7 +40,7 @@ public class DBFormQuery {
          * Construct a query through a boolean condition clause.
          * @param cond_clause 
          */
-        public DBFormQuery(String cond_clause) {
+        public FormQuery(String cond_clause) {
                 m_cond_clause = cond_clause;
                 List<String> keys = new LinkedList<>();
                 List<String> attri_names = new LinkedList<>();

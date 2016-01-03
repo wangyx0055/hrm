@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,23 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
-
-import hrm.utils.Attribute;
-import java.util.Set;
+package hrm.view;
 
 /**
- * Storage dedicated for form data.
+ *
  * @author davis
  */
-public interface SystemFormManager {
+public class FormQueryJSPResolver {
         
-        public void update(FormModule module, FormQuery query, FormData info) 
-                throws SystemFormException;
-        
-        public FormData query(FormModule module, FormQuery query, FormData info) 
-                throws SystemFormException;
-        
-        public void remove(FormModule module, FormQuery query, FormData info)
-                throws SystemFormException;
 }

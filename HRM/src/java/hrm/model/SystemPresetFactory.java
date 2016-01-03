@@ -31,7 +31,7 @@ public class SystemPresetFactory {
         public static SystemPreset create_by_type_and_name(int type, String name) {
                 switch (type) {
                         case DBFORM_MODULE_PRESET:
-                                return new DBFormModulePreset(name);
+                                return new FormModulePreset(name);
                         case AUTHEN_PRESET:
                                 return new AuthenPreset(name);
                         default:

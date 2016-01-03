@@ -57,7 +57,7 @@ public class TestDBSystemPresetManager {
 
         @Test
         public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
-                hrm.model.DBFormModulePreset preset = new hrm.model.DBFormModulePreset("Test HRM System Preset");
+                hrm.model.FormModulePreset preset = new hrm.model.FormModulePreset("Test HRM System Preset");
                 // Add presets to database
                 hrm.model.DBSystemPresetManager dbmgr = new hrm.model.DBSystemPresetManager(true, true);
                 dbmgr.init_with_mock_database();
@@ -65,8 +65,8 @@ public class TestDBSystemPresetManager {
                 // Fetch the preset back
                 hrm.model.SystemPreset preset_fetched = dbmgr.get_system_preset("Test HRM System Preset");
                 assertTrue(preset_fetched != null);
-                assertTrue(preset_fetched instanceof hrm.model.DBFormModulePreset);
-                hrm.model.DBFormModulePreset preset2 = (hrm.model.DBFormModulePreset) preset_fetched;
+                assertTrue(preset_fetched instanceof hrm.model.FormModulePreset);
+                hrm.model.FormModulePreset preset2 = (hrm.model.FormModulePreset) preset_fetched;
                 System.out.println("System page preset: " + preset);
                 System.out.println("System page preset2:" + preset2);
                 assertEquals(preset, preset2);

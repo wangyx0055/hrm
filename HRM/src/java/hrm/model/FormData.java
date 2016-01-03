@@ -32,13 +32,13 @@ import java.util.Set;
  * To store form data.
  * @author davis
  */
-public class DBFormData implements Serializable {
+public class FormData implements Serializable {
         private final Map<String, Attribute>  m_attris = new HashMap();
         
-        public DBFormData() {
+        public FormData() {
         }
         
-        public DBFormData(Set<Attribute> attris) {
+        public FormData(Set<Attribute> attris) {
                 for (Attribute attri : attris) {
                         m_attris.put(attri.get_name(), attri);
                 }

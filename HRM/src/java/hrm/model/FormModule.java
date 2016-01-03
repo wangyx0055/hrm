@@ -41,7 +41,7 @@ import org.jdom2.input.SAXBuilder;
  * Containing elements and hierarchical structure of a database form module.
  * @author davis
  */
-public final class DBFormModule extends NaryTree<Element> implements hrm.utils.Serializable {
+public final class FormModule extends NaryTree<Element> implements hrm.utils.Serializable {
         private String            m_module_name;
         
         @Override
@@ -106,7 +106,7 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
          * Construct a database form module.
          * @param module_name name of this module.
          */
-        public DBFormModule(String module_name) {
+        public FormModule(String module_name) {
                 m_module_name = module_name;
         }
         
@@ -115,7 +115,7 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
          * @param in the input stream that contains the formatted data.
          * @throws hrm.model.SystemPresetException
          */
-        public DBFormModule(InputStream in) throws SystemPresetException {
+        public FormModule(InputStream in) throws SystemPresetException {
                 m_module_name = build_from_file(in);
         }
         
@@ -123,7 +123,7 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
          * For internal use.
          * @param as_root root level.
          */
-        private DBFormModule(NaryTree<Element> as_root, String module_name) {
+        private FormModule(NaryTree<Element> as_root, String module_name) {
                 super(as_root);
                 m_module_name = module_name;
         }
@@ -134,8 +134,8 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
          * @param elm the key element.
          * @return module that contains the key.
          */
-        public DBFormModule add_key(String child, Element elm) {
-                return new DBFormModule(super.add_child(child, elm), m_module_name);
+        public FormModule add_key(String child, Element elm) {
+                return new FormModule(super.add_child(child, elm), m_module_name);
         }
         
         /**
@@ -164,7 +164,7 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
         }
         
         /**
-         * Get the structure of the DBFormModule.
+         * Get the structure of the FormModule.
          * @return the structural path of the form.
          */
         public NaryTree<Element>.Path<Element>[] get_structure() {
@@ -172,7 +172,7 @@ public final class DBFormModule extends NaryTree<Element> implements hrm.utils.S
         }
         
         /**
-         * Construct a DBFormModule from file.
+         * Construct a FormModule from file.
          * @param stream the stream that contains the configuration..
          * @return the module name specified by the file.
          * @throws SystemPresetException 

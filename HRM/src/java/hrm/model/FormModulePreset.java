@@ -23,36 +23,36 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * Preset that contains DBFormModule.
+ * Preset that contains FormModule.
  * @author davis
  */
-public class DBFormModulePreset extends SystemPreset {
-        private HashMap<String, DBFormModule> m_modules = new HashMap<>();
+public class FormModulePreset extends SystemPreset {
+        private HashMap<String, FormModule> m_modules = new HashMap<>();
 
-        public DBFormModulePreset(String name) {
+        public FormModulePreset(String name) {
                 super(name, SystemPresetFactory.DBFORM_MODULE_PRESET);
         }
 
-        public DBFormModule add_module(String module_name) {
+        public FormModule add_module(String module_name) {
                 if (m_modules.containsKey(module_name)) return null;
-                DBFormModule module = new DBFormModule(module_name);
+                FormModule module = new FormModule(module_name);
                 m_modules.put(module_name, module);
                 return module;
         }
         
-        public DBFormModule add_module_from_file(InputStream in) throws SystemPresetException {
-                DBFormModule module = new DBFormModule(in);
+        public FormModule add_module_from_file(InputStream in) throws SystemPresetException {
+                FormModule module = new FormModule(in);
                 String module_name = module.get_module_name();
                 if (m_modules.containsKey(module_name)) return null;
                 m_modules.put(module_name, module);
                 return module;
         }
        
-        public DBFormModule get_module(String module_name) {
+        public FormModule get_module(String module_name) {
                 return m_modules.get(module_name);
         }
         
-        public Collection<DBFormModule> export_all_modules() {
+        public Collection<FormModule> export_all_modules() {
                 return m_modules.values();
         }
         
@@ -61,7 +61,7 @@ public class DBFormModulePreset extends SystemPreset {
                 Serializer s = new Serializer();
                 s.write_array_header(m_modules.size());
                 for (String module_name : m_modules.keySet()) {
-                        DBFormModule module = m_modules.get(module_name);
+                        FormModule module = m_modules.get(module_name);
                         s.write_serialized_stream(module.serialize());
                 }
                 return s.to_byte_stream();
@@ -76,7 +76,7 @@ public class DBFormModulePreset extends SystemPreset {
                 m_modules = new HashMap<>(l);
                 for (int i = 0; i < l; i ++) {
                         byte[] obj = s.read_serialized_stream();
-                        DBFormModule module = new DBFormModule("");
+                        FormModule module = new FormModule("");
                         module.deserialize(obj);
                         m_modules.put(module.get_module_name(), module);
                 }
@@ -84,9 +84,9 @@ public class DBFormModulePreset extends SystemPreset {
         
         @Override
         public boolean equals(Object o) {
-                if (!(o instanceof DBFormModulePreset))
+                if (!(o instanceof FormModulePreset))
                         return false;
-                return m_modules.equals(((DBFormModulePreset) o).m_modules);
+                return m_modules.equals(((FormModulePreset) o).m_modules);
         }
 
         @Override

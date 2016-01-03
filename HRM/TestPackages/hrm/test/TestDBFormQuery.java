@@ -17,7 +17,7 @@
  */
 package hrm.test;
 
-import hrm.model.DBFormQuery;
+import hrm.model.FormQuery;
 import hrm.utils.Attribute;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,7 +29,7 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the DBFormQuery and its helper classes.
+ * Test the FormQuery and its helper classes.
  * @author davis
  */
 public class TestDBFormQuery {
@@ -58,7 +58,7 @@ public class TestDBFormQuery {
         
         @Test
         public void dbform_query() throws Exception {
-                DBFormQuery query = new DBFormQuery("(city = #CityName# AND name = #CompanyName#)\n" +
+                FormQuery query = new FormQuery("(city = #CityName# AND name = #CompanyName#)\n" +
 "OR (ranking >= #RankingNumber#)");
                 query.set_attribute("CompanyName", new Attribute("ATTRI2", "Pixar"));
                 query.set_attribute("CityName", new Attribute("ATT1", "Irvine"));
