@@ -17,8 +17,15 @@
  */
 package hrm.test;
 
+import hrm.model.DBSystemFormManager;
+import hrm.model.FormData;
+import hrm.model.FormModule;
 import hrm.model.FormQuery;
+import hrm.model.SystemFormException;
 import hrm.utils.Attribute;
+import hrm.utils.RMIInteger;
+import hrm.utils.RMIString;
+import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -67,6 +74,41 @@ public class TestDBFormQuery {
         }
         
         @Test
-        public void store_and_fetch() {
+        public void store_and_fetch() throws SQLException, Exception {
+                FormModule module = new FormModule("testconf/test-preset.xml");
+                FormData data = new FormData();
+                data.add_attribute("Document", new RMIInteger(100024));
+                data.add_attribute("Name", new RMIString("davis"));
+                FormData data2 = new FormData();
+                data.add_attribute("Document", new RMIInteger(100025));
+                data.add_attribute("Name", new RMIString("ozh"));
+                FormQuery query = new FormQuery("1 = 1");
+                FormData data3 = new FormData();
+                data.add_attribute("Document", new RMIInteger(100024));
+                data.add_attribute("Name", new RMIString("someone"));
+                FormQuery query2 = new FormQuery("Document=#Document-No#");
+                query2.set_attribute("Document-No", new Attribute("dfdka", 100024));
+                
+                DBSystemFormManager formmgr = new DBSystemFormManager(true, true);
+                formmgr.update(module, query, data);
+                formmgr.update(module, query, data2);
+                formmgr.update(module, query2, data3);
+                
+                FormQuery query3 = new FormQuery("Name=#persons-name# AND Document=#Document-No#");
+                query3.set_attribute("Document-No", new Attribute("dfdka", 100024));
+                query3.set_attribute("persons-name", new Attribute("adsf", "davis"));
+                try {
+                        FormData result = formmgr.query(module, query3);
+                        fail();
+                } catch(SystemFormException ex) {
+                        System.out.println("System form not found exception test pass: "
+                                + ex.getMessage());
+                }
+                
+                FormQuery query4 = new FormQuery("Name=#persons-name# AND Document=#Document-No#");
+                query4.set_attribute("Document-No", new Attribute("dfdka", 100025));
+                query4.set_attribute("persons-name", new Attribute("adsf", "ozh"));
+                FormData result = formmgr.query(module, query4);
+                assertEquals(result, data2);
         }
 }

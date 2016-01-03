@@ -20,6 +20,7 @@ package hrm.model;
 import hrm.utils.Attribute;
 import hrm.utils.Element;
 import hrm.utils.Prompt;
+import hrm.utils.RMIObj;
 import hrm.utils.Serializable;
 import hrm.utils.Serializer;
 import java.io.ByteArrayInputStream;
@@ -194,12 +195,17 @@ public class DBSystemFormManager implements SystemFormManager {
         }
 
         @Override
-        public FormData query(FormModule module, FormQuery query, FormData info) throws SystemFormException {
-                return Database.fetch(module, query, info);
+        public FormData query(FormModule module, FormQuery query) throws SystemFormException {
+                return Database.fetch(module, query);
+        }
+        
+        @Override
+        public void safe_remove(FormModule module, FormQuery query) throws SystemFormException {
         }
 
         @Override
-        public void remove(FormModule module, FormQuery query, FormData info) throws SystemFormException {
+        public void remove(FormModule module, FormQuery query) throws SystemFormException {
+                Database.remove(module, query);
         }
 
         private static class Database {
@@ -374,8 +380,8 @@ public class DBSystemFormManager implements SystemFormManager {
                         pstmt.setBlob(1, new ByteArrayInputStream(info.serialize()));
                         int i = 2;      // key sequence starts at the second column
                         for (Element key : keys) {
-                                Attribute attri = info.get_attribute(key.get_name());
-                                if (attri == null) {
+                                RMIObj obj = info.get_attribute(key.get_name());
+                                if (obj == null) {
                                         // key data not supplied
                                         throw new SystemFormException(
                                                 SystemFormException.Error.StoringError).
@@ -383,9 +389,9 @@ public class DBSystemFormManager implements SystemFormManager {
                                                         + " is not supplied by the DBFormData parameter");
                                 }
                                 if (key.get_type() == String.class) {
-                                        pstmt.setString(i++, (String) attri.get_object());
+                                        pstmt.setString(i++, (String) obj.get_object());
                                 } else if (key.get_type() == Integer.class) {
-                                        pstmt.setInt(i++, (Integer) attri.get_object());
+                                        pstmt.setInt(i++, (Integer) obj.get_object());
                                 } else {
                                         // Failed as the key is not sql typed.
                                         throw new SystemFormException(
@@ -432,8 +438,8 @@ public class DBSystemFormManager implements SystemFormManager {
                                 // Store the keys, key sequence starts at the second column
                                 int i = 2;
                                 for (Element key : data_elms) {
-                                        Attribute attri = info.get_attribute(key.get_name());
-                                        if (attri == null) {
+                                        RMIObj obj = info.get_attribute(key.get_name());
+                                        if (obj == null) {
                                                 // key data not supplied
                                                 throw new SystemFormException(
                                                         SystemFormException.Error.StoringError).
@@ -441,9 +447,9 @@ public class DBSystemFormManager implements SystemFormManager {
                                                                 + " is not supplied by the DBFormData parameter");
                                         }
                                         if (key.get_type() == String.class) {
-                                                pstmt.setString(i++, (String) attri.get_object());
+                                                pstmt.setString(i++, (String) obj.get_object());
                                         } else if (key.get_type() == Integer.class) {
-                                                pstmt.setInt(i++, (Integer) attri.get_object());
+                                                pstmt.setInt(i++, (Integer) obj.get_object());
                                         } else {
                                                 // Failed as the key is not sql typed.
                                                 throw new SystemFormException(
@@ -562,8 +568,7 @@ public class DBSystemFormManager implements SystemFormManager {
                  * otherwise.
                  */
                 public static FormData fetch(FormModule module,
-                        FormQuery query,
-                        FormData info) throws SystemFormException {
+                        FormQuery query) throws SystemFormException {
                         KeyDefn key_defn = new KeyDefn(module.get_keys(), module.get_module_name());
                         String table = m_table_mapper.get_table(key_defn);
                         if (table == null) {
@@ -594,7 +599,7 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @param query
                  * @param info
                  */
-                public static void remove(FormModule module, FormQuery query, FormData info) {
+                public static void remove(FormModule module, FormQuery query) {
                         throw new UnsupportedOperationException();
                 }
 

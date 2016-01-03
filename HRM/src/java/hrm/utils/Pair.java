@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,50 +17,42 @@
  */
 package hrm.utils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * Attribute as a name-binded object.
+ * Represent an ordered pair.
  * @author davis
  */
-public class Attribute {
-        private final String            m_name;
-        private final Object            m_object;
+public class Pair<T, V> {
+        public T        first;
+        public V        second;
         
-        public Attribute(String name, Object object) {
-                m_name = name;
-                m_object = object;
+        public Pair(T first, V second) {
+                this.first = first;
+                this.second = second;
         }
         
-        public String get_name() {
-                return m_name;
-        }
-        
-        public Object get_object() {
-                return m_object;
+        public Pair() {
+                first = null;
+                second = null;
         }
         
         @Override
         public boolean equals(Object o) {
-                if (!(o instanceof Attribute)) return false;
-                Attribute other = (Attribute) o;
-                return m_name.equals(other.m_name) && m_object.equals(other.m_object);
+                if (!(o instanceof Pair)) return false;
+                return ((Pair) o).first.equals(first) && ((Pair) o).second.equals(second);
         }
 
         @Override
         public int hashCode() {
-                int hash = 5;
-                hash = 83 * hash + Objects.hashCode(this.m_name);
-                hash = 83 * hash + Objects.hashCode(this.m_object);
+                int hash = 7;
+                hash = 79 * hash + Objects.hashCode(this.first);
+                hash = 79 * hash + Objects.hashCode(this.second);
                 return hash;
         }
         
         @Override
         public String toString() {
-                return "(" + m_name + "," + m_object + ")";
+                return "<" + first + "," + second + ">";
         }
 }

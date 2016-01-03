@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,23 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.utils;
 
 /**
- * Storage dedicated for form data.
+ * Represent a remote method invocation object.
  * @author davis
  */
-public interface SystemFormManager {
+public interface RMIObj extends Serializable {
         
-        public void update(FormModule module, FormQuery query, FormData info) 
-                throws SystemFormException;
+        abstract String get_class_name();
         
-        public FormData query(FormModule module, FormQuery query) 
-                throws SystemFormException;
-        
-        public void safe_remove(FormModule module, FormQuery query) 
-                throws SystemFormException;
-        
-        public void remove(FormModule module, FormQuery query)
-                throws SystemFormException;
+        abstract Object get_object();
 }

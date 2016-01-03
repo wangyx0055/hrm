@@ -19,72 +19,107 @@ package hrm.model;
 
 import hrm.utils.Attribute;
 import hrm.utils.Element;
+import hrm.utils.Pair;
+import hrm.utils.Prompt;
+import hrm.utils.RMIObj;
 import hrm.utils.Serializable;
-import java.util.Collection;
+import hrm.utils.Serializer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * To store form data.
+ *
  * @author davis
  */
 public class FormData implements Serializable {
-        private final Map<String, Attribute>  m_attris = new HashMap();
-        
+
+        private final Map<String, RMIObj> m_attris = new HashMap();
+
         public FormData() {
         }
-        
-        public FormData(Set<Attribute> attris) {
-                for (Attribute attri : attris) {
-                        m_attris.put(attri.get_name(), attri);
-                }
+
+        public FormData(Map<String, RMIObj> attris) {
+                m_attris.putAll(attris);
         }
-        
-        public void add_attribute(Attribute attri) {
-                m_attris.put(attri.get_name(), attri);
+
+        public void add_attribute(String s, RMIObj obj) {
+                m_attris.put(s, obj);
         }
-        
-        public void update_attribute(String name, Attribute attri) {
-                m_attris.put(name, attri);
+
+        public void update_attribute(String name, RMIObj obj) {
+                m_attris.put(name, obj);
         }
-        
+
         public void remove_attribute(String name) {
                 m_attris.remove(name);
         }
-        
-        public Attribute get_attribute(String name) {
+
+        public RMIObj get_attribute(String name) {
                 return m_attris.get(name);
         }
-        
-        public Set<Attribute> get_attributes() {
-                HashSet<Attribute> attris = new HashSet<>();
-                for (Attribute attri : m_attris.values()) {
-                        attris.add(attri);
-                }
-                return attris;
+
+        public Map<String, RMIObj> get_attributes() {
+                return new HashMap<>(m_attris);
         }
-        
-        public List<Attribute> get_ordered_attribute(List<Element> elms) {
-                List<Attribute> attris = new LinkedList<>();
+
+        public List<Pair<String, RMIObj>> get_ordered_attribute(List<Element> elms) {
+                List<Pair<String, RMIObj>> attris = new LinkedList<>();
                 for (Element elm : elms) {
-                        Attribute attri = m_attris.get(elm.get_name());
-                        if (attri == null) continue;
-                        attris.add(attri);
+                        RMIObj obj = m_attris.get(elm.get_name());
+                        if (obj == null) {
+                                continue;
+                        }
+                        attris.add(new Pair(elm.get_name(), obj));
                 }
                 return attris;
         }
 
         @Override
         public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                Serializer s = new Serializer();
+                s.write_array_header(m_attris.size());
+
+                for (String attri_name : m_attris.keySet()) {
+                        s.write_string(attri_name);
+                        RMIObj obj = m_attris.get(attri_name);
+                        s.write_string(obj.get_class_name());
+                        s.write_serialized_stream(obj.serialize());
+                }
+                return s.to_byte_stream();
         }
 
         @Override
         public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                m_attris.clear();
+
+                Serializer s = new Serializer();
+                s.from_byte_stream(stream);
+                int l = s.read_array_header();
+                for (int i = 0; i < l; i++) {
+                        String attri_name = s.read_string();
+                        String class_name = s.read_string();
+                        try {
+                                Class<?> clazz = Class.forName(class_name);
+                                Constructor<?> ctor = clazz.getConstructor();
+                                RMIObj obj = (RMIObj) ctor.newInstance();
+                                obj.deserialize(s.read_serialized_stream());
+                                m_attris.put(attri_name, obj);
+                        } catch (ClassNotFoundException |
+                                NoSuchMethodException |
+                                SecurityException |
+                                InstantiationException |
+                                IllegalAccessException |
+                                IllegalArgumentException |
+                                InvocationTargetException ex) {
+                                Prompt.log(Prompt.ERROR, getClass().toString(),
+                                        "Failed to reflexively construct the class: "
+                                        + class_name + ", Details: " + ex.getMessage());
+                        }
+                }
         }
 }
