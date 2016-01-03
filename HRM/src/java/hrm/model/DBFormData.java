@@ -18,6 +18,7 @@
 package hrm.model;
 
 import hrm.utils.Attribute;
+import hrm.utils.Element;
 import hrm.utils.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,11 +68,11 @@ public class DBFormData implements Serializable {
                 return attris;
         }
         
-        public List<Attribute> get_ordered_attribute(List<String> names) {
+        public List<Attribute> get_ordered_attribute(List<Element> elms) {
                 List<Attribute> attris = new LinkedList<>();
-                for (String name : names) {
-                        Attribute attri = m_attris.get(name);
-                        if (attri == null) return null;
+                for (Element elm : elms) {
+                        Attribute attri = m_attris.get(elm.get_name());
+                        if (attri == null) continue;
                         attris.add(attri);
                 }
                 return attris;
