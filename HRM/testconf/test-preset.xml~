@@ -19,15 +19,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <!--hr-archive database form module-->
 <module name="test-module">
-    <key name="Name" type="java.lang.String">
-        <attribute name="Facility A_i" type="null"/>
-        <attribute name="Facility B_i" type="null"/>
-        <attribute name="Facility C_i" type="null"/>
-        <attribute name="Facility D_i" type="null"/>
-    </key>
-	
-    <key name="Document" type="java.lang.Integer" unique="true">
-    </key>
-    
-    <attribute name="something" type="null"/>
+    <key name="Name" type="java.lang.String" />
+    <key name="Document" type="java.lang.Integer" unique="true" />
 </module>

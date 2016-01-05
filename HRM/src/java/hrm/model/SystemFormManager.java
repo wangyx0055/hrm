@@ -17,6 +17,8 @@
  */
 package hrm.model;
 
+import java.util.List;
+
 /**
  * Storage dedicated for form data.
  * @author davis
@@ -26,7 +28,7 @@ public interface SystemFormManager {
         public void update(FormModule module, FormQuery query, FormData info) 
                 throws SystemFormException;
         
-        public FormData query(FormModule module, FormQuery query) 
+        public List<FormData> query(FormModule module, FormQuery query) 
                 throws SystemFormException;
         
         public void safe_remove(FormModule module, FormQuery query) 

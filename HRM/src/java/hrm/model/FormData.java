@@ -78,6 +78,17 @@ public class FormData implements Serializable {
                 }
                 return attris;
         }
+        
+        public boolean equals(Object o) {
+                if (!(o instanceof FormData)) return false;
+                FormData other = (FormData) o;
+                return m_attris.equals(other.m_attris);
+        }
+        
+        @Override
+        public String toString() {
+                return "FormData = [" + m_attris + "]";
+        }
 
         @Override
         public byte[] serialize() {

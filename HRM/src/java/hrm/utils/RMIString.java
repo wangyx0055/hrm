@@ -17,12 +17,17 @@
  */
 package hrm.utils;
 
+import java.util.Objects;
+
 /**
  * A decorator to add RMI characteristics to a Java String.
  * @author davis
  */
 public class RMIString implements RMIObj {
         private String  m_string;
+        
+        public RMIString() {
+        }
         
         public RMIString(String s) {
                 m_string = s;
@@ -48,6 +53,26 @@ public class RMIString implements RMIObj {
         @Override
         public void deserialize(byte[] stream) {
                 Serializer s = new Serializer();
+                s.from_byte_stream(stream);
                 m_string = s.read_string();
+        }
+        
+        @Override
+        public String toString() {
+                return "RMIString=" + m_string;
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+                if (!(o instanceof RMIString)) return false;
+                RMIString other = (RMIString) o;
+                return m_string.equals(other.m_string);
+        }
+
+        @Override
+        public int hashCode() {
+                int hash = 7;
+                hash = 59 * hash + Objects.hashCode(this.m_string);
+                return hash;
         }
 }

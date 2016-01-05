@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +17,7 @@
  */
 package hrm.test;
 
+import hrm.utils.Serializer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,10 +31,11 @@ import org.junit.rules.TestName;
  *
  * @author davis
  */
-public class TestDBSystemFormManager {
+public class TestSerializer {
+        
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestDBSystemFormManager() {
+        public TestSerializer() {
         }
         
         @BeforeClass
@@ -55,6 +57,16 @@ public class TestDBSystemFormManager {
         }
 
         @Test
-        public void form_record_manipulation() {
+        public void serialize_and_deserialize() {
+                Serializer s = new Serializer();
+                s.write_int(new Integer(1000100));
+                s.write_string("This is a String to be serialized");
+                s.write_long(new Long(101010100010L));
+                
+                Serializer d = new Serializer();
+                d.from_byte_stream(s.to_byte_stream());
+                assertEquals(1000100, d.read_int());
+                assertEquals("This is a String to be serialized", d.read_string());
+                assertEquals(101010100010L, d.read_long());
         }
 }

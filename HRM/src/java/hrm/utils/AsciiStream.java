@@ -35,7 +35,7 @@ public class AsciiStream {
         private static final int MAX_BUFFERING = 16384;
 
         public static InputStream get_stream_from_resource(Object obj, String file, String backup) {
-                InputStream in = obj.getClass().getResourceAsStream(file);
+                InputStream in = obj.getClass().getClassLoader().getResourceAsStream(file);
                 if (in == null) {
                         Prompt.log(Prompt.WARNING, obj.getClass().toString(),
                                 "while loading " + file + " resource stream not found. Engaging backup plan...");
@@ -45,6 +45,7 @@ public class AsciiStream {
                         } catch (FileNotFoundException ex) {
                                 Prompt.log(Prompt.ERROR, obj.getClass().toString(),
                                         "while loading " + file + " backup plan failed" + ex.getMessage());
+                                return null;
                         }
                         Prompt.log(Prompt.NORMAL, obj.getClass().toString(), 
                                 "backup plan succeeded.");

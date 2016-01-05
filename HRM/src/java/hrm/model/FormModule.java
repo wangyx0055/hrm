@@ -17,22 +17,16 @@
  */
 package hrm.model;
 
-import hrm.utils.Attribute;
 import hrm.utils.Element;
 import hrm.utils.NaryTree;
-import hrm.utils.Prompt;
 import hrm.utils.Serializer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -146,9 +140,9 @@ public final class FormModule extends NaryTree<Element> implements hrm.utils.Ser
         public TreeSet<Element> get_keys() {
                 Map<String, NaryTree<Element>> children = super.get_all_children();
                 TreeSet<Element> elm_set = new TreeSet<>();
-                children.values().stream().forEach((node) -> {
+                for (NaryTree<Element> node : children.values()) {
                         elm_set.add(node.get_value());
-                });
+                }
                 return elm_set;
         }
         

@@ -29,10 +29,10 @@ public class Serializer {
         private final Queue<Byte>       m_stream = new LinkedList<>();
         
         public void write_int(int n) {
-                byte n3 = (byte) (n >>> 24);
-                byte n2 = (byte) ((n >>> 16) & 0XFF);
-                byte n1 = (byte) ((n >>> 8) & 0XFF);
-                byte n0 = (byte) (n & 0XFF);
+                byte n3 = (byte) (n >> 24);
+                byte n2 = (byte) (n >> 16);
+                byte n1 = (byte) (n >> 8);
+                byte n0 = (byte) (n);
                 m_stream.add(n0);
                 m_stream.add(n1);
                 m_stream.add(n2);
@@ -44,18 +44,18 @@ public class Serializer {
                 byte n1 = m_stream.poll();
                 byte n2 = m_stream.poll();
                 byte n3 = m_stream.poll();
-                return (((int) n3) << 24) | (((int) n2) << 16) | (((int) n1) << 8) | (((int) n0));
+                return n3 << 24 | (n2 & 0XFF) << 16 | (n1 & 0XFF) << 8 | (n0 & 0XFF);
         }
         
         public void write_long(long n) {
                 byte n7 = (byte) (n >>> 56);
-                byte n6 = (byte) ((n >>> 48) & 0XFF);
-                byte n5 = (byte) ((n >>> 40) & 0XFF);
-                byte n4 = (byte) ((n >>> 32) & 0XFF);
-                byte n3 = (byte) ((n >>> 24) & 0XFF);
-                byte n2 = (byte) ((n >>> 16) & 0XFF);
-                byte n1 = (byte) ((n >>> 8) & 0XFF);
-                byte n0 = (byte) (n & 0XFF);
+                byte n6 = (byte) (n >>> 48);
+                byte n5 = (byte) (n >>> 40);
+                byte n4 = (byte) (n >>> 32);
+                byte n3 = (byte) (n >>> 24);
+                byte n2 = (byte) (n >>> 16);
+                byte n1 = (byte) (n >>> 8);
+                byte n0 = (byte) (n);
                 m_stream.add(n0);
                 m_stream.add(n1);
                 m_stream.add(n2);
@@ -75,8 +75,10 @@ public class Serializer {
                 byte n5 = m_stream.poll();
                 byte n6 = m_stream.poll();
                 byte n7 = m_stream.poll();
-                return (((long) n7) << 56) | (((long) n6) << 48) | (((long) n5) << 40) | (((long) n4) << 32) |
-                       (((long) n3) << 24) | (((long) n2) << 16) | (((long) n1) << 8) | (((long) n0));
+                return (long) (n7 & 0XFF) << 56 | (long) (n6 & 0XFF) << 48 | 
+                       (long) (n5 & 0XFF) << 40 | (long) (n4 & 0XFF) << 32 |
+                       (long) (n3 & 0XFF) << 24 | (long) (n2 & 0xFF) << 16 | 
+                       (long) (n1 & 0XFF) << 8  | (long) (n0 & 0XFF);
         }
         
         public void write_string(String s) {

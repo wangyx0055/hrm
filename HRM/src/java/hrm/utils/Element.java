@@ -17,15 +17,14 @@
  */
 package hrm.utils;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 
 /**
  * Represent an generic element.
  *
  * @author davis
  */
-public class Element implements Serializable {
+public class Element implements Serializable, Comparable {
 
         private String    m_name;
         private Class<?>  m_type;
@@ -80,6 +79,21 @@ public class Element implements Serializable {
                 else                s += "<?>";
                 return s;
         }
+        
+        @Override
+        public boolean equals(Object o) {
+                if (!(o instanceof Element)) return false;
+                Element other = (Element) o;
+                return m_name.equals(other.m_name) && m_type.equals(other.m_type);
+        }
+
+        @Override
+        public int hashCode() {
+                int hash = 7;
+                hash = 53 * hash + Objects.hashCode(this.m_name);
+                hash = 53 * hash + Objects.hashCode(this.m_type);
+                return hash;
+        }
 
         @Override
         public byte[] serialize() {
@@ -104,5 +118,10 @@ public class Element implements Serializable {
                                 "Class not found when deserializing element: (" + 
                                         m_name + "," + class_name + ")");
                 }
+        }
+
+        @Override
+        public int compareTo(Object o) {
+                return m_name.compareTo(((Element) o).m_name);
         }
 }
