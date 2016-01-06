@@ -15,28 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package test;
+package hrm.deployment.utils;
 
-import hrm.model.SystemPresetException;
-import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import static org.junit.Assert.*;
 
 /**
- * Test the HR Achieve Registration process.
+ * This would clear the test database
  * @author davis
  */
-public class TestControllerDispatching {
+public class DeployClearTestDatabase {
         
-        @Rule public final TestName m_test_name = new TestName();
-        
-        public TestControllerDispatching() {
+        public DeployClearTestDatabase() {
         }
         
         @BeforeClass
@@ -49,20 +43,15 @@ public class TestControllerDispatching {
         
         @Before
         public void setUp() {
-                System.out.println("===================" + "Running Test Case: " + m_test_name.getMethodName() + "===================");
         }
         
         @After
         public void tearDown() {
-                System.out.println("===================" + "Finished Test case:" + m_test_name.getMethodName() + "===================");
         }
 
-        @Test
-        public void register_new_achieve() 
-                throws ClassNotFoundException, SQLException, SystemPresetException, FileNotFoundException {
-                DeploySystemPresetsToDatabase deploy_preset = 
-                        new DeploySystemPresetsToDatabase();
-                deploy_preset.m_is_mocked = true;
-                deploy_preset.system_page_presets();
-        }
+        // TODO add test methods here.
+        // The methods must be annotated with annotation @Test. For example:
+        //
+        // @Test
+        // public void hello() {}
 }

@@ -19,3 +19,7 @@ hs_err_pid*
 /JSONExample/nbproject/private/
 /hr-management-sample/nbproject/private/
 /hrm/nbproject/private/
+/hrm/build/
+/hr-management-sample/build/
+/hrm/dist/
+/hr-management-sample/dist/

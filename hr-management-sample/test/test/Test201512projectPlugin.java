@@ -17,11 +17,14 @@
  */
 package test;
 
-import hrm.model.SystemPresetException;
-import java.io.FileNotFoundException;
-import java.sql.SQLException;
+import hrm.controller.Dispatcher;
+import hrm.system.HRMBusinessPluginException;
+import hrm.system.HRMSystemContext;
+import hrm.view.JSPResolver;
+import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,14 +32,13 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the HR Achieve Registration process.
+ * Test the Dispatcher.
  * @author davis
  */
-public class TestControllerDispatching {
-        
+public class Test201512projectPlugin {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestControllerDispatching() {
+        public Test201512projectPlugin() {
         }
         
         @BeforeClass
@@ -58,11 +60,25 @@ public class TestControllerDispatching {
         }
 
         @Test
-        public void register_new_achieve() 
-                throws ClassNotFoundException, SQLException, SystemPresetException, FileNotFoundException {
-                DeploySystemPresetsToDatabase deploy_preset = 
-                        new DeploySystemPresetsToDatabase();
-                deploy_preset.m_is_mocked = true;
-                deploy_preset.system_page_presets();
+        public void dispatch_and_returned() throws HRMBusinessPluginException {
+                MockInitSystemContext sysmock = 
+                        new MockInitSystemContext("/home/davis/human-resource-management-code/HRM/web/");
+                        
+                HRMSystemContext ctx = sysmock.init();
+                
+                Set<Dispatcher> dispatchers = ctx.get_dispatcher_manager().get_all_dispatchers();
+                assertTrue(dispatchers != null);
+                assertTrue(!dispatchers.isEmpty());
+                Object[] objs = dispatchers.toArray();
+                Dispatcher dispatcher = (Dispatcher) objs[0];
+                
+                Dispatcher.CallerContext caller = dispatcher.get_caller_context("return-registration-form");
+                Dispatcher.ReturnValue values = dispatcher.dispatch_jsp(caller);
+                assertTrue(values != null);
+                JSPResolver resolver = values.get_resolver();
+                assertTrue(resolver != null);
+                System.out.println(resolver.resolve_page_as_string());
+                
+                sysmock.free();
         }
 }

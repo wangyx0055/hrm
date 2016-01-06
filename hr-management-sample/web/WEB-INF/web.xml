@@ -4,13 +4,9 @@
         <listener-class>hrm.system.HRMMain</listener-class>
     </listener>
     <servlet>
-        <servlet-name>RegistrationFormServlet</servlet-name>
+        <servlet-name>DispatcherServlet</servlet-name>
         <servlet-class>hrm.servlets.HRMDispatcherServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>RegistrationFormServlet</servlet-name>
-        <url-pattern>/RegistrationFormServlet</url-pattern>
-    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
