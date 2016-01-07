@@ -56,13 +56,14 @@ public class HRMDispatcherServlet extends HttpServlet {
          */
         protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
+                Prompt.log(Prompt.NORMAL, getClass().toString(), "HTTP request caught: " + request);
                 DispatcherManager mgr = HRMMain.get_system_context().get_dispatcher_manager();
                 Set<Dispatcher> dispatchers = mgr.get_all_dispatchers();
 
                 // construct a controller call
                 Map<String, String[]> params = request.getParameterMap();
                 Dispatcher.CallerContext context
-                        = new Dispatcher().get_caller_context((String) request.getAttribute("caller"));
+                        = new Dispatcher().get_caller_context(request.getParameter("call"));
                 for (String param : params.keySet()) {
                         context.add_parameter(new Attribute(param, params.get(param)));
                 }
@@ -140,7 +141,7 @@ public class HRMDispatcherServlet extends HttpServlet {
          */
         @Override
         public String getServletInfo() {
-                return "Short description";
+                return "HRMDispatcherServlet - Internal Servlet to dispatch request to appropiate callee";
         }// </editor-fold>
 
 }

@@ -59,11 +59,12 @@ public class ResourceScanner {
          */
         public static List<InputStream> open_external_files_at(String path, Filter filter) 
                 throws FileNotFoundException {
+                if (path == null) throw new FileNotFoundException("The path parameter is null");
                 File at_current = new File(m_context_path + path);
                 List<InputStream> ins = new LinkedList<>();
                 for (File f : at_current.listFiles()) {
                         if (f.isFile() && (filter == null || filter.is_accepted(f))) {
-                                Prompt.log(Prompt.NORMAL, "ResourceScanner.open_external_file", 
+                                Prompt.log(Prompt.NORMAL, "ResourceScanner.open_external_files_at", 
                                         "Openning file: " + f.getPath());
                                 ins.add(new FileInputStream(f));
                         }
@@ -82,6 +83,7 @@ public class ResourceScanner {
          */
         public static List<InputStream> open_external_files_recursively_at(String path, Filter filter) 
                 throws FileNotFoundException {
+                if (path == null) throw new FileNotFoundException("The path parameter is null");
                 File at_current = new File(m_context_path + path);
                 
                 Queue<File> dirs = new LinkedList<>();
@@ -112,6 +114,7 @@ public class ResourceScanner {
          * @throws FileNotFoundException
          */
         public static InputStream open_external_file(String file) throws FileNotFoundException {
+                if (file == null) throw new FileNotFoundException("The file parameter is null");
                 Prompt.log(Prompt.NORMAL, "ResourceScanner.open_external_file", 
                                         "Openning file: " + m_context_path + file);
                 return new FileInputStream(m_context_path + file);

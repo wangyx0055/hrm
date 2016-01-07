@@ -3,14 +3,20 @@
     <listener>
         <listener-class>hrm.system.HRMMain</listener-class>
     </listener>
-    <servlet>
+<!--    <servlet>
         <servlet-name>DispatcherServlet</servlet-name>
         <servlet-class>hrm.servlets.HRMDispatcherServlet</servlet-class>
-    </servlet>
+    </servlet>-->
     <context-param>
         <param-name>system-root</param-name>
         <param-value>/home/davis/human-resource-management-code/hr-management-sample/</param-value>
     </context-param>
+    
+    <context-param>
+        <param-name>servlet-namespace</param-name>
+        <param-value>hr-management-sample</param-value>
+    </context-param>
+    
     <session-config>
         <session-timeout>
             30

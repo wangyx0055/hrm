@@ -16,13 +16,9 @@
         <p>You current operation is on HR Archive Registration</p>
         <div>
             <form action="DispatcherServlet" method="post">
-                <input type="button" name="btn-submit" value="Submit Form">
-                <input type="button" name="btn-cancel" value="Cancel Action">
-                <%
-                        request.setAttribute("callee", "ReturnRegistrationForm");
-                        JSPResolver form_result = (JSPResolver) request.getAttribute("result");
-                %>
-                <%=form_result%>
+                <input type="submit" name="btn-submit" value="Submit Form">
+                <input type="submit" name="btn-cancel" value="Cancel Action">
+                <%=(JSPResolver) request.getAttribute("jsp-resolver")%>
             </form>
         </div>
     </body>

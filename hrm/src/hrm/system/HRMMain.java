@@ -19,6 +19,7 @@ package hrm.system;
 
 import hrm.model.SystemPresetException;
 import hrm.model.SystemPresetManager;
+import hrm.servlets.HRMDispatcherServlet;
 import hrm.utils.AsciiStream;
 import hrm.utils.Prompt;
 import java.io.FileNotFoundException;
@@ -33,8 +34,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import hrm.utils.ResourceScanner;
 import java.io.File;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletRegistration;
 
 /**
  * Initialization and shutdown of the HRM system.
@@ -62,11 +65,33 @@ public class HRMMain implements ServletContextListener {
         @Override
         public void contextInitialized(ServletContextEvent sce) {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing HRM...");
-                // iniialize resources
                 m_servlet_ctx = sce.getServletContext();
+                
+                // register servlets
+                Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing Servlets...");
+                String servlet_namespace = m_servlet_ctx.getInitParameter("servlet-namespace");
+                ServletRegistration.Dynamic ds = m_servlet_ctx.addServlet(
+                        "/" + servlet_namespace + "/DispatcherServlet", 
+                        HRMDispatcherServlet.class);
+                ds.addMapping("*.jsp");
+                Map<String, ? extends ServletRegistration> servlets = 
+                        m_servlet_ctx.getServletRegistrations();
+                for (String servlet_name : servlets.keySet()) {
+                        ServletRegistration reg = servlets.get(servlet_name);
+                        Prompt.log(Prompt.NORMAL, getClass().toString(), 
+                                "Servlets " + servlet_name + " is registered as: " + reg.getMappings());
+                }
+                // set up the context path
                 String context_path = m_servlet_ctx.getInitParameter("system-root");
+                Prompt.log(Prompt.NORMAL, getClass().toString(), 
+                        "Setting context path to: " + context_path);
                 ResourceScanner.init_context_path(context_path);
+                Prompt.log(Prompt.NORMAL, getClass().toString(), 
+                        "Initializing system context...");
                 if (m_ctrl_ctx == null) m_ctrl_ctx = new InternalHRMSystemContext();
+                // loading config files
+                Prompt.log(Prompt.NORMAL, getClass().toString(), 
+                        "Loading external configuration files...");
                 init();
         }
 
