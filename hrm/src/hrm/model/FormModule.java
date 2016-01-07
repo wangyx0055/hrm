@@ -177,26 +177,30 @@ public final class FormModule extends NaryTree<Element> implements hrm.utils.Ser
                 try {
                         Document document = (Document) builder.build(stream);
                         org.jdom2.Element root_node = document.getRootElement();
-                        if (!root_node.getName().equals("module")) {
-                                throw new JDOMException("Invalid DBFormModule file: <module> block not found");
+                        if (!root_node.getName().equals("preset")) {
+                                throw new JDOMException("Invalid system preset file: <preset> block not found");
                         }
-                        module_name = root_node.getAttributeValue("name");
+                        org.jdom2.Element module_node = root_node.getChild("module");
+                        if (!module_node.getName().equals("module")) {
+                                throw new JDOMException("Invalid FormModule file: <module> block not found");
+                        }
+                        module_name = module_node.getAttributeValue("name");
                         if (module_name == null) {
-                                throw new JDOMException("Invalid DBFormModule file: <name> attribute for "
+                                throw new JDOMException("Invalid FormModule file: <name> attribute for "
                                                 + "module tag is mandatory");
                         }
                         m_module_name = module_name;
                         
                         // extract keys
-                        List<org.jdom2.Element> keys = root_node.getChildren("key");
+                        List<org.jdom2.Element> keys = module_node.getChildren("key");
                         if (keys == null || keys.isEmpty()) {
-                                throw new JDOMException("Invalid DBFormModule file: <module> block not found");
+                                throw new JDOMException("Invalid FormModule file: <key> block not found");
                         }
                         for (org.jdom2.Element key : keys) {
                                 String name = key.getAttributeValue("name");
                                 String type = key.getAttributeValue("type");
                                 if (name == null) {
-                                        throw new JDOMException("Invalid DBFormModule file: <name> attribute for "
+                                        throw new JDOMException("Invalid FormModule file: <name> attribute for "
                                                 + "key tag is mandatory");
                                 }
                                 Class<?> class_type;
@@ -210,8 +214,8 @@ public final class FormModule extends NaryTree<Element> implements hrm.utils.Ser
                         }
                         // extract all attributes
                         Map<List<org.jdom2.Element>, Integer> attris = new HashMap<>();
-                        attris.put(root_node.getChildren("attribute"), 0);
-                        attris.put(root_node.getChildren("key"), 0);
+                        attris.put(module_node.getChildren("attribute"), 0);
+                        attris.put(module_node.getChildren("key"), 0);
                         
                         Map<List<org.jdom2.Element>, Integer> tmp = new HashMap<>();
                         
@@ -227,7 +231,7 @@ public final class FormModule extends NaryTree<Element> implements hrm.utils.Ser
                                                 String name = node.getAttributeValue("name");
                                                 String type = node.getAttributeValue("type");
                                                 if (name == null) {
-                                                        throw new JDOMException("Invalid DBFormModule file: <name> attribute for "
+                                                        throw new JDOMException("Invalid FormModule file: <name> attribute for "
                                                                 + "attribute tag is mandatory");
                                                 }
                                                 Class<?> class_type;

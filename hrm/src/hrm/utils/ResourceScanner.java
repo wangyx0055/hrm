@@ -52,16 +52,19 @@ public class ResourceScanner {
          * This would open all files at the directory specified.
          *
          * @param path the directory to be scanned.
+         * @param filter filter unwanted files.
          * @return InputStream representing all opened file at current
          * directory.
          * @throws java.io.FileNotFoundException
          */
-        public static List<InputStream> open_external_files_at(String path) 
+        public static List<InputStream> open_external_files_at(String path, Filter filter) 
                 throws FileNotFoundException {
-                File at_current = new File(m_context_path + ".");
+                File at_current = new File(m_context_path + path);
                 List<InputStream> ins = new LinkedList<>();
                 for (File f : at_current.listFiles()) {
-                        if (f.isFile()) {
+                        if (f.isFile() && (filter == null || filter.is_accepted(f))) {
+                                Prompt.log(Prompt.NORMAL, "ResourceScanner.open_external_file", 
+                                        "Openning file: " + f.getPath());
                                 ins.add(new FileInputStream(f));
                         }
                 }
@@ -72,13 +75,14 @@ public class ResourceScanner {
          * This would open all files recursively at the directory specified.
          *
          * @param path the root directory to be scanned.
+         * @param filter filter unwanted files.
          * @return InputStream representing all opened file at current
          * directory.
          * @throws java.io.FileNotFoundException
          */
-        public static List<InputStream> open_external_files_recursively_at(String path) 
+        public static List<InputStream> open_external_files_recursively_at(String path, Filter filter) 
                 throws FileNotFoundException {
-                File at_current = new File(m_context_path + ".");
+                File at_current = new File(m_context_path + path);
                 
                 Queue<File> dirs = new LinkedList<>();
                 dirs.add(at_current);
@@ -88,7 +92,9 @@ public class ResourceScanner {
                 while (!dirs.isEmpty()) {
                         File current = dirs.poll();
                         for (File f : current.listFiles()) {
-                                if (f.isFile()) {
+                                if (f.isFile() && (filter == null || filter.is_accepted(f))) {
+                                        Prompt.log(Prompt.NORMAL, "ResourceScanner.open_external_files_recursively_at", 
+                                                "Openning file: " + f.getPath());
                                         ins.add(new FileInputStream(f));
                                 } else if (f.isDirectory()) {
                                         dirs.add(f);
@@ -106,6 +112,8 @@ public class ResourceScanner {
          * @throws FileNotFoundException
          */
         public static InputStream open_external_file(String file) throws FileNotFoundException {
+                Prompt.log(Prompt.NORMAL, "ResourceScanner.open_external_file", 
+                                        "Openning file: " + m_context_path + file);
                 return new FileInputStream(m_context_path + file);
         }
 }

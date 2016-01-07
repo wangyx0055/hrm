@@ -32,6 +32,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import hrm.utils.ResourceScanner;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,14 +124,20 @@ public class HRMMain implements ServletContextListener {
                 
                 String base = "CONF/";
                 try {
-                        List<InputStream> ins = ResourceScanner.open_external_files_at(base);
+                        List<InputStream> ins = 
+                                ResourceScanner.open_external_files_at(base, new ResourceScanner.Filter() {
+                                @Override
+                                public boolean is_accepted(File file) {
+                                        return file.getName().endsWith(".xml");
+                                }
+                        });
                         for (InputStream in : ins) {
                                 if (in == null) continue;
                                 try {
                                         form_preset.add_module_from_file(in);
                                 } catch (SystemPresetException ex) {
                                         Prompt.log(Prompt.WARNING, getClass().toString(), 
-                                                "Failed to load in DBFormModulePreset, Details: " + 
+                                                "Failed to load in FormModulePreset, Details: " + 
                                                         ex.getMessage());
                                 }
                         }
