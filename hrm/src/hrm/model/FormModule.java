@@ -270,6 +270,6 @@ public final class FormModule extends NaryTree<Element> implements hrm.utils.Ser
         
         @Override
         public String toString() {
-                return "DatabaseFormModule:" + m_module_name + " = [\n" + super.toString() + "\n]";
+                return "FormModule:" + m_module_name + " = [\n" + super.toString() + "\n]";
         }
 }

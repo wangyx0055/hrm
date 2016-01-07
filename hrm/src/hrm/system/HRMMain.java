@@ -31,6 +31,9 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import hrm.utils.ResourceScanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Initialization and shutdown of the HRM system.
@@ -60,6 +63,8 @@ public class HRMMain implements ServletContextListener {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing HRM...");
                 // iniialize resources
                 m_servlet_ctx = sce.getServletContext();
+                String context_path = m_servlet_ctx.getInitParameter("system-root");
+                ResourceScanner.init_context_path(context_path);
                 if (m_ctrl_ctx == null) m_ctrl_ctx = new InternalHRMSystemContext();
                 init();
         }
@@ -79,7 +84,7 @@ public class HRMMain implements ServletContextListener {
                         String[] entrances = content.split(System.lineSeparator());
                         for (String e : entrances) {
                                 entrance = e;
-                                Class<?> clazz = Class.forName("hrm.business." + e);
+                                Class<?> clazz = Class.forName(e);
                                 Constructor<?> ctor = clazz.getConstructor();
                                 HRMBusinessPlugin importer = 
                                         (HRMBusinessPlugin) ctor.newInstance();
@@ -112,59 +117,73 @@ public class HRMMain implements ServletContextListener {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Allocating resources...");
                 
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing System preset...");
-                // constructing DBFormPreset
-                hrm.model.FormModulePreset dbform_preset = 
+                // constructing Form Module Preset
+                hrm.model.FormModulePreset form_preset = 
                         new hrm.model.FormModulePreset(HRMDefaultName.dbformmodulepreset());
                 
-                String[] files = {"CONF/hr-archive-module.xml"};
-                for (String file : files) {
-                        InputStream in = AsciiStream.get_stream_from_resource(m_servlet_ctx, file, 
-                                m_servlet_ctx.getContextPath() + file);
-                        if (in == null) continue;
-                        try {
-                                dbform_preset.add_module_from_file(in);
-                        } catch (SystemPresetException ex) {
-                                Prompt.log(Prompt.WARNING, getClass().toString(), 
-                                        "Failed to load in DBFormModulePreset, Details: " + ex.getMessage());
+                String base = "CONF/";
+                try {
+                        List<InputStream> ins = ResourceScanner.open_external_files_at(base);
+                        for (InputStream in : ins) {
+                                if (in == null) continue;
+                                try {
+                                        form_preset.add_module_from_file(in);
+                                } catch (SystemPresetException ex) {
+                                        Prompt.log(Prompt.WARNING, getClass().toString(), 
+                                                "Failed to load in DBFormModulePreset, Details: " + 
+                                                        ex.getMessage());
+                                }
                         }
+                } catch (FileNotFoundException ex) {
+                        Prompt.log(Prompt.ERROR, getClass().toString(), "Failed to load in all form presets.");
                 }
                 // add presets to manager
                 SystemPresetManager mgr = m_ctrl_ctx.get_preset_manager();
-                mgr.add_system_preset(dbform_preset);
+                mgr.add_system_preset(form_preset);
                 
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Loading plugins...");
-                InputStream in = AsciiStream.get_stream_from_resource(m_servlet_ctx, "CONF/hrm-plugin", 
-                                m_servlet_ctx.getContextPath() + "CONF/hrm-plugin");
-                m_plugins = load_plugin(in, "CONF/hrm-plugin");
-                
-                // Initialize the plugins through importer
-                for (HRMBusinessPlugin plugin : m_plugins) {
-                        if (plugin != null) {
-                                try {
-                                        plugin.init(m_ctrl_ctx);
-                                } catch (HRMBusinessPluginException ex) {
-                                        Prompt.log(Prompt.ERROR, getClass().toString(),
-                                                "Error found while initializing plugin: " + 
-                                                        plugin.get_name());
+                InputStream in;
+                try {
+                        in = ResourceScanner.open_external_file("CONF/hrm-plugin");
+                        m_plugins = load_plugin(in, "CONF/hrm-plugin");
+                        // Initialize the plugins through importer
+                        for (HRMBusinessPlugin plugin : m_plugins) {
+                                if (plugin != null) {
+                                        try {
+                                                plugin.init(m_ctrl_ctx);
+                                        } catch (HRMBusinessPluginException ex) {
+                                                Prompt.log(Prompt.ERROR, getClass().toString(),
+                                                        "Error found while initializing plugin: " + 
+                                                                plugin.get_name());
+                                        }
                                 }
                         }
+                } catch (FileNotFoundException ex) {
+                        Logger.getLogger(HRMMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+                
         }
         
         public void free() {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Deallocating resources...");
-                m_ctrl_ctx.free();
-                
-                for (HRMBusinessPlugin plugin : m_plugins) {
-                        if (plugin != null) {
-                                try {
-                                        plugin.init(m_ctrl_ctx);
-                                } catch (HRMBusinessPluginException ex) {
-                                        Prompt.log(Prompt.ERROR, getClass().toString(),
-                                                "Error found while initializing plugin: " + 
-                                                        plugin.get_name());
+                if (m_ctrl_ctx != null) m_ctrl_ctx.free();
+                else Prompt.log(Prompt.WARNING, getClass().toString(), "System context was not initialized");
+                        
+                if (m_plugins != null) {
+                        for (HRMBusinessPlugin plugin : m_plugins) {
+                                if (plugin != null) {
+                                        try {
+                                                plugin.free();
+                                        } catch (HRMBusinessPluginException ex) {
+                                                Prompt.log(Prompt.ERROR, getClass().toString(),
+                                                        "Error found while initializing plugin: " + 
+                                                                plugin.get_name());
+                                        }
                                 }
                         }
+                } else {
+                        Prompt.log(Prompt.WARNING, getClass().toString(), "Plugins were not initialized");
                 }
         }
         

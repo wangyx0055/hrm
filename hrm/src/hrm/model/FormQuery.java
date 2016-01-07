@@ -198,7 +198,7 @@ public class FormQuery {
         
         @Override
         public String toString() {
-                return "DBFormQuery = [\n\tcond_clause:" + m_cond_clause + "\n" 
+                return "FormQuery = [\n\tcond_clause:" + m_cond_clause + "\n" 
                         + "\tsql_clause: " + m_sql_clause + "\n" 
                         + "\tattri_names: " + m_attri_names + "\n"
                         + "\tattri_value: " + m_attributes + "\n"

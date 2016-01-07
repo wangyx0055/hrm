@@ -18,8 +18,6 @@
 package hrm.utils;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,25 +31,6 @@ import java.io.StringWriter;
 public class AsciiStream {
 
         private static final int MAX_BUFFERING = 16384;
-
-        public static InputStream get_stream_from_resource(Object obj, String file, String backup) {
-                InputStream in = obj.getClass().getClassLoader().getResourceAsStream(file);
-                if (in == null) {
-                        Prompt.log(Prompt.WARNING, obj.getClass().toString(),
-                                "while loading " + file + " resource stream not found. Engaging backup plan...");
-                        try {
-                                // backup
-                                in = new FileInputStream(backup);
-                        } catch (FileNotFoundException ex) {
-                                Prompt.log(Prompt.ERROR, obj.getClass().toString(),
-                                        "while loading " + file + " backup plan failed" + ex.getMessage());
-                                return null;
-                        }
-                        Prompt.log(Prompt.NORMAL, obj.getClass().toString(), 
-                                "backup plan succeeded.");
-                }
-                return in;
-        }
 
         public static String extract(InputStream source) throws IOException {
                 StringWriter writer = new StringWriter();

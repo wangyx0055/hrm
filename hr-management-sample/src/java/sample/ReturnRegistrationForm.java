@@ -76,8 +76,7 @@ public class ReturnRegistrationForm implements Dispatcher.CalleeContext {
         @Override
         public Dispatcher.ReturnValue get_return_value() {
                 SystemPresetManager presets = m_ctx.get_preset_manager();
-                FormModulePreset preset = (FormModulePreset) presets.get_system_preset(
-                        hrm.system.HRMDefaultName.dbformmodulepreset());
+                FormModulePreset preset = (FormModulePreset) presets.get_system_preset(hrm.system.HRMDefaultName.dbformmodulepreset());
                 if (preset == null) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), 
                                 "cannot load in deform module preset");

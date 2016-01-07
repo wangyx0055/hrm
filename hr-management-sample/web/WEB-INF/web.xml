@@ -7,6 +7,10 @@
         <servlet-name>DispatcherServlet</servlet-name>
         <servlet-class>hrm.servlets.HRMDispatcherServlet</servlet-class>
     </servlet>
+    <context-param>
+        <param-name>system-root</param-name>
+        <param-value>/home/davis/human-resource-management-code/hrm/</param-value>
+    </context-param>
     <session-config>
         <session-timeout>
             30

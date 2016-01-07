@@ -26,9 +26,9 @@ import hrm.system.HRMBusinessPlugin;
  * Business specific project
  * @author davis
  */
-public class HRMBusiness_201512project implements HRMBusinessPlugin {
+public class HRManagementLoader implements HRMBusinessPlugin {
         
-        public HRMBusiness_201512project() {
+        public HRManagementLoader() {
         }
 
         @Override
@@ -46,5 +46,9 @@ public class HRMBusiness_201512project implements HRMBusinessPlugin {
         @Override
         public String get_name() {
                 return getClass().toString();
+        }
+
+        @Override
+        public void free() throws HRMBusinessPluginException {
         }
 }

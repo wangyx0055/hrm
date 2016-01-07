@@ -15,11 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.utils;
+package hrm.system;
 
 /**
- * Utility to help scan a directory.
+ * Business plug-in importer protocol.
  * @author davis
  */
-public class DirectoryScanner {
+public interface HRMBusinessPlugin {
+        
+        public void init(HRMSystemContext context) throws HRMBusinessPluginException;
+        
+        public void free() throws HRMBusinessPluginException;
+        
+        public String get_name();
 }

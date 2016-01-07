@@ -23,3 +23,6 @@ hs_err_pid*
 /hr-management-sample/build/
 /hrm/dist/
 /hr-management-sample/dist/
+/hrm/src/dist/
+/hrm/src/build/
+/hrm/src/nbproject/private/
