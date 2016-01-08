@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <!--hr-archive database form module-->
-<preset import_enabled="true">
+<preset import-enabled="true">
 <module name="hr-archive">
     <key name="Level I Facility" type="java.lang.String">
         <attribute name="Facility A_i" type="null"/>
