@@ -20,8 +20,10 @@ package hrm.system;
 import hrm.model.SystemPresetException;
 import hrm.model.SystemPresetManager;
 import hrm.servlets.HRMDispatcherServlet;
+import hrm.servlets.HRMRequestFilter;
 import hrm.utils.AsciiStream;
 import hrm.utils.Prompt;
+import hrm.utils.ResourceScanner;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,11 +34,16 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import hrm.utils.ResourceScanner;
 import java.io.File;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletRegistration;
 
 /**
@@ -70,16 +77,28 @@ public class HRMMain implements ServletContextListener {
                 // register servlets
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing Servlets...");
                 String servlet_namespace = m_servlet_ctx.getInitParameter("servlet-namespace");
-                ServletRegistration.Dynamic ds = m_servlet_ctx.addServlet(
-                        "/" + servlet_namespace + "/DispatcherServlet", 
-                        HRMDispatcherServlet.class);
-                ds.addMapping("*.jsp");
+//                ServletRegistration.Dynamic ds = m_servlet_ctx.addServlet(
+//                        "/" + servlet_namespace + "/DispatcherServlet", 
+//                        HRMDispatcherServlet.class);
+//                ds.addMapping("*.jsp");
                 Map<String, ? extends ServletRegistration> servlets = 
                         m_servlet_ctx.getServletRegistrations();
                 for (String servlet_name : servlets.keySet()) {
-                        ServletRegistration reg = servlets.get(servlet_name);
+                        ServletRegistration servlet_reg = servlets.get(servlet_name);
                         Prompt.log(Prompt.NORMAL, getClass().toString(), 
-                                "Servlets " + servlet_name + " is registered as: " + reg.getMappings());
+                                "Servlets " + servlet_name + " is registered as: " + servlet_reg.getMappings());
+                }
+                FilterRegistration.Dynamic df = m_servlet_ctx.addFilter(
+                        "/" + servlet_namespace + "/RequestFilter", 
+                        HRMRequestFilter.class);
+                df.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, new String[]{"*.jsp"});
+                Map<String, ? extends FilterRegistration> filters = 
+                        m_servlet_ctx.getFilterRegistrations();
+                for (String filter_name : filters.keySet()) {
+                        FilterRegistration filter_reg = filters.get(filter_name);
+                        Prompt.log(Prompt.NORMAL, getClass().toString(), 
+                                "Filter " + filter_name + " is registered as: " + 
+                                        filter_reg.getUrlPatternMappings());
                 }
                 // set up the context path
                 String context_path = m_servlet_ctx.getInitParameter("system-root");

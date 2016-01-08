@@ -54,7 +54,7 @@ public class ReturnRegistrationForm implements Dispatcher.CalleeContext {
                 
                 @Override
                 public String get_redirected_page_uri() {
-                        return null;
+                        return "/hr-archive-admin-reg.jsp";
                 }
 
                 @Override

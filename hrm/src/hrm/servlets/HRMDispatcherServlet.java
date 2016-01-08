@@ -56,52 +56,66 @@ public class HRMDispatcherServlet extends HttpServlet {
          */
         protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
-                Prompt.log(Prompt.NORMAL, getClass().toString(), "HTTP request caught: " + request);
-                DispatcherManager mgr = HRMMain.get_system_context().get_dispatcher_manager();
-                Set<Dispatcher> dispatchers = mgr.get_all_dispatchers();
-
-                // construct a controller call
-                Map<String, String[]> params = request.getParameterMap();
-                Dispatcher.CallerContext context
-                        = new Dispatcher().get_caller_context(request.getParameter("call"));
-                for (String param : params.keySet()) {
-                        context.add_parameter(new Attribute(param, params.get(param)));
-                }
-
-                for (Dispatcher dp : dispatchers) {
-                        // call the controller
-                        Dispatcher.ReturnValue returned_value = dp.dispatch_jsp(context);
-                        if (returned_value == null) continue;
-                        
-                        // return the value back to the view
-                        Set<Attribute> attris = returned_value.get_session_attribute();
-                        if (attris != null) {
-                                HttpSession session = request.getSession();
-                                for (Attribute attri : attris) {
-                                        session.setAttribute(attri.get_name(), attri.get_object());
-                                }
-                        }
-                        attris = returned_value.get_requst_attribute();
-                        if (attris != null) {
-                                for (Attribute attri : attris) {
-                                        request.setAttribute(attri.get_name(), attri.get_object());
-                                }
-                        }
-                        try {
-                                ServletContext ctx = getServletContext();
-                                if (ctx != null) {
-                                        String uri = returned_value.get_redirected_page_uri();
-                                        if (uri != null) ctx.getRequestDispatcher(uri).forward(request, response);
-                                }
-                        } catch (Exception e) {
-                                Prompt.log(Prompt.ERROR, getClass().toString(), "Caught by dispatcher servlet that "
-                                        + e.getMessage() + ", requested by: " + request.getRequestURI()
-                                        + ", processed by: " + returned_value.getClass().toString());
-                                e.printStackTrace();
-                        }
-                        JSPResolver resolver = returned_value.get_resolver();
-                        if (resolver != null) request.setAttribute("jsp-resolver", resolver);
-                }
+//                Prompt.log(Prompt.NORMAL, getClass().toString(), "HTTP request caught: " + request);
+//                
+//                // Block recursive request
+//                String indicator = (String) request.getAttribute("is_self_forward");
+//                if (indicator != null && indicator.equals("true")) {
+////                        throw new ServletException(
+////                                "Self forward request will lead to infinite recursive call!");
+//                        return ;
+//                }
+//                DispatcherManager mgr = HRMMain.get_system_context().get_dispatcher_manager();
+//                Set<Dispatcher> dispatchers = mgr.get_all_dispatchers();
+//
+//                // construct a controller call
+//                Map<String, String[]> params = request.getParameterMap();
+//                Dispatcher.CallerContext context
+//                        = new Dispatcher().get_caller_context(request.getParameter("call"));
+//                for (String param : params.keySet()) {
+//                        context.add_parameter(new Attribute(param, params.get(param)));
+//                }
+//
+//                for (Dispatcher dp : dispatchers) {
+//                        // call the controller
+//                        Dispatcher.ReturnValue returned_value = dp.dispatch_jsp(context);
+//                        if (returned_value == null) continue;
+//                        
+//                        // return the value back to the view
+//                        Set<Attribute> attris = returned_value.get_session_attribute();
+//                        if (attris != null) {
+//                                HttpSession session = request.getSession();
+//                                for (Attribute attri : attris) {
+//                                        session.setAttribute(attri.get_name(), attri.get_object());
+//                                }
+//                        }
+//                        attris = returned_value.get_requst_attribute();
+//                        if (attris != null) {
+//                                for (Attribute attri : attris) {
+//                                        request.setAttribute(attri.get_name(), attri.get_object());
+//                                }
+//                        }
+//                        JSPResolver resolver = returned_value.get_resolver();
+//                        if (resolver != null) {
+//                                request.setAttribute("jsp-resolver", resolver);
+//                        }
+//                        try {
+//                                ServletContext ctx = getServletContext();
+//                                if (ctx != null) {
+//                                        String uri = returned_value.get_redirected_page_uri();
+//                                        if (uri != null) {
+//                                                request.setAttribute("is_self_forward", "true");
+//                                                ctx.getRequestDispatcher(uri).forward(request, response);
+//                                        }
+//                                }
+//                        } catch (ServletException | IOException e) {
+//                                Prompt.log(Prompt.ERROR, getClass().toString(), 
+//                                        "Caught by dispatcher servlet that "
+//                                        + e.getMessage() + ", requested by: " + request.getRequestURI()
+//                                        + ", processed by: " + returned_value.getClass().toString());
+//                                e.printStackTrace();
+//                        }
+//                }
 
         }
 
