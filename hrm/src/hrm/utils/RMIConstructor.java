@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,26 +15,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.utils;
+
+import java.lang.reflect.Constructor;
 
 /**
  *
  * @author davis
  */
-public class Authen extends DataComponent {
-
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
-
-        @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+public class RMIConstructor {
+        
+        public static void serialize_rmi_obj(RMIObj obj, Serializer s) {
+                s.write_string(obj.get_class_name());
+                s.write_serialized_stream(obj.serialize());
         }
         
+        public static RMIObj deserialze_rmi_obj(String class_name, Serializer s) throws Exception {
+                Class<?> clazz = Class.forName(class_name);
+                Constructor<?> ctor = clazz.getConstructor();
+                RMIObj obj = (RMIObj) ctor.newInstance();
+                obj.deserialize(s.read_serialized_stream());
+                return obj;
+        }
 }

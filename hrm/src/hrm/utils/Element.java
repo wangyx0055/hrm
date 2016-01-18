@@ -82,9 +82,15 @@ public class Element implements Serializable, Comparable {
         
         @Override
         public boolean equals(Object o) {
-                if (!(o instanceof Element)) return false;
-                Element other = (Element) o;
-                return m_name.equals(other.m_name) && m_type.equals(other.m_type);
+                if (o instanceof Element) {
+                        Element other = (Element) o;
+                        return m_name.equals(other.m_name) && m_type.equals(other.m_type);
+                } else if (o instanceof String) {
+                        String other = (String) o;
+                        return m_name.equals(other);
+                } else {
+                        return false;
+                }
         }
 
         @Override

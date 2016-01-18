@@ -15,26 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.view;
+
+import java.util.List;
 
 /**
- *
+ * Containers for jsp resolvers.
  * @author davis
  */
-public class Authen extends DataComponent {
-
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
-
-        @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+public interface JSPResolverManager {
         
+        public void add_resolver(JSPResolver resolver);
+        
+        public void get_resolver(String name);
+        
+        public List<JSPResolver> get_all_resolvers();
 }

@@ -17,30 +17,32 @@
  */
 package hrm.view;
 
-import java.util.Map;
-
 /**
  * Resolve page element to JSP page.
  * @author davis
  */
-public interface JSPResolver {
-
-        public enum PageElement {
-                Label,
-                Entry,
-                LargeEntry,
-                DropDownList,
-                LabeledEntry,
-                LargeLabeledEntry,
-                LabeledDropDownList,
-                LineBreak
+public abstract class JSPResolver extends UIBuilder {
+        
+        /**
+         * @return unique name of the resolver.
+         */
+        abstract public String get_name();
+        
+        /**
+         * Partially resolve a page.
+         * @param group_name the group to be resolved.
+         * @return resolved JSP code.
+         */
+        public String resolve_group(String group_name) {
+                throw new UnsupportedOperationException();
         }
         
-        public void set_name_mapping(Map<String, String> name_mapping);
-        
-        public void add_resolvable(JSPResolver.PageElement type, String name);
-        
-        public void add_non_resolvable(JSPResolver.PageElement type);
-        
-        public String resolve_page_as_string();
+        /**
+         * Resolve the entire page.
+         * @return resolved JSP code.
+         */
+        @Override
+        public String toString() {
+                throw new UnsupportedOperationException();
+        }
 }

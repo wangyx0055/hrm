@@ -18,10 +18,10 @@
 package hrm.system;
 
 import hrm.controller.DispatcherManager;
-import hrm.model.DBSystemFormManager;
-import hrm.model.DBSystemPresetManager;
-import hrm.model.SystemFormManager;
-import hrm.model.SystemPresetManager;
+import hrm.model.DBFormDataManager;
+import hrm.model.DBDataComponentManager;
+import hrm.model.DataComponentManager;
+import hrm.model.FormDataManager;
 
 /**
  * Mock implementation of the SystemContext.
@@ -29,24 +29,24 @@ import hrm.model.SystemPresetManager;
  */
 public class MockHRMSystemContext implements HRMSystemContext {
         
-        public final SystemPresetManager        m_preset_mgr;
-        public final SystemFormManager          m_form_mgr;
+        public final DataComponentManager        m_preset_mgr;
+        public final FormDataManager          m_form_mgr;
         public final DispatcherManager          m_disp_mgr;
         
         public MockHRMSystemContext() {
-                m_preset_mgr = new DBSystemPresetManager(true, true);
-                m_form_mgr = null;// new DBSystemFormManager(true, true);
+                m_preset_mgr = new DBDataComponentManager(true, true);
+                m_form_mgr = null;// new DBFormDataManager(true, true);
                 m_disp_mgr = new DispatcherManager();
         }
         
         @Override
         public void free() {
-                DBSystemPresetManager mgr = (DBSystemPresetManager) m_preset_mgr;
+                DBDataComponentManager mgr = (DBDataComponentManager) m_preset_mgr;
                 mgr.free();
         }
         
         @Override
-        public SystemPresetManager get_preset_manager() {
+        public DataComponentManager get_preset_manager() {
                 return m_preset_mgr;
         }
         
@@ -56,7 +56,7 @@ public class MockHRMSystemContext implements HRMSystemContext {
         }
         
         @Override
-        public SystemFormManager get_system_form_manager() {
+        public FormDataManager get_system_form_manager() {
                 return m_form_mgr;
         }
 }

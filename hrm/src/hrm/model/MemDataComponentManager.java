@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,23 +17,26 @@
  */
 package hrm.model;
 
+import java.util.Set;
+
 /**
- *
+ * A non-persistent implementation of DataComponentManager.
  * @author davis
  */
-public class Authen extends DataComponent {
-
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
+public class MemDataComponentManager implements DataComponentManager {
 
         @Override
-        public byte[] serialize() {
+        public boolean add_system_component(DataComponent preset) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public void deserialize(byte[] stream) {
+        public DataComponent get_system_component(String name) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public Set<DataComponent> get_all_system_components() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

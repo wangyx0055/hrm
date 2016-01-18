@@ -17,10 +17,11 @@
  */
 package hrm.system;
 
-import hrm.model.SystemPresetException;
-import hrm.model.SystemPresetManager;
-import hrm.servlets.HRMDispatcherServlet;
-import hrm.servlets.HRMRequestFilter;
+import hrm.model.DataComponentException;
+import hrm.controller.HRMDispatcherServlet;
+import hrm.controller.HRMRequestFilter;
+import hrm.model.DataComponent;
+import hrm.model.DataComponentFactory;
 import hrm.utils.AsciiStream;
 import hrm.utils.Prompt;
 import hrm.utils.ResourceScanner;
@@ -45,6 +46,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletRegistration;
+import hrm.model.DataComponentManager;
 
 /**
  * Initialization and shutdown of the HRM system.
@@ -161,10 +163,10 @@ public class HRMMain implements ServletContextListener {
         public void init() {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Allocating resources...");
                 
-                Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing System preset...");
-                // constructing Form Module Preset
-                hrm.model.FormModulePreset form_preset = 
-                        new hrm.model.FormModulePreset(HRMDefaultName.dbformmodulepreset());
+                Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing Data Components...");
+                
+                // Data components will be added to this manager
+                DataComponentManager mgr = m_ctrl_ctx.get_preset_manager();
                 
                 String base = "CONF/";
                 try {
@@ -178,8 +180,11 @@ public class HRMMain implements ServletContextListener {
                         for (InputStream in : ins) {
                                 if (in == null) continue;
                                 try {
-                                        form_preset.add_module_from_file(in);
-                                } catch (SystemPresetException ex) {
+                                        DataComponent comp = 
+                                                DataComponentFactory.create_from_file(
+                                                        DataComponentFactory.FORM_MODULE_COMPONENT,in);
+                                        mgr.add_system_component(comp);
+                                } catch (DataComponentException ex) {
                                         Prompt.log(Prompt.WARNING, getClass().toString(), 
                                                 "Failed to load in FormModulePreset, Details: " + 
                                                         ex.getMessage());
@@ -188,9 +193,6 @@ public class HRMMain implements ServletContextListener {
                 } catch (FileNotFoundException ex) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), "Failed to load in all form presets.");
                 }
-                // add presets to manager
-                SystemPresetManager mgr = m_ctrl_ctx.get_preset_manager();
-                mgr.add_system_preset(form_preset);
                 
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Loading plugins...");
                 InputStream in;

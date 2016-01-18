@@ -76,8 +76,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         <key id="DOCUMENTNO" source="TREEOFNUMBERS" type="java.lang.Integer"/>
         
         <query-mode name="list_all" clause="1 = 1"/>
-        <query-mode name="constraint1" clause="NAME=#person-name#"/>
-        <query-mode name="hard_constraint" clause="NAME=#person-name# AND DOCUMENTNO=#document-no#"/>
+        <search-mode name="constraint1" clause="NAME=#person-name#"/>
+        <search-mode name="hard_constraint" clause="NAME=#person-name# AND DOCUMENTNO=#document-no#"/>
     </query>
     
     <ui name="test-resolver" module-ref="test-module">

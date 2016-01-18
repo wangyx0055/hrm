@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,32 +15,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.controller;
 
-import java.io.InputStream;
+import hrm.utils.Attribute;
+import hrm.utils.Element;
+import java.awt.event.ActionEvent;
+import java.util.Set;
 
 /**
- * Representing a authentication system preset.
+ *
  * @author davis
  */
-public class AuthenPreset extends SystemPreset {
-
-        public AuthenPreset(String name) {
-                super(name, SystemPresetFactory.AUTHEN_PRESET);
-        }
+public class CtrlFormRetriever extends CalleeContext {
 
         @Override
-        public byte[] serialize() {
+        public Set<Element> get_param_constraints() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public void deserialize(byte[] stream) {
+        public void add_params(Set<Attribute> attri) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
-        public void load_from_file(InputStream in) throws SystemPresetException {
+        public ReturnValue get_return_value() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

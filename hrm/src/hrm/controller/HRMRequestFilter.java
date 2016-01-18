@@ -1,12 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015 davis
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.servlets;
+package hrm.controller;
 
-import hrm.controller.Dispatcher;
-import hrm.controller.DispatcherManager;
 import hrm.system.HRMMain;
 import hrm.utils.Attribute;
 import hrm.utils.Prompt;
@@ -24,7 +34,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -61,15 +70,14 @@ public class HRMRequestFilter implements Filter {
 
                 // construct a controller call
                 Map<String, String[]> params = request.getParameterMap();
-                Dispatcher.CallerContext context
-                        = new Dispatcher().get_caller_context(request.getParameter("call"));
+                CallerContext context = new CallerContext(request.getParameter("call"));
                 for (String param : params.keySet()) {
                         context.add_parameter(new Attribute(param, params.get(param)));
                 }
 
                 for (Dispatcher dp : dispatchers) {
                         // call the controller
-                        Dispatcher.ReturnValue returned_value = dp.dispatch_jsp(context);
+                        ReturnValue returned_value = dp.dispatch_jsp(context);
                         if (returned_value == null) continue;
                         
                         // return the value back to the view

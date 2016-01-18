@@ -21,6 +21,7 @@ import hrm.utils.Attribute;
 import hrm.utils.Element;
 import hrm.utils.Pair;
 import hrm.utils.Prompt;
+import hrm.utils.RMIConstructor;
 import hrm.utils.RMIObj;
 import hrm.utils.Serializable;
 import hrm.utils.Serializer;
@@ -98,8 +99,7 @@ public class FormData implements Serializable {
                 for (String attri_name : m_attris.keySet()) {
                         s.write_string(attri_name);
                         RMIObj obj = m_attris.get(attri_name);
-                        s.write_string(obj.get_class_name());
-                        s.write_serialized_stream(obj.serialize());
+                        RMIConstructor.serialize_rmi_obj(obj, s);
                 }
                 return s.to_byte_stream();
         }
@@ -115,18 +115,9 @@ public class FormData implements Serializable {
                         String attri_name = s.read_string();
                         String class_name = s.read_string();
                         try {
-                                Class<?> clazz = Class.forName(class_name);
-                                Constructor<?> ctor = clazz.getConstructor();
-                                RMIObj obj = (RMIObj) ctor.newInstance();
-                                obj.deserialize(s.read_serialized_stream());
+                                RMIObj obj = RMIConstructor.deserialze_rmi_obj(class_name, s);
                                 m_attris.put(attri_name, obj);
-                        } catch (ClassNotFoundException |
-                                NoSuchMethodException |
-                                SecurityException |
-                                InstantiationException |
-                                IllegalAccessException |
-                                IllegalArgumentException |
-                                InvocationTargetException ex) {
+                        } catch (Exception ex) {
                                 Prompt.log(Prompt.ERROR, getClass().toString(),
                                         "Failed to reflexively construct the class: "
                                         + class_name + ", Details: " + ex.getMessage());

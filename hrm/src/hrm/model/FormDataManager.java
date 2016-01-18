@@ -17,24 +17,21 @@
  */
 package hrm.model;
 
+import java.util.List;
+
 /**
- *
+ * Storage dedicated for form data.
  * @author davis
  */
-public class Authen extends DataComponent {
-
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
-
-        @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+public interface FormDataManager {
         
+        public void update(FormQuery query, FormData info) throws FormDataException;
+        
+        public List<FormData> query(FormQuery query) throws FormDataException;
+        
+        public void safe_remove(FormQuery query) throws FormDataException;
+        
+        public void recover(FormQuery query) throws FormDataException;
+        
+        public void remove(FormQuery query) throws FormDataException;
 }

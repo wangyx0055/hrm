@@ -17,7 +17,11 @@
  */
 package test;
 
+import hrm.model.DBDataComponentManager;
+import hrm.model.DataComponent;
 import hrm.model.DataComponentException;
+import hrm.model.DataComponentFactory;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import org.junit.After;
@@ -27,16 +31,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import hrm.model.DataComponentManager;
 
 /**
- * Test the HR Achieve Registration process.
+ * A utility to deploy page presets to the database.
  * @author davis
  */
-public class TestControllerDispatching {
+public class DeployDataComponentToDatabase {
         
-        @Rule public final TestName m_test_name = new TestName();
+        @Rule public final TestName     m_deployment_name = new TestName();
         
-        public TestControllerDispatching() {
+        public boolean                  m_is_mocked = false;
+        
+        public DeployDataComponentToDatabase() {
         }
         
         @BeforeClass
@@ -49,19 +56,20 @@ public class TestControllerDispatching {
         
         @Before
         public void setUp() {
-                System.out.println("===================" + "Running Test Case: " + m_test_name.getMethodName() + "===================");
+                System.out.println("==========" + "Deploying " + m_deployment_name.getMethodName() + "...==========");
         }
         
         @After
         public void tearDown() {
-                System.out.println("===================" + "Finished Test case:" + m_test_name.getMethodName() + "===================");
+                System.out.println("==========" + "Done      " + m_deployment_name.getMethodName() + "...==========");
         }
 
         @Test
-        public void register_and_dispatch_call() {
-        }
-        
-        @Test
-        public void register_and_dispatch_pageflow() {
+        public void system_page_presets() 
+                throws ClassNotFoundException, SQLException, DataComponentException, FileNotFoundException {
+                DataComponent form = DataComponentFactory.create_from_file(
+                        DataComponentFactory.FORM_MODULE_COMPONENT, new FileInputStream("hr-archive.xml"));
+                DataComponentManager mgr = new DBDataComponentManager(false, true);
+                mgr.add_system_component(form);
         }
 }

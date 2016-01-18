@@ -17,24 +17,17 @@
  */
 package hrm.model;
 
+import java.util.Set;
+
 /**
- *
+ * Interface for accessing DataComponent.
  * @author davis
  */
-public class Authen extends DataComponent {
-
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
-
-        @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+public interface DataComponentManager {
         
+        public boolean add_system_component(DataComponent preset);
+        
+        public DataComponent get_system_component(String name);
+        
+        public Set<DataComponent> get_all_system_components();
 }

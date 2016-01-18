@@ -54,12 +54,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<div class="reminder-list right">
 			<h1 style="margin-left: 20px; margin-top: 10px">Recent Post/Response</h1>
 			<div class="content-board">
-				<div id="forum-thread">Thread 1</div>
-				<div id="forum-thread">Thread 2</div>
-				<div id="forum-thread">Thread 3</div>
-				<div id="forum-thread">Thread 4</div>
-				<div id="forum-thread">Thread 5</div>
-			</div>
+			<div id="forum-thread">Thread 1</div>
+			<div id="forum-thread">Thread 2</div>
+			<div id="forum-thread">Thread 3</div>
+			<div id="forum-thread">Thread 4</div>
+			<div id="forum-thread">Thread 5</div>
 		</div>
         </div>
     </body>

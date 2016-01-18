@@ -28,6 +28,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Database Implementation of the SystemPresetManger by using a dedicated database for system configurations. 
@@ -35,7 +37,7 @@ import java.util.Set;
  *
  * @author davis
  */
-public final class DBSystemPresetManager implements SystemPresetManager {
+public final class DBDataComponentManager implements DataComponentManager {
         private static boolean  m_is_first_time = true;
         
         /**
@@ -43,7 +45,7 @@ public final class DBSystemPresetManager implements SystemPresetManager {
          * @param with_mock whether to use the mock database.
          * @param to_reset whether to reset the database.
          */
-        public DBSystemPresetManager(boolean with_mock, boolean to_reset) {
+        public DBDataComponentManager(boolean with_mock, boolean to_reset) {
                 if (m_is_first_time) {
                         if (with_mock)  init_with_mock_database();
                         else            init_database();
@@ -53,7 +55,7 @@ public final class DBSystemPresetManager implements SystemPresetManager {
         }
 
         @Override
-        public boolean add_system_preset(SystemPreset preset) {
+        public boolean add_system_component(DataComponent preset) {
                 try {
                         Database.add_preset(preset);
                 } catch (SQLException ex) {
@@ -64,19 +66,12 @@ public final class DBSystemPresetManager implements SystemPresetManager {
         }
 
         @Override
-        public boolean add_system_preset_from_file(InputStream in) {
-                SystemPreset preset = SystemPresetFactory.create_by_file(in);
-                if (preset == null) return false;
-                return add_system_preset(preset);
-        }
-
-        @Override
-        public SystemPreset get_system_preset(String name) {
+        public DataComponent get_system_component(String name) {
                 return Database.fetch(name);
         }
 
         @Override
-        public Set<SystemPreset> get_all_system_presets() {
+        public Set<DataComponent> get_all_system_components() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         
@@ -200,7 +195,7 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                  * @param preset preset that are to be added.
                  * @throws java.sql.SQLException
                  */
-                public static void add_preset(SystemPreset preset) throws SQLException {
+                public static void add_preset(DataComponent preset) throws SQLException {
                         try {
                                 String sql = "SELECT * FROM " + TABLE + " WHERE PRESETNAME=?";
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
@@ -237,10 +232,10 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                  * Fetch the system preset using its name.
                  *
                  * @param entry the name of the preset that is to be searched.
-                 * @return the SystemPreset, if the entry exists, or null if the
-                 * otherwise.
+                 * @return the DataComponent, if the entry exists, or null if the
+ otherwise.
                  */
-                public static SystemPreset fetch(String entry) {
+                public static DataComponent fetch(String entry) {
                         try {
                                 String sql = "SELECT * FROM " + TABLE + " WHERE PRESETNAME=?";
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
@@ -251,9 +246,18 @@ public final class DBSystemPresetManager implements SystemPresetManager {
                                         byte[] stream = rs.getBytes(2);
                                         int type = rs.getInt(3);
 
-                                        SystemPreset preset = SystemPresetFactory.create_by_type_and_name(type, name);
-                                        preset.deserialize(stream);
-                                        return preset;
+                                        DataComponent comp;
+                                        try {
+                                                comp = DataComponentFactory.
+                                                        create_by_type_and_name(type, name);
+                                                comp.deserialize(stream);
+                                                return comp;
+                                        } catch (DataComponentException ex) {
+                                                Prompt.log(Prompt.ERROR, entry, 
+                                                        "Failed to fetch this component: " + entry + 
+                                                                ", Details: " + ex.getMessage());
+                                                return null;
+                                        }
                                 } else {
                                         return null;
                                 }

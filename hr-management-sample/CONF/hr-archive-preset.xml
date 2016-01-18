@@ -19,31 +19,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <!--hr-archive database form module-->
 <preset import_enabled="true">
-<module name="hr-archive">
-    <key name="Level I Facility" type="java.lang.String">
-        <attribute name="Facility A_i" type="null"/>
-        <attribute name="Facility B_i" type="null"/>
-        <attribute name="Facility C_i" type="null"/>
-        <attribute name="Facility D_i" type="null"/>
-    </key>
+	<module name="hr-archive">
+	    <key name="Level I Facility" type="java.lang.String">
+		<attribute name="Facility A_i" type="null"/>
+		<attribute name="Facility B_i" type="null"/>
+		<attribute name="Facility C_i" type="null"/>
+		<attribute name="Facility D_i" type="null"/>
+	    </key>
 	
-    <key name="Document#" type="java.lang.Integer" unique="true">
-    </key>
+	    <key name="Document#" type="java.lang.Integer" unique="true">
+	    </key>
 	
-    <key name="Level II Facility" type="java.lang.String">
-        <attribute name="Facility A_ii" type="null"/>
-        <attribute name="Facility B_ii" type="null"/>
-        <attribute name="Facility C_ii" type="null"/>
-        <attribute name="Facility D_ii" type="null"/>
-    </key>
+	    <key name="Level II Facility" type="java.lang.String">
+		<attribute name="Facility A_ii" type="null"/>
+		<attribute name="Facility B_ii" type="null"/>
+		<attribute name="Facility C_ii" type="null"/>
+		<attribute name="Facility D_ii" type="null"/>
+	    </key>
 	
-    <key name="Level III Facility" type="java.lang.String">
-        <attribute name="Facility A_iii" type="null"/>
-        <attribute name="Facility B_iii" type="null"/>
-        <attribute name="Facility C_iii" type="null"/>
-        <attribute name="Facility D_iii" type="null"/>
-    </key>
-    
-    <attribute name="something" type="null"/>
-</module>
+	    <key name="Level III Facility" type="java.lang.String">
+		<attribute name="Facility A_iii" type="null"/>
+		<attribute name="Facility B_iii" type="null"/>
+		<attribute name="Facility C_iii" type="null"/>
+		<attribute name="Facility D_iii" type="null"/>
+	    </key>
+	    
+	    <attribute name="something" type="null"/>
+	</module>
 </preset>

@@ -18,25 +18,25 @@
 package test;
 
 import hrm.model.DataComponentException;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the HR Achieve Registration process.
+ * Test the Page Module to JSP resolver.
  * @author davis
  */
-public class TestControllerDispatching {
-        
+public class TestFormModuleJSPResolver {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestControllerDispatching() {
+        public TestFormModuleJSPResolver() {
         }
         
         @BeforeClass
@@ -58,10 +58,6 @@ public class TestControllerDispatching {
         }
 
         @Test
-        public void register_and_dispatch_call() {
-        }
-        
-        @Test
-        public void register_and_dispatch_pageflow() {
+        public void build_form_module_jsp_resolver() throws DataComponentException, FileNotFoundException {
         }
 }

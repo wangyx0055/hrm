@@ -15,26 +15,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.controller;
+
+import hrm.view.JSPResolver;
+import java.awt.event.ActionListener;
 
 /**
- *
+ * UI Callback.
  * @author davis
  */
-public class Authen extends DataComponent {
+public interface JSPResolverListener extends ActionListener {
 
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
+        public void set_resolver(JSPResolver node);
 
-        @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
+        public JSPResolver get_resolver();
 }

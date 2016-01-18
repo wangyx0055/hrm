@@ -17,12 +17,9 @@
  */
 package hrm.controller;
 
-import hrm.utils.Attribute;
-import hrm.view.JSPResolver;
+import hrm.utils.FA;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This will dispatch the call with caller information to the correct callee.
@@ -31,6 +28,7 @@ import java.util.Set;
 public class Dispatcher {
         
         private final Map<String, CalleeContext>[]      m_call_map;
+        private final FA                                m_pageflow = new FA();
         
         public enum PageCategory {
                 JspPage,
@@ -45,55 +43,11 @@ public class Dispatcher {
                 }
         }
 
-        /**
-         * Helper method to store returned information from a controller.
-         *
-         * @author davis
-         */
-        public interface ReturnValue {
-
-                public String get_redirected_page_uri();
-
-                public Set<Attribute> get_session_attribute();
-
-                public Set<Attribute> get_requst_attribute();
-
-                public JSPResolver get_resolver();
-        }
-
-        /**
-         * Helper method to generate a call with caller name and parameters.
-         *
-         * @author davis
-         */
-        public class CallerContext {
-                private final String            m_caller;
-                private final Set<Attribute>    m_attri = new HashSet();
-
-                public CallerContext(String caller) {
-                        m_caller = caller;
-                }
-
-                public void add_parameter(Attribute attri) {
-                        m_attri.add(attri);
-                }
-        }
-
-        /**
-         * Helper method to generate a call with callee name and parameters.
-         * @author davis
-         */
-        public interface CalleeContext {
-
-                public void add_params(Set<Attribute> attri);
-                
-                public ReturnValue get_return_value();
-        }
-
         public ReturnValue dispatch_jsp(CallerContext call) {
-                CalleeContext callee = m_call_map[PageCategory.JspPage.ordinal()].get(call.m_caller);
+                CalleeContext callee = 
+                        m_call_map[PageCategory.JspPage.ordinal()].get(call.whos_the_caller());
                 if (callee == null) return null;
-                callee.add_params(call.m_attri);
+                callee.add_params(call.get_attributes());
                 return callee.get_return_value();
         }
 
@@ -101,7 +55,6 @@ public class Dispatcher {
                 m_call_map[cate.ordinal()].put(mapped_call, context);
         }
         
-        public CallerContext get_caller_context(String caller) {
-                return new CallerContext(caller);
+        public void register_controller_pageflow(CalleeContext from, CalleeContext to, PageFlow flow) {
         }
 }

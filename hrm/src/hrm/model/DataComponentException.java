@@ -24,27 +24,35 @@ import java.io.StringWriter;
  * Abnormal conditions produced by DBFormModule.
  * @author davis
  */
-public class SystemPresetException extends Exception {
+public class DataComponentException extends Exception {
         public enum Error {
-                UnknownError,
-                LoadingError,
-                StoringError
+                InvalidComponent,
+                CreationForbidden,
+                Unknown,
+                Loading,
+                Storing
         }
         
         private final String            m_message;
         private final String            m_stacktrace;
         private String                  m_extrainfo = "";
         
-        SystemPresetException(Error error_type) {
+        DataComponentException(Error error_type) {
                 switch (error_type) {
-                        case LoadingError:
-                                m_message = "SystemPreset Loading Error!";
+                        case InvalidComponent:
+                                m_message = "DataComponent Invalid Component Type Error!";
                                 break;
-                        case StoringError:
-                                m_message = "SystemPreset Storing Error!";
+                        case CreationForbidden:
+                                m_message = "DataComponent Creation of Such Component Is Forbidden!";
+                                break;
+                        case Loading:
+                                m_message = "DataComponent Loading Error!";
+                                break;
+                        case Storing:
+                                m_message = "DataComponent Storing Error!";
                                 break;
                         default:
-                                m_message = "Unknown error!";
+                                m_message = "DataComponent Unknown error!";
                 }
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
@@ -52,7 +60,7 @@ public class SystemPresetException extends Exception {
                 m_stacktrace = sw.toString();
         }
         
-        public SystemPresetException add_extra_info(String info) {
+        public DataComponentException add_extra_info(String info) {
                 m_extrainfo += info + ";";
                 return this;
         }

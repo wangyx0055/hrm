@@ -18,10 +18,10 @@
 package hrm.system;
 
 import hrm.controller.DispatcherManager;
-import hrm.model.DBSystemFormManager;
-import hrm.model.DBSystemPresetManager;
-import hrm.model.SystemFormManager;
-import hrm.model.SystemPresetManager;
+import hrm.model.DBFormDataManager;
+import hrm.model.DBDataComponentManager;
+import hrm.model.DataComponentManager;
+import hrm.model.FormDataManager;
 
 /**
  * Holding useful context information for other module.
@@ -31,9 +31,9 @@ public interface HRMSystemContext {
         
         public void free();
         
-        public SystemPresetManager get_preset_manager();
+        public DataComponentManager get_preset_manager();
         
         public DispatcherManager get_dispatcher_manager();
         
-        public SystemFormManager get_system_form_manager();
+        public FormDataManager get_system_form_manager();
 }

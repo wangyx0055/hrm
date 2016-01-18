@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,22 +15,45 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package test;
 
-import java.io.InputStream;
-import java.util.Set;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * Interface for accessing SystemPreset.
+ *
  * @author davis
  */
-public interface SystemPresetManager {
+public class TestUIBuilder {
         
-        public boolean add_system_preset(SystemPreset preset);
+        public TestUIBuilder() {
+        }
         
-        public boolean add_system_preset_from_file(InputStream in);
+        @BeforeClass
+        public static void setUpClass() {
+        }
         
-        public SystemPreset get_system_preset(String name);
+        @AfterClass
+        public static void tearDownClass() {
+        }
         
-        public Set<SystemPreset> get_all_system_presets();
+        @Before
+        public void setUp() {
+        }
+        
+        @After
+        public void tearDown() {
+        }
+
+        @Test
+        public void build_and_visit_ui() {
+        }
+        
+        @Test
+        public void modify_ui() {
+        }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,14 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.system;
+package hrm.controller;
 
 /**
- * Default naming convention.
+ *
  * @author davis
  */
-public class HRMDefaultName {
-        public static String dbformmodulepreset() {
-                return "HRMSYSTEMDEFAULTDBFORMMODULE";
-        }
+public interface PageFlow {
+        
 }

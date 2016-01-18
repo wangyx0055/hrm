@@ -17,9 +17,10 @@
  */
 package test;
 
-import hrm.model.SystemPresetException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import hrm.model.DBDataComponentManager;
+import hrm.model.DataComponent;
+import hrm.model.FormModule;
+import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,13 +31,13 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the Page Module to JSP resolver.
+ * Test the SystemPresetManager class.
  * @author davis
  */
-public class TestDBFormModuleJSPResolver {
+public class TestDBDataComponentManager {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestDBFormModuleJSPResolver() {
+        public TestDBDataComponentManager() {
         }
         
         @BeforeClass
@@ -58,24 +59,19 @@ public class TestDBFormModuleJSPResolver {
         }
 
         @Test
-        public void page_module_to_jsp() throws SystemPresetException, FileNotFoundException {
-                // Make the preset
-                hrm.model.FormModulePreset preset = new hrm.model.FormModulePreset("Test HRM System Preset");
-                hrm.model.FormModule module = preset.add_module("Test HR Archive Registration");
-                
-                module.build_from_file(new FileInputStream("web/CONF/hr-archive-module.xml"));
-                System.out.println("Loaded module: " + module.toString());
-                
-                hrm.view.FormModuleJSPResolver jsp_res = new hrm.view.FormModuleJSPResolver(module);
-                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level I Facility");
-                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.DropDownList, "Level II Facility");
-                jsp_res.add_non_resolvable(hrm.view.JSPResolver.PageElement.LineBreak);
-//                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LabeledEntry, "Name");
-//                jsp_res.add_resolvable(hrm.view.JSPResolver.PageElement.LargeLabeledEntry, "Resume");
-                
-                String str_page = jsp_res.resolve_page_as_string();
-                String expected_page_str = "";
-                System.out.println("Resolved page string: \n" + str_page);
-                assertEquals(str_page, expected_page_str);
+        public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
+                FormModule form = new FormModule("Test HRM System Preset");
+                // Add presets to database
+                DBDataComponentManager dbmgr = new DBDataComponentManager(true, true);
+                dbmgr.init_with_mock_database();
+                dbmgr.add_system_component(form);
+                // Fetch the preset back
+                DataComponent form_fetched = dbmgr.get_system_component("Test HRM System Preset");
+                assertTrue(form_fetched != null);
+                assertTrue(form_fetched instanceof FormModule);
+                FormModule form2 = (FormModule) form_fetched;
+                System.out.println("System page preset: " + form);
+                System.out.println("System page preset2:" + form2);
+                assertEquals(form, form2);
         }
 }

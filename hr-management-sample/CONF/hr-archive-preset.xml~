@@ -18,32 +18,44 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <!--hr-archive database form module-->
-<preset import-enabled="true">
-<module name="hr-archive">
-    <key name="Level I Facility" type="java.lang.String">
-        <attribute name="Facility A_i" type="null"/>
-        <attribute name="Facility B_i" type="null"/>
-        <attribute name="Facility C_i" type="null"/>
-        <attribute name="Facility D_i" type="null"/>
-    </key>
+<preset import_enabled="true">
+	<module name="test-module">
+		<data id="LISTOFNUMBERS" datatype="list">
+			<value as="1" type="java.lang.Integer" />
+			<value as="2" type="java.lang.Integer"/>
+			<value as="3" type="java.lang.Integer"/>
+			<value as="4" type="java.lang.Integer"/>
+			<value as="5" type="java.lang.Integer"/>
+		</data>
+		
+		<data id="ASINGLEDATA" datatype="value">
+			<value as="Hello!" type="java.lang.String"/>
+		</data>
+		
+		<data id="TREEOFNUMBERS" datatype="tree">
+			<value as="1" type="java.lang.Integer">
+				<data datatype="tree">
+					<value as="2" type="java.lang.Integer"/>
+					<value as="3" type="java.lang.Integer"/>
+				</data>
+			</value>
+		</data>
+		
+		<data id="UNINITIALIZED" dataype="value" />
+	</module>
 	
-    <key name="Document#" type="java.lang.Integer" unique="true">
-    </key>
+	<query>
+		<key id="LEVELIFACILITY" name="Level I Facility" type="java.lang.String" />
+		<key id="LEVELIIFACILITY" name="Level II Facility" type="java.lang.String" />
+		<key id="LEVELIIIFACILITY" name="Level III Facility" type="java.lang.String" />
+		<key id="DOCUMENTNO" name="Document#" type="java.lang.Integer" unique="true" />
+		
+		<search-mode name="list_all" clause="1 = 1" />
+		<search-mode name="constraint1" clause="" />
+		<search-mode name="hard_constraint" clause="" />
+	</query>
 	
-    <key name="Level II Facility" type="java.lang.String">
-        <attribute name="Facility A_ii" type="null"/>
-        <attribute name="Facility B_ii" type="null"/>
-        <attribute name="Facility C_ii" type="null"/>
-        <attribute name="Facility D_ii" type="null"/>
-    </key>
-	
-    <key name="Level III Facility" type="java.lang.String">
-        <attribute name="Facility A_iii" type="null"/>
-        <attribute name="Facility B_iii" type="null"/>
-        <attribute name="Facility C_iii" type="null"/>
-        <attribute name="Facility D_iii" type="null"/>
-    </key>
-    
-    <attribute name="something" type="null"/>
-</module>
+	<resolver>
+		<resovlerable type="select" ref="" />
+	</resolver>
 </preset>

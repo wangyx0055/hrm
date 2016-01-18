@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -52,9 +50,9 @@ import org.apache.commons.io.IOUtils;
 class KeyDefn implements Serializable {
 
         private String m_name;
-        private TreeSet<Element> m_keys;
+        private final TreeSet<String> m_keys;
 
-        public KeyDefn(Set<Element> keys, String name) {
+        public KeyDefn(Set<String> keys, String name) {
                 m_keys = new TreeSet<>(keys);
                 m_name = name;
         }
@@ -86,8 +84,8 @@ class KeyDefn implements Serializable {
         public byte[] serialize() {
                 Serializer s = new Serializer();
                 s.write_array_header(m_keys.size());
-                for (Element e : m_keys) {
-                        s.write_serialized_stream(e.serialize());
+                for (String key_name : m_keys) {
+                        s.write_string(key_name);
                 }
                 s.write_string(m_name);
                 return s.to_byte_stream();
@@ -101,9 +99,8 @@ class KeyDefn implements Serializable {
                 s.from_byte_stream(stream);
                 int l = s.read_array_header();
                 for (int i = 0; i < l; i++) {
-                        Element e = new Element();
-                        e.deserialize(s.read_serialized_stream());
-                        m_keys.add(e);
+                        String key_name = s.read_string();
+                        m_keys.add(key_name);
                 }
                 m_name = s.read_string();
         }
@@ -183,15 +180,15 @@ class TableMapper implements Serializable {
 }
 
 /**
- * A database implementation of the SystemFormManager.
+ * A database implementation of the FormDataManager.
  *
  * @author davis
  */
-public class DBSystemFormManager implements SystemFormManager {
+public class DBFormDataManager implements FormDataManager {
 
         private static boolean m_is_first_time = true;
 
-        public DBSystemFormManager(boolean with_mock, boolean to_reset) throws SQLException {
+        public DBFormDataManager(boolean with_mock, boolean to_reset) throws SQLException {
                 if (m_is_first_time) {
                         if (with_mock) {
                                 Database.init_with_mock_database(to_reset);
@@ -201,25 +198,43 @@ public class DBSystemFormManager implements SystemFormManager {
                         m_is_first_time = false;
                 }
         }
+        
+        private void verify_form_query(FormQuery query) throws FormDataException {
+                StringBuilder errors = new StringBuilder();
+                if (query.verify(errors)) {
+                        throw new FormDataException(FormDataException.Error.QueryError).
+                                add_extra_info("The FormQuery specified fails verify itself: " + errors);
+                }
+        }
 
         @Override
-        public void update(FormModule module, FormQuery query, FormData info) throws SystemFormException {
-                Database.store(module, query, info);
+        public void update(FormQuery query, FormData info) throws FormDataException {
+                verify_form_query(query);
+                Database.store(query, info);
 
         }
 
         @Override
-        public List<FormData> query(FormModule module, FormQuery query) throws SystemFormException {
-                return Database.fetch(module, query);
+        public List<FormData> query(FormQuery query) throws FormDataException {
+                verify_form_query(query);
+                return Database.fetch(query);
         }
 
         @Override
-        public void safe_remove(FormModule module, FormQuery query) throws SystemFormException {
+        public void safe_remove(FormQuery query) throws FormDataException {
+                verify_form_query(query);
         }
 
         @Override
-        public void remove(FormModule module, FormQuery query) throws SystemFormException {
-                Database.remove(module, query);
+        public void remove(FormQuery query) throws FormDataException {
+                verify_form_query(query);
+                Database.remove(query);
+        }
+
+        @Override
+        public void recover(FormQuery query) throws FormDataException {
+                verify_form_query(query);
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         private static class Database {
@@ -236,7 +251,7 @@ public class DBSystemFormManager implements SystemFormManager {
 
                 private static final String MAPPING_TABLE = "SYSTEMFORMTABLEMAPPER";
 
-                private static final TableMapper m_table_mapper = new TableMapper();
+                private static final TableMapper TABLE_MAPPER = new TableMapper();
 
                 /**
                  * Fetch the table mapper from database if there is any.
@@ -251,21 +266,21 @@ public class DBSystemFormManager implements SystemFormManager {
                                 // Table exists, fetch the table mapper
                                 String sql = "SELECT * FROM " + MAPPING_TABLE;
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
-                                ResultSet rs = pstmt.executeQuery();
-                                if (rs.next()) {
-                                        Blob blob = rs.getBlob(1);
-                                        try {
-                                                m_table_mapper.deserialize(IOUtils.toByteArray(
-                                                        blob.getBinaryStream()));
-                                        } catch (IOException ex) {
-                                                Prompt.log(Prompt.ERROR, "fetch_table_mapper",
-                                                        "Failed to read the binary blob stream, Details: "
-                                                        + ex.getMessage());
+                                try (ResultSet rs = pstmt.executeQuery()) {
+                                        if (rs.next()) {
+                                                Blob blob = rs.getBlob(1);
+                                                try {
+                                                        TABLE_MAPPER.deserialize(
+                                                                IOUtils.toByteArray(blob.getBinaryStream()));
+                                                } catch (IOException ex) {
+                                                        Prompt.log(Prompt.ERROR, "fetch_table_mapper",
+                                                                "Failed to read the binary blob stream, Details: "
+                                                                        + ex.getMessage());
+                                                }
+                                        } else {
+                                                // Do nothing.
                                         }
-                                } else {
-                                        // Do nothing.
                                 }
-                                rs.close();
                         } else {
                                 // Create a table mapper as it doesn't exist yet, the mapper will be empty
                                 Statement stmt = m_dbconn.createStatement();
@@ -279,7 +294,7 @@ public class DBSystemFormManager implements SystemFormManager {
                  * any change to that.
                  */
                 private static void store_table_mapper() {
-                        if (m_table_mapper.checkout_dirty_flag()) {
+                        if (TABLE_MAPPER.checkout_dirty_flag()) {
                                 try {
                                         // the table is dirty. should probably update it.
                                         Statement stmt = m_dbconn.createStatement();
@@ -287,7 +302,7 @@ public class DBSystemFormManager implements SystemFormManager {
                                         // store the entire table mapper
                                         String sql = "INSERT INTO " + MAPPING_TABLE + " VALUES (?)";
                                         PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
-                                        pstmt.setBlob(1, new ByteArrayInputStream(m_table_mapper.serialize()));
+                                        pstmt.setBlob(1, new ByteArrayInputStream(TABLE_MAPPER.serialize()));
                                         pstmt.executeUpdate();
                                 } catch (SQLException ex) {
                                         Prompt.log(Prompt.ERROR, "DBSystemFromManager",
@@ -308,7 +323,7 @@ public class DBSystemFormManager implements SystemFormManager {
                         m_dbconn = DriverManager.getConnection(m_database_url, m_user, m_password);
                         fetch_table_mapper();
                         if (to_clear) clear();
-                        m_table_mapper.clear();
+                        TABLE_MAPPER.clear();
                 }
 
                 /**
@@ -347,33 +362,20 @@ public class DBSystemFormManager implements SystemFormManager {
                         }
                 }
 
-                private static PreparedStatement generate_select_statement(String table,
-                        FormModule module,
-                        FormQuery query,
-                        StringBuilder sql) throws SystemFormException {
+                private static PreparedStatement generate_select_statement(
+                                String table, FormQuery query, StringBuilder sql) throws FormDataException {
                         try {
                                 sql.setLength(0);
                                 sql.append("SELECT * FROM ").append(table).append(" WHERE ").
                                         append(query.sql_where_clause());
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql.toString());
                                 // configure the prepared statement
-                                List<String> key_names = query.get_involved_key_names();
-                                List<Attribute> query_attris;
-                                try {
-                                        query_attris = query.get_attributes();
-                                } catch (Exception ex) {
-                                        throw new SystemFormException(SystemFormException.Error.InvalidParameterError).
-                                                add_extra_info(ex.getMessage());
-                                }
-                                List<Element> query_elms = module.get_ordered_keys(key_names);
-                                if (query_attris == null || key_names == null || query_elms == null) {
-                                        throw new SystemFormException(SystemFormException.Error.InvalidParameterError).
-                                                add_extra_info("Query attributes, info attributes and key elements are "
-                                                        + "incompatible: " + query + ", " + key_names + ", " + query_elms);
-                                }
+                                List<String> key_names = query.get_ordered_query_key_names();
+                                List<Attribute> query_attris = query.get_ordered_query_attributes();
+
                                 for (int i = 0; i < query_attris.size(); i++) {
                                         Attribute attri = query_attris.get(i);
-                                        Element elm = query_elms.get(i);
+                                        Element elm = query.get_key(key_names.get(i));
                                         Object obj = attri.get_object();
                                         if (elm.get_type() == String.class) {
                                                 pstmt.setString(i + 1, (String) obj);
@@ -381,25 +383,25 @@ public class DBSystemFormManager implements SystemFormManager {
                                                 pstmt.setInt(i + 1, (Integer) obj);
                                         } else {
                                                 // Failed as the key is not sql typed.
-                                                throw new SystemFormException(
-                                                        SystemFormException.Error.QueryError).
+                                                throw new FormDataException(
+                                                        FormDataException.Error.QueryError).
                                                         add_extra_info("Failed as the key is not sql typed: " + elm);
                                         }
                                 }
                                 return pstmt;
                         } catch (SQLException ex) {
-                                throw new SystemFormException(SystemFormException.Error.QueryError).
+                                throw new FormDataException(FormDataException.Error.QueryError).
                                         add_extra_info("Unknown SQL error: " + ex.getMessage());
                         }
                 }
 
-                private static PreparedStatement generate_insert_statement(String table,
-                        FormModule module, FormData info,
-                        StringBuilder sql) throws SystemFormException, SQLException {
+                private static PreparedStatement generate_insert_statement(
+                                String table, FormQuery query, FormData info, StringBuilder sql) 
+                                        throws FormDataException, SQLException {
                         // Form the sql template
                         sql.setLength(0);
                         sql.append("INSERT INTO ").append(table).append(" VALUES (?");
-                        TreeSet<Element> keys = module.get_keys();
+                        Collection<Element> keys = query.get_keys();
                         for (int i = 0; i < keys.size(); i++) {
                                 sql.append(",?");
                         }
@@ -412,8 +414,8 @@ public class DBSystemFormManager implements SystemFormManager {
                                 RMIObj obj = info.get_attribute(key.get_name());
                                 if (obj == null) {
                                         // key data not supplied
-                                        throw new SystemFormException(
-                                                SystemFormException.Error.StoringError).
+                                        throw new FormDataException(
+                                                FormDataException.Error.StoringError).
                                                 add_extra_info("Failed as the data associated with the key: " + key
                                                         + " is not supplied by the DBFormData parameter");
                                 }
@@ -423,8 +425,8 @@ public class DBSystemFormManager implements SystemFormManager {
                                         pstmt.setInt(i++, (Integer) obj.get_object());
                                 } else {
                                         // Failed as the key is not sql typed.
-                                        throw new SystemFormException(
-                                                SystemFormException.Error.StoringError).
+                                        throw new FormDataException(
+                                                FormDataException.Error.StoringError).
                                                 add_extra_info("Failed as the key is not sql typed: " + key);
                                 }
                         }
@@ -432,29 +434,15 @@ public class DBSystemFormManager implements SystemFormManager {
                 }
 
                 private static PreparedStatement generate_update_statement(String table,
-                        FormModule module,
-                        FormQuery query,
-                        FormData info,
-                        StringBuilder sql) throws SystemFormException {
+                                FormQuery query, FormData info, StringBuilder sql) throws FormDataException {
                         sql.setLength(0);
                         sql.append("UPDATE ").append(table).append(" SET FORMDATAOBJECT=?");
                         // Check the parameters
-                        List<String> query_key_names = query.get_involved_key_names();
-                        List<Attribute> query_attris;
-                        try {
-                                query_attris = query.get_attributes();
-                        } catch (Exception ex) {
-                                throw new SystemFormException(SystemFormException.Error.InvalidParameterError).
-                                        add_extra_info(ex.getMessage());
-                        }
-                        List<Element> query_elms = module.get_ordered_keys(query_key_names);
-                        if (query_key_names == null || query_attris == null || query_elms == null) {
-                                throw new SystemFormException(SystemFormException.Error.InvalidParameterError).
-                                        add_extra_info("Query attributes, info attributes and key elements are "
-                                                + "incompatible: " + query + ", " + query_attris + ", " + query_elms);
-                        }
+                        List<String> query_key_names = query.get_ordered_query_key_names();
+                        List<Attribute> query_attris = query.get_ordered_query_attributes();
+
                         // Generate the value clause
-                        TreeSet<Element> data_elms = module.get_keys();
+                        Collection<Element> data_elms = query.get_keys();
                         for (Element elm : data_elms) {
                                 sql.append(",").append(elm.get_name()).append("=?");
                         }
@@ -472,8 +460,8 @@ public class DBSystemFormManager implements SystemFormManager {
                                         RMIObj obj = info.get_attribute(key.get_name());
                                         if (obj == null) {
                                                 // key data not supplied
-                                                throw new SystemFormException(
-                                                        SystemFormException.Error.StoringError).
+                                                throw new FormDataException(
+                                                        FormDataException.Error.StoringError).
                                                         add_extra_info("Failed as the data associated with the key: " + key
                                                                 + " is not supplied by the DBFormData parameter");
                                         }
@@ -483,19 +471,19 @@ public class DBSystemFormManager implements SystemFormManager {
                                                 pstmt.setInt(i++, (Integer) obj.get_object());
                                         } else {
                                                 // Failed as the key is not sql typed.
-                                                throw new SystemFormException(
-                                                        SystemFormException.Error.StoringError).
+                                                throw new FormDataException(
+                                                        FormDataException.Error.StoringError).
                                                         add_extra_info("Failed as the key is not sql typed: " + key);
                                         }
                                 }
                                 // Configure the where clause
-                                for (int j = 0; j < query_elms.size(); j++) {
+                                for (int j = 0; j < query_attris.size(); j++) {
                                         Attribute attri = query_attris.get(j);
-                                        Element key = query_elms.get(j);
+                                        Element key = query.get_key(query_key_names.get(i));
                                         if (attri == null) {
                                                 // key data not supplied
-                                                throw new SystemFormException(
-                                                        SystemFormException.Error.StoringError).
+                                                throw new FormDataException(
+                                                        FormDataException.Error.StoringError).
                                                         add_extra_info("Failed as the data associated with the key: " + key
                                                                 + " is not supplied by the DBFormData parameter");
                                         }
@@ -505,25 +493,25 @@ public class DBSystemFormManager implements SystemFormManager {
                                                 pstmt.setInt(i++, (Integer) attri.get_object());
                                         } else {
                                                 // Failed as the key is not sql typed.
-                                                throw new SystemFormException(
-                                                        SystemFormException.Error.StoringError).
+                                                throw new FormDataException(
+                                                        FormDataException.Error.StoringError).
                                                         add_extra_info("Failed as the key is not sql typed: " + key);
                                         }
                                 }
                         } catch (SQLException ex) {
-                                throw new SystemFormException(SystemFormException.Error.StoringError).
+                                throw new FormDataException(FormDataException.Error.StoringError).
                                         add_extra_info("Unknown SQL error: " + ex.getMessage());
                         }
                         return pstmt;
                 }
 
-                private static PreparedStatement generate_table_creation_statement(String table,
-                        FormModule module, StringBuilder sql) throws SystemFormException, SQLException {
+                private static PreparedStatement generate_table_creation_statement(
+                                String table, FormQuery query, StringBuilder sql) throws FormDataException, SQLException {
                         sql.setLength(0);
                         sql.append("CREATE TABLE ").append(table).append("(");
                         // first column has to be the form data itself.
                         sql.append("FORMDATAOBJECT BLOB(1M)");
-                        TreeSet<Element> keys = module.get_keys();
+                        Collection<Element> keys = query.get_keys();
                         for (Element key : keys) {
                                 if (key.get_type() == String.class) {
                                         sql.append(",").append(key.get_name()).append(" VARCHAR(255)");
@@ -531,8 +519,8 @@ public class DBSystemFormManager implements SystemFormManager {
                                         sql.append(",").append(key.get_name()).append(" INTEGER");
                                 } else {
                                         // Failed as the key is not sql typed.
-                                        throw new SystemFormException(
-                                                SystemFormException.Error.InvalidParameterError).
+                                        throw new FormDataException(
+                                                FormDataException.Error.InvalidParameterError).
                                                 add_extra_info("Failed as the key is not sql typed: "
                                                         + key);
                                 }
@@ -549,45 +537,43 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @param preset preset that are to be added.
                  * @throws java.sql.SQLException
                  */
-                public static void store(FormModule module,
-                        FormQuery query,
-                        FormData info) throws SystemFormException {
-                        KeyDefn key_defn = new KeyDefn(module.get_keys(), module.get_module_name());
-                        String table = m_table_mapper.get_table(key_defn);
+                public static void store(FormQuery query, FormData info) throws FormDataException {
+                        KeyDefn key_defn = new KeyDefn(query.get_key_names(), query.get_name());
+                        String table = TABLE_MAPPER.get_table(key_defn);
                         if (table == null) {
                                 // generate new table name, store the table mapper and create the new table.
-                                table = m_table_mapper.add_table(key_defn);
+                                table = TABLE_MAPPER.add_table(key_defn);
 
                                 PreparedStatement pstmt;
                                 StringBuilder sql = new StringBuilder();
                                 try {
-                                        pstmt = generate_table_creation_statement(table, module, sql);
+                                        pstmt = generate_table_creation_statement(table, query, sql);
                                         pstmt.executeUpdate();
                                 } catch (SQLException ex) {
-                                        m_table_mapper.remove_table(key_defn);
-                                        throw new SystemFormException(SystemFormException.Error.StoringError).
+                                        TABLE_MAPPER.remove_table(key_defn);
+                                        throw new FormDataException(FormDataException.Error.StoringError).
                                                 add_extra_info("Failed to create table via: <"
                                                         + sql + ">, " + ex.getMessage());
                                 }
                         }
                         StringBuilder sql = new StringBuilder();
                         try {
-                                PreparedStatement pstmt = generate_select_statement(
-                                        table, module, query, sql);
+                                PreparedStatement pstmt = generate_select_statement(table, query, sql);
+                                
                                 // query
                                 ResultSet rs = pstmt.executeQuery();
                                 if (rs.next()) {
                                         // the record exists
-                                        pstmt = generate_update_statement(table, module, query, info, sql);
+                                        pstmt = generate_update_statement(table, query, info, sql);
                                         pstmt.executeUpdate();
                                 } else {
                                         // update the record as it has already existed
-                                        pstmt = generate_insert_statement(table, module, info, sql);
+                                        pstmt = generate_insert_statement(table, query, info, sql);
                                         pstmt.executeUpdate();
                                 }
                         } catch (SQLException ex) {
-                                m_table_mapper.remove_table(key_defn);
-                                throw new SystemFormException(SystemFormException.Error.UnknownError).
+                                TABLE_MAPPER.remove_table(key_defn);
+                                throw new FormDataException(FormDataException.Error.UnknownError).
                                         add_extra_info("Unknown SQL Error: " + ex.getMessage()
                                                 + "\nSQL Statement: " + sql);
                         }
@@ -601,37 +587,37 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @return the SystemPreset, if the entry exists, or null if the
                  * otherwise.
                  */
-                public static List<FormData> fetch(FormModule module,
-                        FormQuery query) throws SystemFormException {
-                        KeyDefn key_defn = new KeyDefn(module.get_keys(), module.get_module_name());
-                        String table = m_table_mapper.get_table(key_defn);
+                public static List<FormData> fetch(FormQuery query) throws FormDataException {
+                        KeyDefn key_defn = new KeyDefn(query.get_key_names(), query.get_name());
+                        String table = TABLE_MAPPER.get_table(key_defn);
                         if (table == null) {
-                                return null;    // no matched result since such table which stores the form is absent.
+                                // no matched result since such table which stores the form is absent.
+                                return new LinkedList<>();    
                         }
                         StringBuilder sql = new StringBuilder();
                         try {
-                                PreparedStatement pstmt = generate_select_statement(
-                                        table, module, query, sql);
-                                // query
-                                ResultSet rs = pstmt.executeQuery();
+                                PreparedStatement pstmt = generate_select_statement(table, query, sql);
+                                
                                 List<FormData> queried_form = new LinkedList<>();
-                                while (rs.next()) {
-                                        // FormData is guaranteed to be at the first column
-                                        Blob blob = rs.getBlob(1);
-                                        FormData dbform = new FormData();
-                                        try {
-                                                dbform.deserialize(IOUtils.toByteArray(blob.getBinaryStream()));
-                                                queried_form.add(dbform);
-                                        } catch (IOException ex) {
-                                                Prompt.log(Prompt.ERROR, "fetch",
-                                                        "Failed to read the binary blob stream, Details: "
-                                                        + ex.getMessage());
+                                try ( // query
+                                        ResultSet rs = pstmt.executeQuery()) {
+                                        while (rs.next()) {
+                                                // FormData is guaranteed to be at the first column
+                                                Blob blob = rs.getBlob(1);
+                                                FormData dbform = new FormData();
+                                                try {
+                                                        dbform.deserialize(IOUtils.toByteArray(blob.getBinaryStream()));
+                                                        queried_form.add(dbform);
+                                                } catch (IOException ex) {
+                                                        Prompt.log(Prompt.ERROR, "fetch",
+                                                                "Failed to read the binary blob stream, Details: "
+                                                                        + ex.getMessage());
+                                                }
                                         }
                                 }
-                                rs.close();
                                 return queried_form;
                         } catch (SQLException ex) {
-                                throw new SystemFormException(SystemFormException.Error.UnknownError).
+                                throw new FormDataException(FormDataException.Error.UnknownError).
                                         add_extra_info("Unknown SQL Error: " + ex.getMessage()
                                                 + "\nSQL Statement: " + sql);
                         }
@@ -643,7 +629,7 @@ public class DBSystemFormManager implements SystemFormManager {
                  * @param query
                  * @param info
                  */
-                public static void remove(FormModule module, FormQuery query) {
+                public static void remove(FormQuery query) {
                         throw new UnsupportedOperationException();
                 }
 
@@ -656,7 +642,7 @@ public class DBSystemFormManager implements SystemFormManager {
                 public static void clear() throws SQLException {
                         // check if those subjected table is there
                         DatabaseMetaData dbm = m_dbconn.getMetaData();
-                        for (String table : m_table_mapper.get_all_tables()) {
+                        for (String table : TABLE_MAPPER.get_all_tables()) {
                                 try {
                                         Statement stmt = m_dbconn.createStatement();
                                         stmt.executeUpdate("DROP TABLE " + table);

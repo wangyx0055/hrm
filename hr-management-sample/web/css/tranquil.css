@@ -1,0 +1,95 @@
+body {
+    background-image: 	url("../img/Dewy-Grass-972-x-648.jpg");
+    background-color: 	#cccccc;
+    background-repeat: 	no-repeat;
+    background-size: 	cover;
+}
+
+
+button.banner-menu {
+    background-color:	transparent;
+    border: 		none;
+    height: 		50px;
+    line-height:	50px;
+    color: 		white;
+}
+
+button.banner-menu:hover {
+    background-color:	rgba(30, 30, 30, 0.8);
+    transition:		1s;
+}
+
+div.login-link {
+	text-align: 	right; 
+	color: 		#E0E0E0; 
+	margin-right: 	20px;
+}
+
+div.banner {
+    position: 		relative;
+    height: 		50px;
+    line-height:	50px;
+    width: 		85%;
+    left: 		5%;
+    background-color: 	rgba(0,0,0,0.6);
+    text-align: 	center;
+}
+
+h1.heading {
+    position: 		relative;
+    background-size: 	cover;
+    left: 		7%
+}
+
+div.two-sided {
+     position:		relative;
+     width: 		85%;
+     left: 		5%;
+}
+
+div.left, div.right {
+    float: 		left;
+    min-height:		400px;
+}
+
+div.forum-board {
+    width: 		70%;
+    background: 	linear-gradient(to left, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.7) 100%);
+}
+
+div.reminder-list {
+    width: 		30%;
+    background: 	linear-gradient(to left, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.0) 100%);
+}
+
+div.content-board {
+    margin-left:	7%;
+    padding-top:	10px;
+    padding-bottom:	10px;
+    padding-left:	10px;
+    padding-right:	10px;
+    background-color:	rgba(220, 220, 200, 0.5);
+    border-radius: 	15px;
+    box-shadow: 	10px 10px 5px rgba(65, 80, 65, 0.6);
+    width:		85%;
+}
+
+#forum-thread {
+    font-size:		16pt;
+    height:		40px;
+    margin-top:		10px;
+    margin-bottom:	10px;
+    box-shadow: 	2px 2px 5px rgba(65, 80, 65, 0.6);
+    border: 		2px solid rgba(200,200,200, 0.5);
+    border-radius:	2px;
+}
+
+#forum-thread:hover {
+    font-size:		30pt;
+    height:		60px;
+    background-color:	rgba(220, 220, 200, 0.8);
+    box-shadow: 	10px 10px 5px rgba(65, 80, 65, 0.6);
+    transition: 	0.5s;
+}
+
+

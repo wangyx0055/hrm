@@ -17,12 +17,13 @@
  */
 package test;
 
-import hrm.model.DBSystemFormManager;
+import hrm.model.DBFormDataManager;
 import hrm.model.FormData;
 import hrm.model.FormModule;
 import hrm.model.FormQuery;
-import hrm.model.SystemFormException;
+import hrm.model.DataComponentFactory;
 import hrm.utils.Attribute;
+import hrm.utils.Element;
 import hrm.utils.RMIInteger;
 import hrm.utils.RMIString;
 import java.io.FileInputStream;
@@ -41,10 +42,10 @@ import org.junit.rules.TestName;
  * Test the FormQuery and its helper classes.
  * @author davis
  */
-public class TestDBFormManager {
+public class TestDBFormDataManager {
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestDBFormManager() {
+        public TestDBFormDataManager() {
         }
         
         @BeforeClass
@@ -67,17 +68,31 @@ public class TestDBFormManager {
         
         @Test
         public void dbform_query() throws Exception {
-                FormQuery query = new FormQuery("(city = #CityName# AND name = #CompanyName#)\n" +
-"OR (ranking >= #RankingNumber#)");
-                query.set_attribute("CompanyName", new Attribute("ATTRI2", "Pixar"));
-                query.set_attribute("CityName", new Attribute("ATT1", "Irvine"));
-                query.set_attribute("RankingNumber", new Attribute("ATTR3", 10));
+                FormQuery query = new FormQuery("Form-Query-Test");
+                // Set up keys
+                query.add_key(new Element("city", String.class));
+                query.add_key(new Element("name", String.class));
+                query.add_key(new Element("ranking", Integer.class));
+                
+                // Set up query
+                FormQuery.QueryMode qmode = query.create_query_mode(
+                        "test-query-mode", 
+                        "(city = #CityName# AND name = #CompanyName#) OR (ranking >= #RankingNumber#)");
+                qmode.set_attribute("CompanyName", new Attribute("ATTRI2", "Pixar"));
+                qmode.set_attribute("CityName", new Attribute("ATT1", "Irvine"));
+                qmode.set_attribute("RankingNumber", new Attribute("ATTR3", 10));
+                
+                // Test
                 System.out.println(query);
+                StringBuilder errors = new StringBuilder();
+                assertTrue(query.verify(errors));
+                System.out.println(errors);
         }
         
         @Test
         public void store_and_fetch() throws SQLException, Exception {
-                FormModule module = new FormModule(new FileInputStream("testconf/test-preset.xml"));
+                FormModule module = (FormModule) DataComponentFactory.create_from_file(DataComponentFactory.FORM_MODULE_COMPONENT, 
+                        new FileInputStream("testconf/test-preset.xml"));
                 FormData data = new FormData();
                 data.add_attribute("Document", new RMIInteger(100024));
                 data.add_attribute("Name", new RMIString("davis"));
@@ -96,28 +111,28 @@ public class TestDBFormManager {
                 FormQuery query = new FormQuery("1 = 1");
                 System.out.println("Query1: " + query);
                 FormQuery query2 = new FormQuery("Document=#Document-No#");
-                query2.set_attribute("Document-No", new Attribute("dfdka", 100024));
+//                query2.set_attribute("Document-No", new Attribute("dfdka", 100024));
                 System.out.println("Query2: " + query2);
                 
-                DBSystemFormManager formmgr = new DBSystemFormManager(true, true);
-                formmgr.update(module, query, data);
-                formmgr.update(module, query, data2);
-                formmgr.update(module, query2, data3);
+                DBFormDataManager formmgr = new DBFormDataManager(true, true);
+                formmgr.update(query, data);
+                formmgr.update(query, data2);
+                formmgr.update(query2, data3);
                 
                 FormQuery query3 = new FormQuery("Name=#persons-name# AND Document=#Document-No#");
-                query3.set_attribute("Document-No", new Attribute("dfdka", 100024));
-                query3.set_attribute("persons-name", new Attribute("adsf", "davis"));
+//                query3.set_attribute("Document-No", new Attribute("dfdka", 100024));
+//                query3.set_attribute("persons-name", new Attribute("adsf", "davis"));
                 System.out.println("Query3: " + query3);
                 
-                List<FormData> result = formmgr.query(module, query3);
+                List<FormData> result = formmgr.query(query3);
                 if (!result.isEmpty()) fail();
                 
                 FormQuery query4 = new FormQuery("Name=#persons-name# AND Document=#Document-No#");
-                query4.set_attribute("Document-No", new Attribute("dfdka", 100025));
-                query4.set_attribute("persons-name", new Attribute("adsf", "ozh"));
+//                query4.set_attribute("Document-No", new Attribute("dfdka", 100025));
+//                query4.set_attribute("persons-name", new Attribute("adsf", "ozh"));
                 System.out.println("Query4: " + query4);
                 
-                result = formmgr.query(module, query4);
+                result = formmgr.query(query4);
                 assertTrue(!result.isEmpty());
                 System.out.println("Form data fetched: " + result.get(0));
                 assertEquals(result.get(0), data2);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +17,6 @@
  */
 package test;
 
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,13 +27,14 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the SystemPresetManager class.
+ *
  * @author davis
  */
-public class TestDBSystemPresetManager {
+public class TestBuiltinControllers {
+        
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestDBSystemPresetManager() {
+        public TestBuiltinControllers() {
         }
         
         @BeforeClass
@@ -56,19 +56,6 @@ public class TestDBSystemPresetManager {
         }
 
         @Test
-        public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
-                hrm.model.FormModulePreset preset = new hrm.model.FormModulePreset("Test HRM System Preset");
-                // Add presets to database
-                hrm.model.DBSystemPresetManager dbmgr = new hrm.model.DBSystemPresetManager(true, true);
-                dbmgr.init_with_mock_database();
-                dbmgr.add_system_preset(preset);
-                // Fetch the preset back
-                hrm.model.SystemPreset preset_fetched = dbmgr.get_system_preset("Test HRM System Preset");
-                assertTrue(preset_fetched != null);
-                assertTrue(preset_fetched instanceof hrm.model.FormModulePreset);
-                hrm.model.FormModulePreset preset2 = (hrm.model.FormModulePreset) preset_fetched;
-                System.out.println("System page preset: " + preset);
-                System.out.println("System page preset2:" + preset2);
-                assertEquals(preset, preset2);
+        public void retrieve_form() {
         }
 }

@@ -24,7 +24,7 @@ import java.io.StringWriter;
  * Indicate errors associated with manipulating a system form.
  * @author davis
  */
-public class SystemFormException extends Exception {
+public class FormDataException extends Exception {
         public enum Error {
                 UnknownError,
                 InitializationError,
@@ -39,7 +39,7 @@ public class SystemFormException extends Exception {
         private final String            m_stacktrace;
         private String                  m_extrainfo = "";
         
-        SystemFormException(Error error_type) {
+        FormDataException(Error error_type) {
                 switch (error_type) {
                         case InitializationError:
                                 m_message = "SystemPreset Initialization Error!";
@@ -68,7 +68,7 @@ public class SystemFormException extends Exception {
                 m_stacktrace = sw.toString();
         }
         
-        public SystemFormException add_extra_info(String info) {
+        public FormDataException add_extra_info(String info) {
                 m_extrainfo += info + ";";
                 return this;
         }

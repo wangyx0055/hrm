@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,12 +17,6 @@
  */
 package test;
 
-import hrm.model.DBSystemPresetManager;
-import hrm.model.SystemPresetException;
-import hrm.model.SystemPresetManager;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,16 +27,14 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * A utility to deploy page presets to the database.
+ *
  * @author davis
  */
-public class DeploySystemPresetsToDatabase {
+public class TestDispatchServlets {
         
-        @Rule public final TestName     m_deployment_name = new TestName();
+        @Rule public final TestName m_test_name = new TestName();
         
-        public boolean                  m_is_mocked = false;
-        
-        public DeploySystemPresetsToDatabase() {
+        public TestDispatchServlets() {
         }
         
         @BeforeClass
@@ -55,21 +47,15 @@ public class DeploySystemPresetsToDatabase {
         
         @Before
         public void setUp() {
-                System.out.println("==========" + "Deploying " + m_deployment_name.getMethodName() + "...==========");
+                System.out.println("===================" + "Running Test Case: " + m_test_name.getMethodName() + "===================");
         }
         
         @After
         public void tearDown() {
-                System.out.println("==========" + "Done      " + m_deployment_name.getMethodName() + "...==========");
+                System.out.println("===================" + "Finished Test case:" + m_test_name.getMethodName() + "===================");
         }
 
         @Test
-        public void system_page_presets() 
-                throws ClassNotFoundException, SQLException, SystemPresetException, FileNotFoundException {
-                hrm.model.FormModulePreset preset = 
-                        new hrm.model.FormModulePreset(hrm.system.HRMDefaultName.dbformmodulepreset());
-                preset.add_module_from_file(new FileInputStream("hr-archive.xml"));
-                SystemPresetManager mgr = new DBSystemPresetManager(false, true);
-                mgr.add_system_preset(preset);
+        public void capture_request_and_dispatch() {
         }
 }

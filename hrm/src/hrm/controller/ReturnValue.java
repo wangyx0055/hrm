@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,26 +15,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.controller;
+
+import hrm.utils.Attribute;
+import hrm.view.JSPResolver;
+import java.util.Set;
 
 /**
+ * Helper method to store returned information from a controller.
  *
  * @author davis
  */
-public class Authen extends DataComponent {
+public interface ReturnValue {
 
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
-        }
+        public String get_redirected_page_uri();
 
-        @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        public Set<Attribute> get_session_attribute();
 
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
+        public Set<Attribute> get_requst_attribute();
+
+        public JSPResolver get_resolver();
 }

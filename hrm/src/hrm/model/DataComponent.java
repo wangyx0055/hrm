@@ -17,23 +17,19 @@
  */
 package hrm.model;
 
-import java.io.InputStream;
-
 /**
- * Define a system preset.
+ * Define a system component.
  * @author davis
  */
-public abstract class SystemPreset implements hrm.utils.Serializable {
+public abstract class DataComponent implements hrm.utils.Serializable {
         private final String    m_name;
         private final int       m_type;
-        
-        public abstract void load_from_file(InputStream in) throws SystemPresetException;
         
         /**
          * Construct the system preset with a name constant.
          * @param name Name of this system preset.
          */
-        SystemPreset(String name, int type) {
+        DataComponent(String name, int type) {
                 m_name = name;
                 m_type = type;
         }

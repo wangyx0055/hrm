@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,25 +15,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.controller;
 
-import java.util.List;
+import hrm.utils.Attribute;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Storage dedicated for form data.
+ * Helper method to define a call request with caller name and parameters.
+ *
  * @author davis
  */
-public interface SystemFormManager {
+public class CallerContext {
+
+        private final String m_caller;
+        private final Set<Attribute> m_attri = new HashSet();
+
+        public CallerContext(String caller) {
+                m_caller = caller;
+        }
+
+        public void add_parameter(Attribute attri) {
+                m_attri.add(attri);
+        }
         
-        public void update(FormModule module, FormQuery query, FormData info) 
-                throws SystemFormException;
+        public Set<Attribute> get_attributes() {
+                return m_attri;
+        }
         
-        public List<FormData> query(FormModule module, FormQuery query) 
-                throws SystemFormException;
-        
-        public void safe_remove(FormModule module, FormQuery query) 
-                throws SystemFormException;
-        
-        public void remove(FormModule module, FormQuery query)
-                throws SystemFormException;
+        public String whos_the_caller() {
+                return m_caller;
+        } 
 }

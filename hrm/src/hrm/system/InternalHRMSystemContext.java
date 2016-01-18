@@ -18,28 +18,28 @@
 package hrm.system;
 
 import hrm.controller.DispatcherManager;
-import hrm.model.DBSystemFormManager;
-import hrm.model.DBSystemPresetManager;
-import hrm.model.SystemFormManager;
-import hrm.model.SystemPresetManager;
+import hrm.model.DBFormDataManager;
+import hrm.model.DBDataComponentManager;
 import hrm.utils.Prompt;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import hrm.model.DataComponentManager;
+import hrm.model.FormDataManager;
 
 /**
  * Internal implementation of the SystemContext.
  * @author davis
  */
 public class InternalHRMSystemContext implements HRMSystemContext {
-        public SystemPresetManager        m_preset_mgr = null;
-        public SystemFormManager          m_form_mgr = null;
+        public DataComponentManager        m_preset_mgr = null;
+        public FormDataManager          m_form_mgr = null;
         public DispatcherManager          m_disp_mgr = null;
         
         public InternalHRMSystemContext() {
-                m_preset_mgr = new DBSystemPresetManager(false, true);
+                m_preset_mgr = new DBDataComponentManager(false, true);
                 try {
-                        m_form_mgr = new DBSystemFormManager(false, false);
+                        m_form_mgr = new DBFormDataManager(false, false);
                 } catch (SQLException ex) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), 
                                 "Failed to initialize DBSystemFormManager, Details: " + ex.getMessage());
@@ -49,12 +49,12 @@ public class InternalHRMSystemContext implements HRMSystemContext {
         
         @Override
         public void free() {
-                DBSystemPresetManager mgr = (DBSystemPresetManager) m_preset_mgr;
+                DBDataComponentManager mgr = (DBDataComponentManager) m_preset_mgr;
                 mgr.free();
         }
         
         @Override
-        public SystemPresetManager get_preset_manager() {
+        public DataComponentManager get_preset_manager() {
                 return m_preset_mgr;
         }
         
@@ -64,7 +64,7 @@ public class InternalHRMSystemContext implements HRMSystemContext {
         }
         
         @Override
-        public SystemFormManager get_system_form_manager() {
+        public FormDataManager get_system_form_manager() {
                 return m_form_mgr;
         }
 }

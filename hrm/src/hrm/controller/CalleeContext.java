@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,26 +15,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.model;
+package hrm.controller;
+
+import hrm.utils.Attribute;
+import hrm.utils.Element;
+import hrm.view.JSPResolver;
+import java.util.Set;
 
 /**
+ * Definition of a Callee where is responsible for performing action when it is dispatched by request.
  *
  * @author davis
  */
-public class Authen extends DataComponent {
+public abstract class CalleeContext implements JSPResolverListener {
 
-        public Authen(String name) {
-                super(name, DataComponentFactory.AUTHEN_COMPONENT);
+        abstract public Set<Element> get_param_constraints();
+
+        abstract public void add_params(Set<Attribute> attri);
+
+        abstract public ReturnValue get_return_value();
+
+        private JSPResolver m_resolver;
+
+        @Override
+        public void set_resolver(JSPResolver res) {
+                m_resolver = res;
         }
 
         @Override
-        public byte[] serialize() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public JSPResolver get_resolver() {
+                return m_resolver;
         }
-
-        @Override
-        public void deserialize(byte[] stream) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
 }
