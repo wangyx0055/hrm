@@ -34,4 +34,6 @@ public interface FormDataManager {
         public void recover(FormQuery query) throws FormDataException;
         
         public void remove(FormQuery query) throws FormDataException;
+        
+        public void free() throws FormDataException;
 }

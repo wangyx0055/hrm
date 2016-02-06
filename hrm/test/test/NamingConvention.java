@@ -15,11 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+package test;
 
 /**
  *
  * @author davis
  */
-public class TestUIBuilder {
-        
+public final class NamingConvention {
+        public static final String TEST_DATABASE_URL = "/db/TestDatabase";
+        public static final String TEST_DATABASE_USER = "HRM-USER";
+        public static final String TEST_DATABASE_PASSWORD = "HRM-USER-PASSWORD";
 }

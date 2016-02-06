@@ -19,7 +19,6 @@ package hrm.model;
 
 import hrm.utils.Prompt;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -28,8 +27,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Database Implementation of the SystemPresetManger by using a dedicated database for system configurations. 
@@ -42,14 +39,31 @@ public final class DBDataComponentManager implements DataComponentManager {
         
         /**
          * This will construct the class by initializing the database at its first instantiation.
-         * @param with_mock whether to use the mock database.
+         * @param db_url URL of the database. It may or may not exits.
+         * @param db_user User name of the database.
+         * @param db_password Password of the database.
          * @param to_reset whether to reset the database.
+         * @throws java.sql.SQLException
+         * @throws java.lang.ClassNotFoundException
          */
-        public DBDataComponentManager(boolean with_mock, boolean to_reset) {
+        public DBDataComponentManager(String db_url, String db_user, String db_password,
+                                     boolean to_reset) throws SQLException, ClassNotFoundException {
                 if (m_is_first_time) {
-                        if (with_mock)  init_with_mock_database();
-                        else            init_database();
-                        if (to_reset)   reset_database();
+                        try {
+                                Database.init(db_url, db_user, db_password);
+                        } catch (ClassNotFoundException | SQLException ex) {
+                                Prompt.log(Prompt.ERROR, getClass().toString(),
+                                        "Failed to initialize the database, Details: " + ex.getMessage());
+                                throw ex;
+                        }
+                        if (to_reset) {
+                                try {
+                                        Database.clear();
+                                } catch (SQLException ex) {
+                                        Prompt.log(Prompt.WARNING, getClass().toString(), 
+                                                "Failed to clear the database, Details: " + ex.getMessage());
+                                }
+                        }
                         m_is_first_time = false;
                 }
         }
@@ -57,7 +71,7 @@ public final class DBDataComponentManager implements DataComponentManager {
         @Override
         public boolean add_system_component(DataComponent preset) {
                 try {
-                        Database.add_preset(preset);
+                        Database.add_component(preset);
                 } catch (SQLException ex) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), ex.getMessage());
                         return false;
@@ -75,33 +89,6 @@ public final class DBDataComponentManager implements DataComponentManager {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         
-        public void init_database() {
-                try {
-                        Database.init();
-                } catch (ClassNotFoundException | SQLException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Failed to initialize the database, Details: " + ex.getMessage());
-                }
-        }
-        
-        public void init_with_mock_database() {
-                try {
-                        Database.init_with_mock_database();
-                } catch (ClassNotFoundException | SQLException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Failed to initialize the mock database, Details: " + ex.getMessage());
-                }
-        }
-        
-        public void reset_database() {
-                try {
-                        Database.clear();
-                } catch (SQLException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Failed to reset the database, Details: " + ex.getMessage());
-                }
-        }
-
         public void free() {
                 try {
                         Database.free();
@@ -117,13 +104,12 @@ public final class DBDataComponentManager implements DataComponentManager {
                         /* can not be constructed */
                 }
 
-                private static String m_database_url;
-                private static String m_user;
-                private static String m_password;
                 private static Connection m_dbconn;
 
                 private static final String TABLE = "SYSTEMCONF";
-
+                private static final String SQL_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+                private static final String SQL_PROTOCOL = "jdbc:derby:";
+ 
                 /**
                  * Table goes as: name:String(primary key), binary_blob:byte[],
                  * type:int
@@ -131,10 +117,27 @@ public final class DBDataComponentManager implements DataComponentManager {
                  * @throws ClassNotFoundException
                  * @throws SQLException
                  */
-                private static void connect_to_database() throws ClassNotFoundException, SQLException {
-                        Class.forName("org.apache.derby.jdbc.ClientDriver");
-                        m_dbconn = DriverManager.getConnection(m_database_url, m_user, m_password);
-
+                private static void connect_to_database(String url, String user, String password) 
+                                throws ClassNotFoundException, SQLException {
+                        try {
+                                Class.forName(SQL_DRIVER);
+                        } catch (ClassNotFoundException ex) {
+                                Prompt.log(Prompt.ERROR, "DBDataComponentManager.connect_to_database", 
+                                        "Cannot load in such sql driver as: " + ex.getMessage());
+                                throw ex;
+                        }
+                        try {
+                                m_dbconn = DriverManager.getConnection(SQL_PROTOCOL + url, user, password);
+                        } catch (SQLException ex) {
+                                // It's possible that the database doesn't exists yet, try creating one
+                                Prompt.log(Prompt.WARNING, "DBDataComponentManager.connect_to_database", 
+                                           "Database doesn't not exists, trying to create one. Details: " 
+                                                   + ex.getMessage());
+                                m_dbconn = DriverManager.getConnection(
+                                        SQL_PROTOCOL + url + ";create=true", user, password);
+                                Prompt.log(Prompt.NORMAL, "DBDataComponentManager.connect_to_database", 
+                                        "Database has been created successfully");
+                        }
                         // check if "SYSTEMCONF" table is there
                         DatabaseMetaData dbm = m_dbconn.getMetaData();
                         ResultSet tables = dbm.getTables(null, null, TABLE, null);
@@ -157,25 +160,9 @@ public final class DBDataComponentManager implements DataComponentManager {
                  * @throws java.lang.ClassNotFoundException
                  * @throws java.sql.SQLException
                  */
-                public static void init() throws ClassNotFoundException, SQLException {
-                        m_database_url = "jdbc:derby://localhost:1527/HRMSystemConfiguration";
-                        m_user = "hrm";
-                        m_password = "hrm_password";
-                        connect_to_database();
-                }
-
-                /**
-                 * Initialize with a mock database which may be useful for
-                 * testing.
-                 *
-                 * @throws java.lang.ClassNotFoundException
-                 * @throws java.sql.SQLException
-                 */
-                public static void init_with_mock_database() throws ClassNotFoundException, SQLException {
-                        m_database_url = "jdbc:derby://localhost:1527/HRMTestDatabase";
-                        m_user = "hrm_test";
-                        m_password = "hrm_test_password";
-                        connect_to_database();
+                public static void init(String db_url, String db_user, String db_password) 
+                                throws ClassNotFoundException, SQLException {
+                        connect_to_database(db_url, db_user, db_password);
                 }
 
                 /**
@@ -190,24 +177,24 @@ public final class DBDataComponentManager implements DataComponentManager {
                 }
 
                 /**
-                 * Add a system preset to the database.
+                 * Add a system comp to the database.
                  *
-                 * @param preset preset that are to be added.
+                 * @param comp comp that are to be added.
                  * @throws java.sql.SQLException
                  */
-                public static void add_preset(DataComponent preset) throws SQLException {
+                public static void add_component(DataComponent comp) throws SQLException {
                         try {
                                 String sql = "SELECT * FROM " + TABLE + " WHERE PRESETNAME=?";
                                 PreparedStatement pstmt = m_dbconn.prepareStatement(sql);
-                                pstmt.setString(1, preset.get_name());
+                                pstmt.setString(1, comp.get_name());
                                 ResultSet rs = pstmt.executeQuery();
                                 if (!rs.next()) {
                                         // Never seen this record before, then insert it
                                         pstmt = m_dbconn.prepareStatement(
                                                 "INSERT INTO " + TABLE + " VALUES (?,?,?)");
-                                        pstmt.setString(1, preset.get_name());
-                                        pstmt.setBlob(2, new ByteArrayInputStream(preset.serialize()));
-                                        pstmt.setInt(3, preset.get_type());
+                                        pstmt.setString(1, comp.get_name());
+                                        pstmt.setBlob(2, new ByteArrayInputStream(comp.serialize()));
+                                        pstmt.setInt(3, comp.get_type());
                                         pstmt.executeUpdate();
                                         return ;
                                 }
@@ -216,13 +203,13 @@ public final class DBDataComponentManager implements DataComponentManager {
                                         + "SET PRESETNAME=?,OBJECT=?,OBJECTTYPE=? \n"
                                         + "WHERE PRESETNAME=?";
                                 pstmt = m_dbconn.prepareStatement(sql);
-                                pstmt.setString(1, preset.get_name());
-                                pstmt.setBlob(2, new ByteArrayInputStream(preset.serialize()));
-                                pstmt.setInt(3, preset.get_type());
-                                pstmt.setString(4, preset.get_name());
+                                pstmt.setString(1, comp.get_name());
+                                pstmt.setBlob(2, new ByteArrayInputStream(comp.serialize()));
+                                pstmt.setInt(3, comp.get_type());
+                                pstmt.setString(4, comp.get_name());
                                 pstmt.executeUpdate();
                         } catch (SQLException e) {
-                                Prompt.log(Prompt.ERROR, "preset: " + preset.get_name(), 
+                                Prompt.log(Prompt.ERROR, "preset: " + comp.get_name(), 
                                         "Failed to add preset to the database, Details: " + e.getMessage());
                         }
 
@@ -262,7 +249,6 @@ public final class DBDataComponentManager implements DataComponentManager {
                                         return null;
                                 }
                         } catch (SQLException ex) {
-                                ex.printStackTrace();
                                 return null;
                         }
                 }

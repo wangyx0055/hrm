@@ -20,26 +20,31 @@ package test;
 import hrm.system.HRMMain;
 import hrm.system.HRMSystemContext;
 import hrm.system.MockHRMSystemContext;
+import java.sql.SQLException;
 import javax.servlet.ServletContextEvent;
 import org.springframework.mock.web.MockServletContext;
 
 /**
  * Mock and initialize the system context.
+ *
  * @author davis
  */
 public class MockInitSystemContext {
-        HRMMain                 m_main = new HRMMain(new MockHRMSystemContext());
-        MockServletContext      m_sc = new MockServletContext();
-        
-        public MockInitSystemContext(String context_path) {
+
+        HRMMain m_main = new HRMMain(new MockHRMSystemContext(".", 
+                NamingConvention.TEST_DATABASE_USER,
+                NamingConvention.TEST_DATABASE_PASSWORD));
+        MockServletContext m_sc = new MockServletContext();
+
+        public MockInitSystemContext(String context_path) throws SQLException, ClassNotFoundException {
                 m_sc.setContextPath(context_path);
         }
-        
+
         public HRMSystemContext init() {
                 m_main.contextInitialized(new ServletContextEvent(m_sc));
                 return HRMMain.get_system_context();
         }
-        
+
         public void free() {
                 m_main.contextDestroyed(new ServletContextEvent(m_sc));
         }

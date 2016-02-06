@@ -13,6 +13,16 @@
     </context-param>
     
     <context-param>
+        <param-name>system-user</param-name>
+        <param-value>hrm-sample-user</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>system-passcode</param-name>
+        <param-value>hrm-sample-passcode</param-value>
+    </context-param>
+    
+    <context-param>
         <param-name>servlet-namespace</param-name>
         <param-value>hr-management-sample</param-value>
     </context-param>

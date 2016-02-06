@@ -18,7 +18,6 @@
 package hrm.system;
 
 import hrm.model.DataComponentException;
-import hrm.controller.HRMDispatcherServlet;
 import hrm.controller.HRMRequestFilter;
 import hrm.model.DataComponent;
 import hrm.model.DataComponentFactory;
@@ -37,13 +36,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletRegistration;
 import hrm.model.DataComponentManager;
@@ -83,19 +79,16 @@ public class HRMMain implements ServletContextListener {
 //                        "/" + servlet_namespace + "/DispatcherServlet", 
 //                        HRMDispatcherServlet.class);
 //                ds.addMapping("*.jsp");
-                Map<String, ? extends ServletRegistration> servlets = 
-                        m_servlet_ctx.getServletRegistrations();
+                Map<String, ? extends ServletRegistration> servlets = m_servlet_ctx.getServletRegistrations();
                 for (String servlet_name : servlets.keySet()) {
                         ServletRegistration servlet_reg = servlets.get(servlet_name);
                         Prompt.log(Prompt.NORMAL, getClass().toString(), 
                                 "Servlets " + servlet_name + " is registered as: " + servlet_reg.getMappings());
                 }
                 FilterRegistration.Dynamic df = m_servlet_ctx.addFilter(
-                        "/" + servlet_namespace + "/RequestFilter", 
-                        HRMRequestFilter.class);
+                        "/" + servlet_namespace + "/RequestFilter", HRMRequestFilter.class);
                 df.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, new String[]{"*.jsp"});
-                Map<String, ? extends FilterRegistration> filters = 
-                        m_servlet_ctx.getFilterRegistrations();
+                Map<String, ? extends FilterRegistration> filters = m_servlet_ctx.getFilterRegistrations();
                 for (String filter_name : filters.keySet()) {
                         FilterRegistration filter_reg = filters.get(filter_name);
                         Prompt.log(Prompt.NORMAL, getClass().toString(), 
@@ -109,7 +102,15 @@ public class HRMMain implements ServletContextListener {
                 ResourceScanner.init_context_path(context_path);
                 Prompt.log(Prompt.NORMAL, getClass().toString(), 
                         "Initializing system context...");
-                if (m_ctrl_ctx == null) m_ctrl_ctx = new InternalHRMSystemContext();
+                if (m_ctrl_ctx == null) {
+                        String system_root = m_servlet_ctx.getInitParameter("system-root");
+                        String system_user = m_servlet_ctx.getInitParameter("system-user");
+                        String system_passcode = m_servlet_ctx.getInitParameter("system-passcode");
+                        system_root = system_root == null ? "." : system_root;
+                        system_user = system_user == null ? "default_user" : system_user;
+                        system_passcode = system_passcode == null ? "default_passcode" : system_passcode;
+                        m_ctrl_ctx = new InternalHRMSystemContext(system_root, system_user, system_passcode);
+                }
                 // loading config files
                 Prompt.log(Prompt.NORMAL, getClass().toString(), 
                         "Loading external configuration files...");
@@ -184,7 +185,7 @@ public class HRMMain implements ServletContextListener {
                                                 DataComponentFactory.create_from_file(
                                                         DataComponentFactory.FORM_MODULE_COMPONENT,in);
                                         mgr.add_system_component(comp);
-                                } catch (DataComponentException ex) {
+                                } catch (Exception ex) {
                                         Prompt.log(Prompt.WARNING, getClass().toString(), 
                                                 "Failed to load in FormModulePreset, Details: " + 
                                                         ex.getMessage());

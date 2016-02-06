@@ -114,7 +114,11 @@ public class TestDBFormDataManager {
 //                query2.set_attribute("Document-No", new Attribute("dfdka", 100024));
                 System.out.println("Query2: " + query2);
                 
-                DBFormDataManager formmgr = new DBFormDataManager(true, true);
+                DBFormDataManager formmgr = new DBFormDataManager(
+                        NamingConvention.TEST_DATABASE_URL, 
+                        NamingConvention.TEST_DATABASE_USER,
+                        NamingConvention.TEST_DATABASE_PASSWORD,
+                        true);
                 formmgr.update(query, data);
                 formmgr.update(query, data2);
                 formmgr.update(query2, data3);

@@ -39,5 +39,10 @@ public class MemDataComponentManager implements DataComponentManager {
         public Set<DataComponent> get_all_system_components() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
+
+        @Override
+        public void free() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
         
 }

@@ -62,8 +62,11 @@ public class TestDBDataComponentManager {
         public void add_and_fetch_page_preset() throws ClassNotFoundException, SQLException {
                 FormModule form = new FormModule("Test HRM System Preset");
                 // Add presets to database
-                DBDataComponentManager dbmgr = new DBDataComponentManager(true, true);
-                dbmgr.init_with_mock_database();
+                DBDataComponentManager dbmgr = new DBDataComponentManager(
+                        NamingConvention.TEST_DATABASE_URL,
+                        NamingConvention.TEST_DATABASE_USER,
+                        NamingConvention.TEST_DATABASE_PASSWORD,
+                        true);
                 dbmgr.add_system_component(form);
                 // Fetch the preset back
                 DataComponent form_fetched = dbmgr.get_system_component("Test HRM System Preset");

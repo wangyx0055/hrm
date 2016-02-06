@@ -30,4 +30,6 @@ public interface DataComponentManager {
         public DataComponent get_system_component(String name);
         
         public Set<DataComponent> get_all_system_components();
+        
+        public void free();
 }

@@ -22,6 +22,7 @@ import hrm.model.DBFormDataManager;
 import hrm.model.DBDataComponentManager;
 import hrm.model.DataComponentManager;
 import hrm.model.FormDataManager;
+import java.sql.SQLException;
 
 /**
  * Mock implementation of the SystemContext.
@@ -29,25 +30,31 @@ import hrm.model.FormDataManager;
  */
 public class MockHRMSystemContext implements HRMSystemContext {
         
-        public final DataComponentManager        m_preset_mgr;
-        public final FormDataManager          m_form_mgr;
+        public final DataComponentManager       m_comp_mgr;
+        public final FormDataManager            m_form_mgr;
         public final DispatcherManager          m_disp_mgr;
         
-        public MockHRMSystemContext() {
-                m_preset_mgr = new DBDataComponentManager(true, true);
-                m_form_mgr = null;// new DBFormDataManager(true, true);
+        private static final String     COMP_DB = "/testdb/hrm_data_componet";
+        private static final String     FORM_DB = "/testdb/hrm_form_data";
+        
+        public MockHRMSystemContext(String system_root, String system_user, String system_passcode) 
+                        throws SQLException, ClassNotFoundException {
+                m_comp_mgr = new DBDataComponentManager(system_root + COMP_DB,
+                                                        system_user, system_passcode, true);
+                m_form_mgr = new DBFormDataManager(system_root + FORM_DB, 
+                                                   system_user, system_passcode, true);
                 m_disp_mgr = new DispatcherManager();
         }
         
         @Override
         public void free() {
-                DBDataComponentManager mgr = (DBDataComponentManager) m_preset_mgr;
+                DBDataComponentManager mgr = (DBDataComponentManager) m_comp_mgr;
                 mgr.free();
         }
         
         @Override
         public DataComponentManager get_preset_manager() {
-                return m_preset_mgr;
+                return m_comp_mgr;
         }
         
         @Override

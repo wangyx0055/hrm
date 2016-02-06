@@ -18,6 +18,7 @@
 package test;
 
 import hrm.system.HRMSystemContext;
+import java.sql.SQLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -59,9 +60,9 @@ public class TestMainAndSystemContext {
         }
 
         @Test
-        public void launch_main() {
+        public void launch_main() throws SQLException, ClassNotFoundException {
                 MockInitSystemContext sysmock = 
-                        new MockInitSystemContext("/home/davis/human-resource-management-code/HRM/web/");
+                        new MockInitSystemContext("/home/davis/human-resource-management-code/hrm/testconf/");
                 HRMSystemContext ctx = sysmock.init();
                 assertTrue(ctx != null);
                 assertTrue(ctx.get_dispatcher_manager() != null);

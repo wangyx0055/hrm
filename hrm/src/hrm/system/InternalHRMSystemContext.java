@@ -22,25 +22,31 @@ import hrm.model.DBFormDataManager;
 import hrm.model.DBDataComponentManager;
 import hrm.utils.Prompt;
 import java.sql.SQLException;
+import hrm.model.DataComponentManager;
+import hrm.model.FormDataException;
+import hrm.model.FormDataManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import hrm.model.DataComponentManager;
-import hrm.model.FormDataManager;
 
 /**
  * Internal implementation of the SystemContext.
  * @author davis
  */
 public class InternalHRMSystemContext implements HRMSystemContext {
-        public DataComponentManager        m_preset_mgr = null;
+        public DataComponentManager     m_preset_mgr = null;
         public FormDataManager          m_form_mgr = null;
-        public DispatcherManager          m_disp_mgr = null;
+        public DispatcherManager        m_disp_mgr = null;
         
-        public InternalHRMSystemContext() {
-                m_preset_mgr = new DBDataComponentManager(false, true);
+        private static final String     COMP_DB = "db/hrm_data_componet";
+        private static final String     FORM_DB = "db/hrm_form_data";
+        
+        public InternalHRMSystemContext(String system_root, String system_user, String system_passcode) {
                 try {
-                        m_form_mgr = new DBFormDataManager(false, false);
-                } catch (SQLException ex) {
+                        m_preset_mgr = new DBDataComponentManager(
+                                system_root + COMP_DB, system_user, system_passcode, true);
+                        m_form_mgr = new DBFormDataManager(
+                                system_root + FORM_DB, system_user, system_passcode, false);
+                } catch (SQLException | ClassNotFoundException ex) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), 
                                 "Failed to initialize DBSystemFormManager, Details: " + ex.getMessage());
                 }
@@ -49,8 +55,16 @@ public class InternalHRMSystemContext implements HRMSystemContext {
         
         @Override
         public void free() {
-                DBDataComponentManager mgr = (DBDataComponentManager) m_preset_mgr;
-                mgr.free();
+                if (m_preset_mgr != null) {
+                        m_preset_mgr.free();
+                }
+                if (m_form_mgr != null) {
+                        try {
+                                m_form_mgr.free();
+                        } catch (FormDataException ex) {
+                                Prompt.log(Prompt.WARNING, getClass().toString(), ex.toString());
+                        }
+                }
         }
         
         @Override

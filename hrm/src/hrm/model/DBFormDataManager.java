@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -188,13 +190,10 @@ public class DBFormDataManager implements FormDataManager {
 
         private static boolean m_is_first_time = true;
 
-        public DBFormDataManager(boolean with_mock, boolean to_reset) throws SQLException {
+        public DBFormDataManager(String db_url, String db_user, String db_password,
+                        boolean to_reset) throws SQLException, ClassNotFoundException {
                 if (m_is_first_time) {
-                        if (with_mock) {
-                                Database.init_with_mock_database(to_reset);
-                        } else {
-                                Database.init(to_reset);
-                        }
+                        Database.init(db_url, db_user, db_password, to_reset);
                         m_is_first_time = false;
                 }
         }
@@ -237,16 +236,24 @@ public class DBFormDataManager implements FormDataManager {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
+        @Override
+        public void free() throws FormDataException {
+                try {
+                        Database.free();
+                } catch (SQLException ex) {
+                        throw new FormDataException(FormDataException.Error.UnknownError).
+                                add_extra_info(ex.getMessage());
+                }
+        }
+
         private static class Database {
 
                 private Database() {
                         /* can not be constructed */
                 }
 
-                private static final String SQL_DRIVER = "org.apache.derby.jdbc.ClientDriver";
-                private static String m_database_url;
-                private static String m_user;
-                private static String m_password;
+                private static final String SQL_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+                private static final String SQL_PROTOCOL = "jdbc:derby:";
                 private static Connection m_dbconn;
 
                 private static final String MAPPING_TABLE = "SYSTEMFORMTABLEMAPPER";
@@ -314,13 +321,28 @@ public class DBFormDataManager implements FormDataManager {
                 /**
                  * Connect to the database and fetch the table mapper.
                  */
-                private static void connect_to_database(boolean to_clear) throws SQLException {
+                private static void connect_to_database(String url, String user, String password, 
+                                                        boolean to_clear) throws SQLException, 
+                                                                                 ClassNotFoundException {
                         try {
                                 Class.forName(SQL_DRIVER);
                         } catch (ClassNotFoundException ex) {
-                                Prompt.log(Prompt.ERROR, "", "Cannot load in SQL Driver: " + SQL_DRIVER);
+                                Prompt.log(Prompt.ERROR, "DBFormDataManager.connect_to_database", 
+                                        "Cannot load in such sql driver as: " + ex.getMessage());
+                                throw ex;
                         }
-                        m_dbconn = DriverManager.getConnection(m_database_url, m_user, m_password);
+                        try {
+                                m_dbconn = DriverManager.getConnection(SQL_PROTOCOL + url, user, password);
+                        } catch (SQLException ex) {
+                                // It's possible that the database doesn't exists yet, try creating one
+                                Prompt.log(Prompt.WARNING, "DBFormDataManager.connect_to_database", 
+                                           "Database doesn't not exists, trying to create one. Details: " 
+                                                   + ex.getMessage());
+                                m_dbconn = DriverManager.getConnection(
+                                        SQL_PROTOCOL + url + ";create=true", user, password);
+                                Prompt.log(Prompt.NORMAL, "DBFormDataManager.connect_to_database", 
+                                        "Database has been created successfully");
+                        }
                         fetch_table_mapper();
                         if (to_clear) clear();
                         TABLE_MAPPER.clear();
@@ -331,24 +353,9 @@ public class DBFormDataManager implements FormDataManager {
                  *
                  * @throws java.sql.SQLException
                  */
-                public static void init(boolean to_clear) throws SQLException {
-                        m_database_url = "jdbc:derby://localhost:1527/HRMSystemFormData";
-                        m_user = "hrm";
-                        m_password = "hrm_password";
-                        connect_to_database(to_clear);
-                }
-
-                /**
-                 * Initialize with a mock database which may be useful for
-                 * testing.
-                 *
-                 * @throws java.sql.SQLException
-                 */
-                public static void init_with_mock_database(boolean to_clear) throws SQLException {
-                        m_database_url = "jdbc:derby://localhost:1527/HRMTestDatabase";
-                        m_user = "hrm_test";
-                        m_password = "hrm_test_password";
-                        connect_to_database(to_clear);
+                public static void init(String db_url, String db_user, String db_password,
+                                        boolean to_clear) throws SQLException, ClassNotFoundException {
+                        connect_to_database(db_url, db_user, db_password, to_clear);
                 }
 
                 /**

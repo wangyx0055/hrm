@@ -69,7 +69,11 @@ public class DeployDataComponentToDatabase {
                 throws ClassNotFoundException, SQLException, DataComponentException, FileNotFoundException {
                 DataComponent form = DataComponentFactory.create_from_file(
                         DataComponentFactory.FORM_MODULE_COMPONENT, new FileInputStream("hr-archive.xml"));
-                DataComponentManager mgr = new DBDataComponentManager(false, true);
+                DataComponentManager mgr = new DBDataComponentManager(
+                                                NamingConvention.TEST_DATABASE_URL, 
+                                                NamingConvention.TEST_DATABASE_USER, 
+                                                NamingConvention.TEST_DATABASE_PASSWORD,
+                                                true);
                 mgr.add_system_component(form);
         }
 }

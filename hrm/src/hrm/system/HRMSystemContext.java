@@ -18,8 +18,6 @@
 package hrm.system;
 
 import hrm.controller.DispatcherManager;
-import hrm.model.DBFormDataManager;
-import hrm.model.DBDataComponentManager;
 import hrm.model.DataComponentManager;
 import hrm.model.FormDataManager;
 
