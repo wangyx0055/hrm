@@ -17,17 +17,20 @@
  */
 package hrm.utils;
 
+import java.sql.SQLException;
+
 /**
  * Log output.
  *
  * @author davis
  */
 public class Prompt {
+
         // warning level
         public static final int NORMAL = 1;
         public static final int WARNING = 2;
         public static final int ERROR = 3;
-        
+
         // coloring schemes
         public static final String ANSI_RESET = "\u001B[0m";
         public static final String ANSI_BLACK = "\u001B[30m";
@@ -54,7 +57,25 @@ public class Prompt {
                         default:
                                 prefix = "";
                 }
-                if (loc != null)  System.out.println(prefix + loc + " - " + message + ANSI_RESET);
-                else              System.out.println(prefix + " - " + message + ANSI_RESET);
+                if (loc != null) {
+                        System.out.println(prefix + loc + " - " + message + ANSI_RESET);
+                } else {
+                        System.out.println(prefix + " - " + message + ANSI_RESET);
+                }
+        }
+
+        public static void log_sql_ex(String loc, SQLException ex) {
+                System.out.println(loc + " - SQLException: ");
+                do {
+                        System.out.println("\t" + loc + " - SQLState:" + ex.getSQLState());
+                        System.out.println("\t" + loc + " - Error Code:" + ex.getErrorCode());
+                        System.out.println("\t" + loc + " - Message:" + ex.getMessage());
+                        Throwable t = ex.getCause();
+                        while (t != null) {
+                                System.out.println("\t" + loc + " - Cause:" + t);
+                                t = t.getCause();
+                        }
+                        ex = ex.getNextException();
+                } while (ex != null);
         }
 }
