@@ -31,7 +31,8 @@ import org.springframework.mock.web.MockServletContext;
  */
 public class MockInitSystemContext {
 
-        HRMMain m_main = new HRMMain(new MockHRMSystemContext(".", 
+        HRMMain m_main = new HRMMain(new MockHRMSystemContext(
+                NamingConvention.TEST_CONTEXT_PATH, 
                 NamingConvention.TEST_DATABASE_USER,
                 NamingConvention.TEST_DATABASE_PASSWORD));
         MockServletContext m_sc = new MockServletContext();

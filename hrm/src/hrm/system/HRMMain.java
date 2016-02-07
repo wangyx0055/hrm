@@ -17,7 +17,6 @@
  */
 package hrm.system;
 
-import hrm.model.DataComponentException;
 import hrm.controller.HRMRequestFilter;
 import hrm.model.DataComponent;
 import hrm.model.DataComponentFactory;
@@ -46,32 +45,38 @@ import hrm.model.DataComponentManager;
 
 /**
  * Initialization and shutdown of the HRM system.
+ *
  * @author davis
  */
 public class HRMMain implements ServletContextListener {
-        
+
         private static HRMSystemContext m_ctrl_ctx = null;
-        private ServletContext          m_servlet_ctx;
+        private ServletContext m_servlet_ctx;
         private List<HRMBusinessPlugin> m_plugins;
-        
+
         public HRMMain() {
                 // normal initialization
         }
-        
+
         public HRMMain(HRMSystemContext ctximpl) {
                 // mock initialization
                 m_ctrl_ctx = ctximpl;
         }
-        
+
         public static HRMSystemContext get_system_context() {
                 return m_ctrl_ctx;
         }
-        
+
         @Override
         public void contextInitialized(ServletContextEvent sce) {
+                // change logging properties
+                System.setProperty("org.apache.catalina.core.ContainerBase.[Catalina].level", "INFO");
+                System.setProperty("org.apache.catalina.core.ContainerBase.[Catalina].handlers",
+                                   "java.util.logging.ConsoleHandler");
+
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing HRM...");
                 m_servlet_ctx = sce.getServletContext();
-                
+
                 // register servlets
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing Servlets...");
                 String servlet_namespace = m_servlet_ctx.getInitParameter("servlet-namespace");
@@ -82,8 +87,8 @@ public class HRMMain implements ServletContextListener {
                 Map<String, ? extends ServletRegistration> servlets = m_servlet_ctx.getServletRegistrations();
                 for (String servlet_name : servlets.keySet()) {
                         ServletRegistration servlet_reg = servlets.get(servlet_name);
-                        Prompt.log(Prompt.NORMAL, getClass().toString(), 
-                                "Servlets " + servlet_name + " is registered as: " + servlet_reg.getMappings());
+                        Prompt.log(Prompt.NORMAL, getClass().toString(),
+                                   "Servlets " + servlet_name + " is registered as: " + servlet_reg.getMappings());
                 }
                 FilterRegistration.Dynamic df = m_servlet_ctx.addFilter(
                         "/" + servlet_namespace + "/RequestFilter", HRMRequestFilter.class);
@@ -91,17 +96,17 @@ public class HRMMain implements ServletContextListener {
                 Map<String, ? extends FilterRegistration> filters = m_servlet_ctx.getFilterRegistrations();
                 for (String filter_name : filters.keySet()) {
                         FilterRegistration filter_reg = filters.get(filter_name);
-                        Prompt.log(Prompt.NORMAL, getClass().toString(), 
-                                "Filter " + filter_name + " is registered as: " + 
-                                        filter_reg.getUrlPatternMappings());
+                        Prompt.log(Prompt.NORMAL, getClass().toString(),
+                                   "Filter " + filter_name + " is registered as: "
+                                   + filter_reg.getUrlPatternMappings());
                 }
                 // set up the context path
                 String context_path = m_servlet_ctx.getInitParameter("system-root");
-                Prompt.log(Prompt.NORMAL, getClass().toString(), 
-                        "Setting context path to: " + context_path);
+                Prompt.log(Prompt.NORMAL, getClass().toString(),
+                           "Setting context path to: " + context_path);
                 ResourceScanner.init_context_path(context_path);
-                Prompt.log(Prompt.NORMAL, getClass().toString(), 
-                        "Initializing system context...");
+                Prompt.log(Prompt.NORMAL, getClass().toString(),
+                           "Initializing system context...");
                 if (m_ctrl_ctx == null) {
                         String system_root = m_servlet_ctx.getInitParameter("system-root");
                         String system_user = m_servlet_ctx.getInitParameter("system-user");
@@ -112,8 +117,8 @@ public class HRMMain implements ServletContextListener {
                         m_ctrl_ctx = new InternalHRMSystemContext(system_root, system_user, system_passcode);
                 }
                 // loading config files
-                Prompt.log(Prompt.NORMAL, getClass().toString(), 
-                        "Loading external configuration files...");
+                Prompt.log(Prompt.NORMAL, getClass().toString(),
+                           "Loading external configuration files...");
                 init();
         }
 
@@ -123,7 +128,7 @@ public class HRMMain implements ServletContextListener {
                 // destroying resources
                 free();
         }
-        
+
         private List<HRMBusinessPlugin> load_plugin(InputStream in, String plugin_conf) {
                 ArrayList<HRMBusinessPlugin> importers = new ArrayList();
                 String entrance = "";
@@ -134,67 +139,69 @@ public class HRMMain implements ServletContextListener {
                                 entrance = e;
                                 Class<?> clazz = Class.forName(e);
                                 Constructor<?> ctor = clazz.getConstructor();
-                                HRMBusinessPlugin importer = 
-                                        (HRMBusinessPlugin) ctor.newInstance();
+                                HRMBusinessPlugin importer
+                                                  = (HRMBusinessPlugin) ctor.newInstance();
                                 importers.add(importer);
                         }
                 } catch (FileNotFoundException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Cannot find plugin configuration file: " + plugin_conf +
-                                        ", Details: " + ex.getMessage());
+                        Prompt.log(Prompt.ERROR, getClass().toString(),
+                                   "Cannot find plugin configuration file: " + plugin_conf
+                                   + ", Details: " + ex.getMessage());
                 } catch (IOException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Cannot read plugin configuration file: " + plugin_conf +
-                                        ", Details: " + ex.getMessage());
-                } catch (ClassNotFoundException | 
-                         NoSuchMethodException | 
-                        SecurityException | 
-                        InstantiationException | 
-                        IllegalAccessException | 
-                        IllegalArgumentException | 
-                        InvocationTargetException ex) {
-                        Prompt.log(Prompt.ERROR, getClass().toString(), 
-                                "Cannot find/initialize class: " + entrance + 
-                                        " specified in the plugin configuration file: " + plugin_conf +
-                                           ", Details: " + ex.getMessage());
+                        Prompt.log(Prompt.ERROR, getClass().toString(),
+                                   "Cannot read plugin configuration file: " + plugin_conf
+                                   + ", Details: " + ex.getMessage());
+                } catch (ClassNotFoundException |
+                         NoSuchMethodException |
+                         SecurityException |
+                         InstantiationException |
+                         IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                        Prompt.log(Prompt.ERROR, getClass().toString(),
+                                   "Cannot find/initialize class: " + entrance
+                                   + " specified in the plugin configuration file: " + plugin_conf
+                                   + ", Details: " + ex.getMessage());
                 }
                 return importers;
         }
-        
+
         public void init() {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Allocating resources...");
-                
+
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing Data Components...");
-                
+
                 // Data components will be added to this manager
                 DataComponentManager mgr = m_ctrl_ctx.get_preset_manager();
-                
+
                 String base = "CONF/";
                 try {
-                        List<InputStream> ins = 
-                                ResourceScanner.open_external_files_at(base, new ResourceScanner.Filter() {
-                                @Override
-                                public boolean is_accepted(File file) {
-                                        return file.getName().endsWith(".xml");
-                                }
-                        });
+                        List<InputStream> ins
+                                          = ResourceScanner.open_external_files_at(base, new ResourceScanner.Filter() {
+                                                                                   @Override
+                                                                                   public boolean is_accepted(File file) {
+                                                                                           return file.getName().endsWith(".xml");
+                                                                                   }
+                                                                           });
                         for (InputStream in : ins) {
-                                if (in == null) continue;
+                                if (in == null) {
+                                        continue;
+                                }
                                 try {
-                                        DataComponent comp = 
-                                                DataComponentFactory.create_from_file(
-                                                        DataComponentFactory.FORM_MODULE_COMPONENT,in);
+                                        DataComponent comp
+                                                      = DataComponentFactory.create_from_file(
+                                                        DataComponentFactory.FORM_MODULE_COMPONENT, in);
                                         mgr.add_system_component(comp);
                                 } catch (Exception ex) {
-                                        Prompt.log(Prompt.WARNING, getClass().toString(), 
-                                                "Failed to load in FormModulePreset, Details: " + 
-                                                        ex.getMessage());
+                                        Prompt.log(Prompt.WARNING, getClass().toString(),
+                                                   "Failed to load in FormModulePreset, Details: "
+                                                   + ex.getMessage());
                                 }
                         }
                 } catch (FileNotFoundException ex) {
                         Prompt.log(Prompt.ERROR, getClass().toString(), "Failed to load in all form presets.");
                 }
-                
+
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Loading plugins...");
                 InputStream in;
                 try {
@@ -207,23 +214,25 @@ public class HRMMain implements ServletContextListener {
                                                 plugin.init(m_ctrl_ctx);
                                         } catch (HRMBusinessPluginException ex) {
                                                 Prompt.log(Prompt.ERROR, getClass().toString(),
-                                                        "Error found while initializing plugin: " + 
-                                                                plugin.get_name());
+                                                           "Error found while initializing plugin: "
+                                                           + plugin.get_name());
                                         }
                                 }
                         }
                 } catch (FileNotFoundException ex) {
                         Logger.getLogger(HRMMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
-                
+
         }
-        
+
         public void free() {
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Deallocating resources...");
-                if (m_ctrl_ctx != null) m_ctrl_ctx.free();
-                else Prompt.log(Prompt.WARNING, getClass().toString(), "System context was not initialized");
-                        
+                if (m_ctrl_ctx != null) {
+                        m_ctrl_ctx.free();
+                } else {
+                        Prompt.log(Prompt.WARNING, getClass().toString(), "System context was not initialized");
+                }
+
                 if (m_plugins != null) {
                         for (HRMBusinessPlugin plugin : m_plugins) {
                                 if (plugin != null) {
@@ -231,8 +240,8 @@ public class HRMMain implements ServletContextListener {
                                                 plugin.free();
                                         } catch (HRMBusinessPluginException ex) {
                                                 Prompt.log(Prompt.ERROR, getClass().toString(),
-                                                        "Error found while initializing plugin: " + 
-                                                                plugin.get_name());
+                                                           "Error found while initializing plugin: "
+                                                           + plugin.get_name());
                                         }
                                 }
                         }
@@ -240,5 +249,5 @@ public class HRMMain implements ServletContextListener {
                         Prompt.log(Prompt.WARNING, getClass().toString(), "Plugins were not initialized");
                 }
         }
-        
+
 }

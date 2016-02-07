@@ -37,7 +37,7 @@ public class InternalHRMSystemContext implements HRMSystemContext {
         public FormDataManager          m_form_mgr = null;
         public DispatcherManager        m_disp_mgr = null;
         
-        private static final String     COMP_DB = "db/hrm_data_componet";
+        private static final String     COMP_DB = "db/hrm_data_component";
         private static final String     FORM_DB = "db/hrm_form_data";
         
         public InternalHRMSystemContext(String system_root, String system_user, String system_passcode) {

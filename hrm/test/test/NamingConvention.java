@@ -22,7 +22,8 @@ package test;
  * @author davis
  */
 public final class NamingConvention {
-        public static final String TEST_DATABASE_URL = "/db/TestDatabase";
-        public static final String TEST_DATABASE_USER = "HRM-USER";
-        public static final String TEST_DATABASE_PASSWORD = "HRM-USER-PASSWORD";
+        public static final String TEST_CONTEXT_PATH = "/home/davis/human-resource-management-code/hrm/testconf/";
+        public static final String TEST_DATABASE_URL = TEST_CONTEXT_PATH + "dedicatedtestdb";
+        public static final String TEST_DATABASE_USER = "HRMUSER";
+        public static final String TEST_DATABASE_PASSWORD = "HRMUSERPASSWORD";
 }

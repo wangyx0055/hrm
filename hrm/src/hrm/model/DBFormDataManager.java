@@ -241,6 +241,7 @@ public class DBFormDataManager implements FormDataManager {
                 try {
                         Database.free();
                 } catch (SQLException ex) {
+                        Prompt.log_sql_ex(getClass().toString(), ex);
                         throw new FormDataException(FormDataException.Error.UnknownError).
                                 add_extra_info(ex.getMessage());
                 }

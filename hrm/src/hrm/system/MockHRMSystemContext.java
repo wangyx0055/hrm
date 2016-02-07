@@ -21,8 +21,12 @@ import hrm.controller.DispatcherManager;
 import hrm.model.DBFormDataManager;
 import hrm.model.DBDataComponentManager;
 import hrm.model.DataComponentManager;
+import hrm.model.FormDataException;
 import hrm.model.FormDataManager;
+import hrm.utils.Prompt;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Mock implementation of the SystemContext.
@@ -34,8 +38,8 @@ public class MockHRMSystemContext implements HRMSystemContext {
         public final FormDataManager            m_form_mgr;
         public final DispatcherManager          m_disp_mgr;
         
-        private static final String     COMP_DB = "/testdb/hrm_data_componet";
-        private static final String     FORM_DB = "/testdb/hrm_form_data";
+        private static final String     COMP_DB = "testdb/hrm_data_component";
+        private static final String     FORM_DB = "testdb/hrm_form_data";
         
         public MockHRMSystemContext(String system_root, String system_user, String system_passcode) 
                         throws SQLException, ClassNotFoundException {
@@ -48,8 +52,16 @@ public class MockHRMSystemContext implements HRMSystemContext {
         
         @Override
         public void free() {
-                DBDataComponentManager mgr = (DBDataComponentManager) m_comp_mgr;
-                mgr.free();
+                if (m_comp_mgr != null) {
+                        m_comp_mgr.free();
+                }
+                if (m_form_mgr != null) {
+                        try {
+                                m_form_mgr.free();
+                        } catch (FormDataException ex) {
+                                Prompt.log(Prompt.WARNING, getClass().toString(), ex.toString());
+                        }
+                }
         }
         
         @Override
