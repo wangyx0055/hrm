@@ -5,6 +5,32 @@ body {
     background-size: 	cover;
 }
 
+button.login-link {
+    background-color:	transparent;
+    border: 		none;
+    min-width:          60px;
+    height: 		50px;
+    line-height:	50px; 
+    color: 		darkslategray;
+}
+
+button.login-link:hover {
+    background:         radial-gradient(70px, rgba(200, 200, 200, 0.4) 40%, rgba(30, 30, 30, 0.8));
+    color:              lightcyan;
+    transition:		1s;
+}
+
+div.login-link {
+    position:           relative;
+    float:              right;
+    top:                3px;
+    right:              60px;
+    height: 		50px;
+    line-height:	50px;
+    min-width: 		20%;
+    background:         radial-gradient(80px, rgba(230,230,230,0.4) 40%, rgba(30,30,30,0.0));
+    text-align: 	center;
+}
 
 button.banner-menu {
     background-color:	transparent;
@@ -19,12 +45,6 @@ button.banner-menu:hover {
     transition:		1s;
 }
 
-div.login-link {
-	text-align: 	right; 
-	color: 		#E0E0E0; 
-	margin-right: 	20px;
-}
-
 div.banner {
     position: 		relative;
     height: 		50px;
@@ -35,21 +55,52 @@ div.banner {
     text-align: 	center;
 }
 
+div.dropdown-group {
+    position:           relative;
+    display:            inline-block;
+}
+
+div.dropdown-content {
+    display:            none;
+    position:           absolute;
+    background-color: 	rgba(0,0,0,0.6);
+    box-shadow: 	10px 10px 5px rgba(65, 80, 65, 0.6);
+    z-index:            999;
+    min-width:          200px;
+}
+
+div.dropdown-content a {
+    background-color:	transparent;
+    border: 		none;
+    color: 		darkgray;
+    text-decoration:    none;
+    display:            block;
+}
+
+div.dropdown-content a:hover {
+    background-color:	rgba(30, 30, 30, 0.8);
+    color:              lightcyan;
+    transition:		1s;
+}
+
+div.show {
+    display:            block;
+}
+
 h1.heading {
     position: 		relative;
-    background-size: 	cover;
     left: 		7%
 }
 
 div.two-sided {
-     position:		relative;
-     width: 		85%;
-     left: 		5%;
+    position:		relative;
+    width: 		85%;
+    left: 		5%;
 }
 
 div.left, div.right {
     float: 		left;
-    min-height:		400px;
+    min-height:		500px;
 }
 
 div.forum-board {
