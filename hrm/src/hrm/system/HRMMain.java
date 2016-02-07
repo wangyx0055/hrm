@@ -17,6 +17,7 @@
  */
 package hrm.system;
 
+import hrm.controller.HRMDispatcherServlet;
 import hrm.controller.HRMRequestFilter;
 import hrm.model.DataComponent;
 import hrm.model.DataComponentFactory;
@@ -49,7 +50,9 @@ import hrm.model.DataComponentManager;
  * @author davis
  */
 public class HRMMain implements ServletContextListener {
-
+        
+        public static final boolean DEBUG = true;
+        
         private static HRMSystemContext m_ctrl_ctx = null;
         private ServletContext m_servlet_ctx;
         private List<HRMBusinessPlugin> m_plugins;
@@ -80,10 +83,10 @@ public class HRMMain implements ServletContextListener {
                 // register servlets
                 Prompt.log(Prompt.NORMAL, getClass().toString(), "Initializing Servlets...");
                 String servlet_namespace = m_servlet_ctx.getInitParameter("servlet-namespace");
-//                ServletRegistration.Dynamic ds = m_servlet_ctx.addServlet(
-//                        "/" + servlet_namespace + "/DispatcherServlet", 
-//                        HRMDispatcherServlet.class);
-//                ds.addMapping("*.jsp");
+                ServletRegistration.Dynamic ds = m_servlet_ctx.addServlet(
+                        "/" + servlet_namespace + "/DispatcherServlet", 
+                        HRMDispatcherServlet.class);
+                ds.addMapping("*.jspx");
                 Map<String, ? extends ServletRegistration> servlets = m_servlet_ctx.getServletRegistrations();
                 for (String servlet_name : servlets.keySet()) {
                         ServletRegistration servlet_reg = servlets.get(servlet_name);
