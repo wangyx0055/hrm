@@ -26,10 +26,11 @@ import hrm.system.HRMBusinessPlugin;
 
 /**
  * Business specific project
+ *
  * @author davis
  */
 public class HRManagementLoader implements HRMBusinessPlugin {
-        
+
         public HRManagementLoader() {
         }
 
@@ -37,14 +38,14 @@ public class HRManagementLoader implements HRMBusinessPlugin {
         public void init(HRMSystemContext context) throws HRMBusinessPluginException {
                 // construct a dispatcher
                 Dispatcher dp = new Dispatcher();
-                dp.register_controller_call(new CtrlFormRetriever(), 
-                        "return-registration-form", Dispatcher.PageCategory.JspPage);
-                dp.register_controller_call(new CtrlFormSubmission(), 
-                        "submit-registration-form", Dispatcher.PageCategory.JspPage);
+                dp.register_controller_call(new CELogin(), CELogin.class.getSimpleName(),
+                                            Dispatcher.PageCategory.JspPage);
+                dp.register_controller_call(new CESignup(), CESignup.class.getSimpleName(),
+                                            Dispatcher.PageCategory.JspPage);
                 // upload the dispatcher
                 context.get_dispatcher_manager().add_dispatcher(dp);
         }
-        
+
         @Override
         public String get_name() {
                 return getClass().toString();

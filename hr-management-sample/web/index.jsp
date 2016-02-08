@@ -25,13 +25,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
         <title>HRM - Index Page</title>
     </head>
-    <body>
+    <body class="vernal">
         <div class="login-link">
             <button id="btn-login-link" class="login-link" type="button">login</button>
             <button id="btn-signup-link" class="login-link" type="button">sign up</button>
         </div>
-        <h1 class="heading">HRM 0.1 - Welcome</h1>
-        <div class="separator"></div>
+        <h1 id="txt-logo" class="heading">
+            <a class="no-decoration" href="index.jsp">HRM 0.1 - Welcome</a>
+        </h1>
         <div class="banner">
             <button id="btn-me-and-others" class="banner-menu" type="button">Me & others</button>
             <button id="btn-blog" class="banner-menu" type="button">Blog</button>
@@ -99,6 +100,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         </div>
 
         <script>
+            // redirect to proper index page
+            function load_window(event) {
+                //@todo: Do this later
+//                if (location.search.slice(1) === "") {
+//                    window.location.replace('index.jspx?login=false');
+//                }
+            }
+
             var g_current_dropdown = null;
 
             // utils
@@ -127,11 +136,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
             // button events
             function clk_login_link(event) {
-                alert("login");
+                //window.location.href = "login.jspx?call=CELogin&return=form_received";
+                window.location.href = "login.jsp";
             }
 
             function clk_signup_link(event) {
-                alert("signup");
+                window.location.href = "login.jspx?call=CESignup&return=form_received";
             }
 
             function clk_me_and_others(event) {
@@ -166,7 +176,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
             function clk_system_admin_access(event) {
             }
-
+            
+            window.onload = load_window;
+            document.getElementById("txt-logo").onclick = load_window;
             document.getElementById("btn-login-link").onclick = clk_login_link;
             document.getElementById("btn-signup-link").onclick = clk_signup_link;
             document.getElementById("btn-blog").onclick = clk_blog;
