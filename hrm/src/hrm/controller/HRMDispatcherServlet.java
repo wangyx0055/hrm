@@ -17,14 +17,12 @@
  */
 package hrm.controller;
 
-import hrm.controller.Dispatcher;
-import hrm.controller.DispatcherManager;
 import hrm.system.HRMMain;
 import hrm.utils.Attribute;
 import hrm.utils.Prompt;
 import hrm.view.JSPResolver;
 import java.io.IOException;
-import java.util.List;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletContext;
@@ -60,7 +58,7 @@ public class HRMDispatcherServlet extends HttpServlet {
                         System.out.println("Request for internal dispatcher servlet");
                         Prompt.log(Prompt.NORMAL, getClass().toString(), "HTTP request caught: " + request);
                 }
-                
+
                 // Block recursive request
                 String indicator = (String) request.getAttribute("is_self_forward");
                 if (indicator != null && indicator.equals("true")) {
@@ -72,10 +70,17 @@ public class HRMDispatcherServlet extends HttpServlet {
 
                 // construct a controller call
                 Map<String, String[]> params = request.getParameterMap();
-                CallerContext context = new CallerContext(request.getParameter("call"));
-                for (String param : params.keySet()) {
-                        context.add_parameter(new Attribute(param, params.get(param)));
+                String callee = request.getParameter("call");
+                CallerContext context = new CallerContext(callee == null ? "" : callee,
+                                                          request.getRequestURI().substring(
+                                                                  request.getContextPath().length()));
+                HttpSession session = request.getSession();
+                Enumeration<String> session_attris = session.getAttributeNames();
+                while (session_attris.hasMoreElements()) {
+                        String attri_name = session_attris.nextElement();
+                        params.put(attri_name, new String[]{(String) session.getAttribute(attri_name)});
                 }
+                context.set_parameters(params);
 
                 for (Dispatcher dp : dispatchers) {
                         // call the controller
@@ -87,7 +92,6 @@ public class HRMDispatcherServlet extends HttpServlet {
                         // return the value back to the view
                         Set<Attribute> attris = returned_value.get_session_attribute();
                         if (attris != null) {
-                                HttpSession session = request.getSession();
                                 for (Attribute attri : attris) {
                                         session.setAttribute(attri.get_name(), attri.get_object());
                                 }
@@ -100,7 +104,15 @@ public class HRMDispatcherServlet extends HttpServlet {
                         }
                         JSPResolver resolver = returned_value.get_resolver();
                         if (resolver != null) {
-                                request.setAttribute("jsp-resolver", resolver);
+                                String[] var_name = params.get("return");
+                                String s = resolver.toString();
+                                if (var_name != null) {
+                                        request.setAttribute(var_name[0], s);
+                                } else {
+                                        request.setAttribute("ret", s);
+                                        Prompt.log(Prompt.WARNING, getClass().toString(),
+                                                   "This call: " + callee + " has return value but ignored");
+                                }
                         }
                         try {
                                 ServletContext ctx = request.getServletContext();

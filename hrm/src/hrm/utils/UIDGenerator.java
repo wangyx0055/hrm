@@ -15,24 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
-
-import java.awt.event.ActionEvent;
+package hrm.utils;
 
 /**
- *
+ * Generate a non-persistent unique ID.
  * @author davis
  */
-public class CtrlFormQuery extends CalleeContext {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ReturnValue process(String action) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+public class UIDGenerator {
+        private static long UID = 0;
         
+        public synchronized static Long get_uid() {
+                return (Long) UID ++;
+        }
 }

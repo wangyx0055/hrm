@@ -21,6 +21,8 @@ import hrm.controller.CalleeContext;
 import hrm.controller.ReturnValue;
 import hrm.utils.Attribute;
 import hrm.utils.Element;
+import hrm.view.BasicJSPResolver;
+import hrm.view.JSPResolver;
 import java.awt.event.ActionEvent;
 import java.util.Set;
 
@@ -28,26 +30,41 @@ import java.util.Set;
  *
  * @author davis
  */
-public class CESignup extends CalleeContext {
+public class CEIndex extends CalleeContext {
 
-        @Override
-        public Set<Element> get_param_constraints() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        
+        private class Retrieval implements ReturnValue {
+
+                @Override
+                public String get_redirected_page_uri() {
+                        return null;
+                }
+
+                @Override
+                public Set<Attribute> get_session_attribute() {
+                        return null;
+                }
+
+                @Override
+                public Set<Attribute> get_requst_attribute() {
+                        return null;
+                }
+
+                @Override
+                public JSPResolver get_resolver() {
+                        return new BasicJSPResolver("login");
+                }
+                
         }
 
         @Override
-        public void add_params(Set<Attribute> attri) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ReturnValue get_return_value() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public ReturnValue process(String action) {
+                return new Retrieval();
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         
 }

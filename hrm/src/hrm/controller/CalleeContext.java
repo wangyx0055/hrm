@@ -18,8 +18,9 @@
 package hrm.controller;
 
 import hrm.utils.Attribute;
-import hrm.utils.Element;
 import hrm.view.JSPResolver;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,11 +30,12 @@ import java.util.Set;
  */
 public abstract class CalleeContext implements JSPResolverListener {
 
-        abstract public Set<Element> get_param_constraints();
-
-        abstract public void add_params(Set<Attribute> attri);
-
-        abstract public ReturnValue get_return_value();
+        /**
+         * Main processing method.
+         * @param action the action requested.
+         * @return the results.
+         */
+        abstract public ReturnValue process(String action);
 
         private JSPResolver m_resolver;
 
@@ -45,5 +47,58 @@ public abstract class CalleeContext implements JSPResolverListener {
         @Override
         public JSPResolver get_resolver() {
                 return m_resolver;
+        }
+        
+        private Map<String, String[]>  m_params = new HashMap<>();
+        private String m_incoming_uri = "";
+        
+        /**
+         * Helper method to set all required parameters.
+         * @param param one of the parameter to be requested.
+         */
+        public void require(Parameter param) {
+                String[] value = m_params.get(param.name());
+                param.assign(value);
+        }
+        
+        private class ReturnCleaner implements ReturnValue {
+                private final ReturnValue m_ret;
+                
+                public ReturnCleaner(ReturnValue ret) {
+                        m_ret = ret;
+                }
+                
+                @Override
+                public String get_redirected_page_uri() {
+                        String uri = m_ret.get_redirected_page_uri();
+                        if (uri == null) {
+                                uri = m_incoming_uri.replace(".jspx", ".jsp");
+                        }
+                        return uri;
+                }
+
+                @Override
+                public Set<Attribute> get_session_attribute() {
+                        return m_ret.get_session_attribute();
+                }
+
+                @Override
+                public Set<Attribute> get_requst_attribute() {
+                        return m_ret.get_requst_attribute();
+                }
+
+                @Override
+                public JSPResolver get_resolver() {
+                        return m_ret.get_resolver();
+                }
+                
+        }
+        
+        public ReturnValue get_return_value(Map<String, String[]> params, String incoming_uri) {
+                m_params = params;
+                m_incoming_uri = incoming_uri;
+                String[] action = params.get("action");
+                ReturnValue ret = process(action == null ? null : action[0]);
+                return new ReturnCleaner(ret);
         }
 }

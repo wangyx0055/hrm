@@ -17,18 +17,26 @@
  */
 package test;
 
+import hrm.view.UIBuilder;
+import hrm.view.UIBuilder.InsertionPoint;
+import hrm.view.UIBuilder.UINode;
+import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 /**
  *
  * @author davis
  */
 public class TestUIBuilder {
+        
+        @Rule public final TestName m_test_name = new TestName();
         
         public TestUIBuilder() {
         }
@@ -43,17 +51,114 @@ public class TestUIBuilder {
         
         @Before
         public void setUp() {
+                System.out.println("===================" + "Running Test Case: " + m_test_name.getMethodName() + "===================");
         }
         
         @After
         public void tearDown() {
+                System.out.println("===================" + "Finished Test case:" + m_test_name.getMethodName() + "===================");
         }
 
+
         @Test
-        public void build_and_visit_ui() {
+        public void build_and_output_ui() {
+                                String user_account = 
+"<!DOCTYPE html>\n" +
+"<html>\n" +
+"    <head>\n" +
+"        <meta charset=\"UTF-8\"/>\n" +
+"        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n" +
+"        <link rel=\"stylesheet\" href=\"css/tranquil.css\"/>\n" +
+"        <link rel=\"stylesheet\" href=\"css/emotionless.css\"/>\n" +
+"\n" +
+"        <title>HRM - Login</title>\n" +
+"    </head>\n" +
+"    <body class=\"emotionless\">\n" +
+"        <h1 class=\"heading\">\n" +
+"            <a class=\"no-decoration\" href=\"index.jsp\">HRM 0.1</a>\n" +
+"        </h1>\n" +
+"        <div id=\"DETAILED-ACCOUNT-MANAGEMENT-UI\"/>\n" +
+"    </body>\n" +
+"</html>";
+                
+                String login_html = 
+"<!DOCTYPE html>\n" +
+"<html>\n" +
+"    <head>\n" +
+"        <meta charset=\"UTF-8\"/>\n" +
+"        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n" +
+"        <link rel=\"stylesheet\" href=\"css/tranquil.css\"/>\n" +
+"        <link rel=\"stylesheet\" href=\"css/emotionless.css\"/>\n" +
+"\n" +
+"        <title>HRM - Account</title>\n" +
+"    </head>\n" +
+"    <body class=\"emotionless\">\n" +
+"        <div class=\"central\">\n" +
+"            <h2 class=\"heading-text\">HRM Login</h2>\n" +
+"            \n" +
+"            <div class=\"central-text\">Username</div>\n" +
+"            <input id=\"txb-user-name\" class=\"central-input\" type=\"text\"/>\n" +
+"            \n" +
+"            <div class=\"central-text\">Password</div>\n" +
+"            <input id=\"txb-password\" class=\"central-input\" type=\"password\"/>\n" +
+"            \n" +
+"            <button id=\"btn-login\" class=\"central-button\">login</button>\n" +
+"        </div>\n" +
+"    </body>\n" +
+"</html>";
+                String signup_html = 
+"<!DOCTYPE html>\n" +
+"<html>\n" +
+"    <head>\n" +
+"        <meta charset=\"UTF-8\"/>\n" +
+"        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n" +
+"        <link rel=\"stylesheet\" href=\"css/tranquil.css\"/>\n" +
+"        <link rel=\"stylesheet\" href=\"css/emotionless.css\"/>\n" +
+"\n" +
+"        <title>HRM - Account</title>\n" +
+"    </head>\n" +
+"    <body class=\"emotionless\">\n" +
+"        <div class=\"central\">\n" +
+"            <h2 class=\"heading-text\">HRM Signup</h2>\n" +
+"            \n" +
+"            <div class=\"central-text\">Username</div>\n" +
+"            <input id=\"txb-user-name\" class=\"central-input\" type=\"text\"/>\n" +
+"            \n" +
+"            <div class=\"central-text\">Password</div>\n" +
+"            <input id=\"txb-password\" class=\"central-input\" type=\"password\"/>\n" +
+"            <div class=\"central-text\">Retype password</div>\n" +
+"            <input id=\"txb-retype-password\" class=\"central-input\" type=\"password\"/>\n" +
+"            \n" +
+"            <div class=\"central-text\">Email Address</div>\n" +
+"            <input id=\"txb-email\" class=\"central-input\" type=\"text\"/>\n" +
+"            \n" +
+"            <button id=\"btn-signup\" class=\"central-button\">sign up</button>\n" +
+"        </div>\n" +
+"    </body>\n" +
+"</html>";
+                                
+                UIBuilder ui = new UIBuilder();
+                UINode root = ui.create_node(true, "root");
+                Map<String, UIBuilder.InsertionPoint> insps = root.insert_html(user_account, true);
+                
+                System.out.println("Insertion points generated: " + insps);
+                InsertionPoint insp = insps.get("DETAILED-ACCOUNT-MANAGEMENT-UI");
+                
+                System.out.println("Using login ui: ");
+                UINode mgm_ui = ui.create_node(false, "login ui");
+                mgm_ui.insert_html(login_html, false);
+                insp.link_ui_node(mgm_ui);
+                System.out.println("Resulting UI: \n" + root);
+                
+                System.out.println("Switching ui to signup: ");
+                UINode mgm_ui2 = ui.create_node(false, "signup ui");
+                mgm_ui.insert_html(signup_html, false);
+                insp.link_ui_node(mgm_ui);
+                System.out.println("Resulting UI: \n" + root);
+                
         }
         
         @Test
-        public void modify_ui() {
+        public void build_and_switch_ui() {
         }
 }

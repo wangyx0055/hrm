@@ -102,10 +102,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         <script>
             // redirect to proper index page
             function load_window(event) {
-                //@todo: Do this later
-//                if (location.search.slice(1) === "") {
-//                    window.location.replace('index.jspx?login=false');
-//                }
+                if (location.search.slice(1) === "") {
+                    //window.location.replace("index.jspx?call=CEIndex&action=retrieve");
+                }
             }
 
             var g_current_dropdown = null;
@@ -136,12 +135,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
             // button events
             function clk_login_link(event) {
-                //window.location.href = "login.jspx?call=CELogin&return=form_received";
-                window.location.href = "login.jsp";
+                window.location.href = "user-account.jspx?call=CEUserAccount&action=retrieve-login&return=form";
             }
 
             function clk_signup_link(event) {
-                window.location.href = "login.jspx?call=CESignup&return=form_received";
+                window.location.href = "user-account.jspx?call=CEUserAccount&action=retrieve-signup&return=form";
             }
 
             function clk_me_and_others(event) {

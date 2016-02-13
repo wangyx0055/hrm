@@ -15,24 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.controller;
-
-import java.awt.event.ActionEvent;
+package hrm.view;
 
 /**
  *
  * @author davis
  */
-public class CtrlFormQuery extends CalleeContext {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ReturnValue process(String action) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+public class BasicJSPResolver extends JSPResolver {
         
+        private final String    m_name;
+        
+        public BasicJSPResolver(String name) {
+                m_name = name;
+        }
+
+        @Override
+        public String get_name() {
+                return m_name;
+        }
 }

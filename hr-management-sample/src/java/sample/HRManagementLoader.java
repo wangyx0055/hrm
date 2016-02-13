@@ -17,8 +17,6 @@
  */
 package sample;
 
-import hrm.controller.CtrlFormRetriever;
-import hrm.controller.CtrlFormSubmission;
 import hrm.controller.Dispatcher;
 import hrm.system.HRMSystemContext;
 import hrm.system.HRMBusinessPluginException;
@@ -38,9 +36,7 @@ public class HRManagementLoader implements HRMBusinessPlugin {
         public void init(HRMSystemContext context) throws HRMBusinessPluginException {
                 // construct a dispatcher
                 Dispatcher dp = new Dispatcher();
-                dp.register_controller_call(new CELogin(), CELogin.class.getSimpleName(),
-                                            Dispatcher.PageCategory.JspPage);
-                dp.register_controller_call(new CESignup(), CESignup.class.getSimpleName(),
+                dp.register_controller_call(new CEUserAccount(), CEUserAccount.class.getSimpleName(),
                                             Dispatcher.PageCategory.JspPage);
                 // upload the dispatcher
                 context.get_dispatcher_manager().add_dispatcher(dp);

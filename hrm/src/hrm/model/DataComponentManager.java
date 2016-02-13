@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public interface DataComponentManager {
         
-        public boolean add_system_component(DataComponent preset);
+        public boolean add_system_component(DataComponent comp);
         
         public DataComponent get_system_component(String name);
         

@@ -17,9 +17,7 @@
  */
 package hrm.controller;
 
-import hrm.utils.Attribute;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Helper method to define a call request with caller name and parameters.
@@ -28,22 +26,28 @@ import java.util.Set;
  */
 public class CallerContext {
 
-        private final String m_caller;
-        private final Set<Attribute> m_attri = new HashSet();
+        private final String m_callee;
+        private final String m_caller_uri;
+        private Map<String, String[]> m_attris;
 
-        public CallerContext(String caller) {
-                m_caller = caller;
+        public CallerContext(String callee, String caller_uri) {
+                m_callee = callee;
+                m_caller_uri = caller_uri;
         }
 
-        public void add_parameter(Attribute attri) {
-                m_attri.add(attri);
+        public void set_parameters(Map<String, String[]> attris) {
+                m_attris = attris;
         }
         
-        public Set<Attribute> get_attributes() {
-                return m_attri;
+        public Map<String, String[]> get_parameters() {
+                return m_attris;
         }
         
-        public String whos_the_caller() {
-                return m_caller;
-        } 
+        public String whos_the_callee() {
+                return m_callee;
+        }
+        
+        public String caller_uri() {
+                return m_caller_uri;
+        }
 }

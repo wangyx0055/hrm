@@ -32,7 +32,7 @@ html, body {
 div.central {
     position:           relative;
     width:              35%;
-    height:             75%;
+    min-height:         75%;
     margin-left:        -20%;
     margin-top:         -25%;
     top:                50%;
@@ -56,10 +56,10 @@ div.central-text {
     font-size:          18pt;
     font-family:        "Sans-serif";
     color:              darkgray;
-    margin-left:        8%;
     margin-top:         5%;
     margin-bottom:      5%;
     min-width:          80%;
+    margin-left:        8%;
 }
 
 input.central-input {
@@ -68,6 +68,7 @@ input.central-input {
     border:             none;
     border-bottom:      1px solid #808080;
     width:              80%;
+    margin-left:        8%;
 }
 
 button.central-button {
@@ -75,7 +76,7 @@ button.central-button {
     color:              lightcyan;
     position:           relative;
     margin-top:         25%;
-    left:               8%;
+    margin-left:        8%;
     padding:            8px;
     display:            block;
     border:             none;

@@ -17,10 +17,7 @@
  */
 package hrm.controller;
 
-import hrm.utils.Attribute;
-import hrm.utils.Element;
 import java.awt.event.ActionEvent;
-import java.util.Set;
 
 /**
  *
@@ -29,22 +26,12 @@ import java.util.Set;
 public class CtrlFormSubmission extends CalleeContext {
 
         @Override
-        public Set<Element> get_param_constraints() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void add_params(Set<Attribute> attri) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ReturnValue get_return_value() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
         public void actionPerformed(ActionEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ReturnValue process(String action) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         

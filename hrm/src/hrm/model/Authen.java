@@ -26,6 +26,9 @@ public class Authen extends DataComponent {
         public Authen(String name) {
                 super(name, DataComponentFactory.AUTHEN_COMPONENT);
         }
+        
+        public void authenticate_user(User user) {
+        }
 
         @Override
         public byte[] serialize() {
@@ -36,5 +39,4 @@ public class Authen extends DataComponent {
         public void deserialize(byte[] stream) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
 }

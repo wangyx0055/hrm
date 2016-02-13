@@ -43,6 +43,6 @@ public abstract class JSPResolver extends UIBuilder {
          */
         @Override
         public String toString() {
-                throw new UnsupportedOperationException();
+                return super.get_root_node().toString();
         }
 }

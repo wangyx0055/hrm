@@ -17,22 +17,28 @@
  */
 package hrm.controller;
 
-import java.awt.event.ActionEvent;
-
 /**
  *
  * @author davis
  */
-public class CtrlFormQuery extends CalleeContext {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ReturnValue process(String action) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+public class Parameter {
+        
+        private final String m_name;
+        private String[] m_values;
+        
+        public Parameter(String name) {
+                m_name = name;
         }
         
+        public String name() {
+                return m_name;
+        }
+        
+        public String[] values() {
+                return m_values;
+        }
+        
+        public void assign(String[] values) {
+                m_values = values;
+        }
 }

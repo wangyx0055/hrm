@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,18 +22,19 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
 /**
- * Test the HR Achieve Registration process.
+ *
  * @author davis
  */
-public class TestControllerDispatching {
+public class TestAuthen {
         
         @Rule public final TestName m_test_name = new TestName();
         
-        public TestControllerDispatching() {
+        public TestAuthen() {
         }
         
         @BeforeClass
@@ -55,12 +56,14 @@ public class TestControllerDispatching {
         }
 
         @Test
-        public void register_and_dispatch_call() {
-                String s = "index.jspx?call=CEIndex&action=retrieve";
-                System.out.println(s.replace(".jspx", ".jsp"));
+        public void user_password_authen() {
         }
         
         @Test
-        public void register_and_dispatch_pageflow() {
+        public void user_secure_token_authen() {
+        }
+        
+        @Test
+        public void authen_fails_for_low_priviledge() {
         }
 }

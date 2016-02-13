@@ -45,10 +45,9 @@ public class Dispatcher {
 
         public ReturnValue dispatch_jsp(CallerContext call) {
                 CalleeContext callee = 
-                        m_call_map[PageCategory.JspPage.ordinal()].get(call.whos_the_caller());
+                        m_call_map[PageCategory.JspPage.ordinal()].get(call.whos_the_callee());
                 if (callee == null) return null;
-                callee.add_params(call.get_attributes());
-                return callee.get_return_value();
+                return callee.get_return_value(call.get_parameters(), call.caller_uri());
         }
 
         public void register_controller_call(CalleeContext context, String mapped_call, PageCategory cate) {
