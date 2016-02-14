@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public class CEUserAccount extends CalleeContext {
         
-        private class Retrieval implements ReturnValue {
+        private class Retrieval extends ReturnValue {
                 
                 private final String m_which;
                 
@@ -77,7 +77,7 @@ public class CEUserAccount extends CalleeContext {
                 }  
         }
         
-        private class Submission implements ReturnValue {
+        private class Submission extends ReturnValue {
                 
                 private final String m_which;
                 

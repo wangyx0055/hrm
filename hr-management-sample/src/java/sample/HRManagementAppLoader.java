@@ -27,9 +27,9 @@ import hrm.system.HRMBusinessPlugin;
  *
  * @author davis
  */
-public class HRManagementLoader implements HRMBusinessPlugin {
+public class HRManagementAppLoader implements HRMBusinessPlugin {
 
-        public HRManagementLoader() {
+        public HRManagementAppLoader() {
         }
 
         @Override

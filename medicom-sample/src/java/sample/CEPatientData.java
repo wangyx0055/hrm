@@ -19,52 +19,30 @@ package sample;
 
 import hrm.controller.CalleeContext;
 import hrm.controller.ReturnValue;
-import hrm.utils.Attribute;
-import hrm.utils.Element;
-import hrm.view.BasicJSPResolver;
-import hrm.view.JSPResolver;
 import java.awt.event.ActionEvent;
-import java.util.Set;
 
 /**
  *
  * @author davis
  */
-public class CEIndex extends CalleeContext {
+public class CEPatientData extends CalleeContext {
 
-        
-        
-        private class Retrieval extends ReturnValue {
-
-                @Override
-                public String get_redirected_page_uri() {
-                        return null;
-                }
-
-                @Override
-                public Set<Attribute> get_session_attribute() {
-                        return null;
-                }
-
-                @Override
-                public Set<Attribute> get_requst_attribute() {
-                        return null;
-                }
-
-                @Override
-                public JSPResolver get_resolver() {
-                        return new BasicJSPResolver("login");
-                }
-                
+        public CEPatientData() {
         }
 
         @Override
         public ReturnValue process(String action) {
-                return new Retrieval();
+                switch (action) {
+                        case "upload": {
+                                return new ReturnValue() {};
+                        }
+                        default:
+                                return new ReturnValue() {};
+                }
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
 }

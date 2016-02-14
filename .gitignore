@@ -26,3 +26,6 @@ hs_err_pid*
 /hrm/src/dist/
 /hrm/src/build/
 /hrm/src/nbproject/private/
+/medicom-sample/nbproject/private/
+/medicom-sample/build/
+/medicom-sample/dist/

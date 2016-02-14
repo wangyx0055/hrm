@@ -61,7 +61,7 @@ public abstract class CalleeContext implements JSPResolverListener {
                 param.assign(value);
         }
         
-        private class ReturnCleaner implements ReturnValue {
+        private class ReturnCleaner extends ReturnValue {
                 private final ReturnValue m_ret;
                 
                 public ReturnCleaner(ReturnValue ret) {

@@ -5,7 +5,7 @@
     </listener>
     <context-param>
         <param-name>system-root</param-name>
-        <param-value>/home/davis/ServerData/hr-management-sample/</param-value>
+        <param-value>/home/davis/ServerData/medicom-sample/</param-value>
     </context-param>
     
     <context-param>
@@ -20,7 +20,7 @@
     
     <context-param>
         <param-name>servlet-namespace</param-name>
-        <param-value>hr-management-sample</param-value>
+        <param-value>medicom-sample</param-value>
     </context-param>
     
     <session-config>
