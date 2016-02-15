@@ -15,34 +15,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.view;
+package hrm.controller;
+
+import hrm.controller.JSPResolver;
+import java.util.List;
 
 /**
- * Resolve page element to JSP page.
+ * Containers for jsp resolvers.
  * @author davis
  */
-public abstract class JSPResolver extends UIBuilder {
+public interface JSPResolverManager {
         
-        /**
-         * @return unique name of the resolver.
-         */
-        abstract public String get_name();
+        public void add_resolver(JSPResolver resolver);
         
-        /**
-         * Partially resolve a page.
-         * @param group_name the group to be resolved.
-         * @return resolved JSP code.
-         */
-        public String resolve_group(String group_name) {
-                throw new UnsupportedOperationException();
-        }
+        public void get_resolver(String name);
         
-        /**
-         * Resolve the entire page.
-         * @return resolved JSP code.
-         */
-        @Override
-        public String toString() {
-                return super.get_root_node().toString();
-        }
+        public List<JSPResolver> get_all_resolvers();
 }

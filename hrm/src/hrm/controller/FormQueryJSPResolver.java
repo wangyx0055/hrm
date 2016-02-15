@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 davis
+ * Copyright (C) 2016 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,19 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.view;
-
-import java.util.List;
+package hrm.controller;
 
 /**
- * Containers for jsp resolvers.
+ *
  * @author davis
  */
-public interface JSPResolverManager {
+public class FormQueryJSPResolver {
         
-        public void add_resolver(JSPResolver resolver);
-        
-        public void get_resolver(String name);
-        
-        public List<JSPResolver> get_all_resolvers();
 }

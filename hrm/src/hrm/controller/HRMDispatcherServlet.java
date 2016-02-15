@@ -20,17 +20,22 @@ package hrm.controller;
 import hrm.system.HRMMain;
 import hrm.utils.Attribute;
 import hrm.utils.Prompt;
-import hrm.view.JSPResolver;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 /**
  * Handling a form request. This servlet takes in request from JSP and dispatch
@@ -38,6 +43,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author davis
  */
+@MultipartConfig
 public class HRMDispatcherServlet extends HttpServlet {
 
         public HRMDispatcherServlet() {
@@ -65,23 +71,40 @@ public class HRMDispatcherServlet extends HttpServlet {
                         throw new ServletException(
                                 "Self forward request will lead to infinite recursive call!");
                 }
-                DispatcherManager mgr = HRMMain.get_system_context().get_dispatcher_manager();
-                Set<Dispatcher> dispatchers = mgr.get_all_dispatchers();
-
-                // construct a controller call
+                // gather parameters/attributes
                 Map<String, String[]> params = request.getParameterMap();
-                String callee = request.getParameter("call");
-                CallerContext context = new CallerContext(callee == null ? "" : callee,
-                                                          request.getRequestURI().substring(
-                                                                  request.getContextPath().length()));
                 HttpSession session = request.getSession();
                 Enumeration<String> session_attris = session.getAttributeNames();
                 while (session_attris.hasMoreElements()) {
                         String attri_name = session_attris.nextElement();
                         params.put(attri_name, new String[]{(String) session.getAttribute(attri_name)});
                 }
+                // gather multipart data
+                List<DataPart> data_parts = new ArrayList<>();
+                try {
+                        Collection<Part> file_parts = request.getParts();
+                        for (Part file_part : file_parts) {
+                                String file_name = file_part.getSubmittedFileName();
+                                InputStream data_stream = file_part.getInputStream();
+                                data_parts.add(new DataPart(file_name, data_stream));
+                        }
+                } catch (IOException | ServletException ex) {
+                        if (HRMMain.DEBUG)
+                                Prompt.log(Prompt.NORMAL, getClass().toString(), 
+                                           "Data file not supplied: " + ex.getMessage());
+                }
+                
+                // construct a controller call
+                String callee = request.getParameter("call");
+                CallerContext context = new CallerContext(callee == null ? "" : callee,
+                                                          request.getRequestURI().substring(
+                                                                  request.getContextPath().length()));
                 context.set_parameters(params);
-
+                context.set_data_streams(data_parts);
+                
+                // dispatch the call
+                DispatcherManager mgr = HRMMain.get_system_context().get_dispatcher_manager();
+                Set<Dispatcher> dispatchers = mgr.get_all_dispatchers();
                 for (Dispatcher dp : dispatchers) {
                         // call the controller
                         ReturnValue returned_value = dp.dispatch_jsp(context);

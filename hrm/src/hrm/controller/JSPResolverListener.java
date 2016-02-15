@@ -17,7 +17,6 @@
  */
 package hrm.controller;
 
-import hrm.view.JSPResolver;
 import java.awt.event.ActionListener;
 
 /**

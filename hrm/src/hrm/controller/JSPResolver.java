@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 davis
+ * Copyright (C) 2015 davis
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,22 +15,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package hrm.view;
+package hrm.controller;
+
+import hrm.view.UIBuilder;
 
 /**
- *
+ * Resolve page element to JSP page.
  * @author davis
  */
-public class BasicJSPResolver extends JSPResolver {
+public abstract class JSPResolver extends UIBuilder {
         
-        private final String    m_name;
+        /**
+         * @return unique name of the resolver.
+         */
+        abstract public String get_name();
         
-        public BasicJSPResolver(String name) {
-                m_name = name;
+        /**
+         * Partially resolve a page.
+         * @param group_name the group to be resolved.
+         * @return resolved JSP code.
+         */
+        public String resolve_group(String group_name) {
+                throw new UnsupportedOperationException();
         }
-
+        
+        /**
+         * Resolve the entire page.
+         * @return resolved JSP code.
+         */
         @Override
-        public String get_name() {
-                return m_name;
+        public String toString() {
+                return super.get_root_node().toString();
         }
 }

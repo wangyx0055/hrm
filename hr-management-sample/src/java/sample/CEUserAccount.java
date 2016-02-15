@@ -21,8 +21,8 @@ import hrm.controller.CalleeContext;
 import hrm.controller.Parameter;
 import hrm.controller.ReturnValue;
 import hrm.utils.Attribute;
-import hrm.view.BasicJSPResolver;
-import hrm.view.JSPResolver;
+import hrm.controller.BasicJSPResolver;
+import hrm.controller.JSPResolver;
 import hrm.view.UIBuilder.InsertionPoint;
 import hrm.view.UIBuilder.UINode;
 import java.awt.event.ActionEvent;
@@ -111,7 +111,7 @@ public class CEUserAccount extends CalleeContext {
         private final Parameter         remember_me = new Parameter("remember-me");
 
         @Override
-        public ReturnValue process(String action) {
+        public ReturnValue process(String action) throws Exception {
                 switch (action) {
                         case "retrieve-login":
                                 return new Retrieval("login");

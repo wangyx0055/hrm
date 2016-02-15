@@ -17,29 +17,20 @@
  */
 package hrm.controller;
 
-import hrm.utils.Attribute;
-import java.util.Set;
-
 /**
- * Helper method to store returned information from a controller.
  *
  * @author davis
  */
-public abstract class ReturnValue {
-
-        public String get_redirected_page_uri() {
-                return null;
+public class BasicJSPResolver extends JSPResolver {
+        
+        private final String    m_name;
+        
+        public BasicJSPResolver(String name) {
+                m_name = name;
         }
 
-        public Set<Attribute> get_session_attribute() {
-                return null;
-        }
-
-        public Set<Attribute> get_requst_attribute() {
-                return null;
-        }
-
-        public JSPResolver get_resolver() {
-                return null;
+        @Override
+        public String get_name() {
+                return m_name;
         }
 }

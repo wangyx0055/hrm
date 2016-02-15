@@ -18,8 +18,10 @@
 package sample;
 
 import hrm.controller.CalleeContext;
+import hrm.controller.DataPart;
 import hrm.controller.ReturnValue;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 /**
  *
@@ -31,10 +33,16 @@ public class CEPatientData extends CalleeContext {
         }
 
         @Override
-        public ReturnValue process(String action) {
+        public ReturnValue process(String action) throws Exception {
                 switch (action) {
                         case "upload": {
+                                List<DataPart> raw_data_parts = require_data_streams();
+                                for (DataPart raw_data : raw_data_parts) {
+                                        System.out.println(raw_data);
+                                }
                                 return new ReturnValue() {};
+                        }
+                        case "query": {
                         }
                         default:
                                 return new ReturnValue() {};

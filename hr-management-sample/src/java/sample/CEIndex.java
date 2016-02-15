@@ -21,8 +21,8 @@ import hrm.controller.CalleeContext;
 import hrm.controller.ReturnValue;
 import hrm.utils.Attribute;
 import hrm.utils.Element;
-import hrm.view.BasicJSPResolver;
-import hrm.view.JSPResolver;
+import hrm.controller.BasicJSPResolver;
+import hrm.controller.JSPResolver;
 import java.awt.event.ActionEvent;
 import java.util.Set;
 

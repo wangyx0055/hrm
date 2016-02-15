@@ -18,8 +18,11 @@
 package hrm.controller;
 
 import hrm.utils.FA;
+import hrm.utils.Prompt;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This will dispatch the call with caller information to the correct callee.
@@ -47,7 +50,16 @@ public class Dispatcher {
                 CalleeContext callee = 
                         m_call_map[PageCategory.JspPage.ordinal()].get(call.whos_the_callee());
                 if (callee == null) return null;
-                return callee.get_return_value(call.get_parameters(), call.caller_uri());
+                try {
+                        return callee.get_return_value(call.get_parameters(),
+                                                       call.get_data_streams(),
+                                                       call.caller_uri());
+                } catch (Exception ex) {
+                        Prompt.log(Prompt.WARNING, getClass().toString(), 
+                                   "Exception encountered when processing the callee: " + callee +
+                                   ", Details: " + ex.getMessage());
+                        return null;
+                }
         }
 
         public void register_controller_call(CalleeContext context, String mapped_call, PageCategory cate) {

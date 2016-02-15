@@ -17,6 +17,8 @@
  */
 package hrm.controller;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +31,8 @@ public class CallerContext {
         private final String m_callee;
         private final String m_caller_uri;
         private Map<String, String[]> m_attris;
-
+        private List<DataPart> m_parts;
+        
         public CallerContext(String callee, String caller_uri) {
                 m_callee = callee;
                 m_caller_uri = caller_uri;
@@ -49,5 +52,13 @@ public class CallerContext {
         
         public String caller_uri() {
                 return m_caller_uri;
+        }
+
+        public void set_data_streams(List<DataPart> data_parts) {
+                m_parts = data_parts;
+        }
+        
+        public List<DataPart> get_data_streams() {
+                return m_parts;
         }
 }
