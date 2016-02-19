@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 body.nature {
-    background-image: 	url("../img/background-sunflower.jpg");
+    background-image: 	url("../img/hilltop.jpg");
     background-color: 	#cccccc;
     background-repeat: 	no-repeat;
     background-size: 	cover;
@@ -65,6 +65,21 @@ button.classic {
 }
 
 button.classic:hover {
+    background:         rgba(230, 230, 230, 0.5);
+    color:              lightcyan;
+    transition:		1s;
+}
+
+button.classic-fill-width {
+        background-color:   rgba(250, 250, 250, 0.3);
+        border:             none;
+        height:             40px;
+        line-height:        40px;
+        color:              darkslategrey;
+        width:              100%;
+}
+
+button.classic-fill-width:hover{
     background:         rgba(230, 230, 230, 0.5);
     color:              lightcyan;
     transition:		1s;
@@ -151,7 +166,6 @@ div.left, div.right {
 
 div.forum-board {
     width: 		30%;
-    background: 	linear-gradient(to left, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.7) 100%);
 }
 
 div.reminder-list {
@@ -160,15 +174,14 @@ div.reminder-list {
 }
 
 div.content-board {
-    margin-left:	7%;
+    margin-left:	3%;
     padding-top:	10px;
     padding-bottom:	10px;
     padding-left:	10px;
     padding-right:	10px;
-    background-color:	rgba(220, 220, 200, 0.5);
+    background-color:	rgba(220, 220, 200, 0.3);
     border-radius: 	15px;
     box-shadow: 	10px 10px 5px rgba(65, 80, 65, 0.6);
-    width:		85%;
 }
 
 .content-box {
