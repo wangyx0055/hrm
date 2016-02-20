@@ -13,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" href="css/simplicity.css">
         <script src='js/d3/d3.js'></script>
-
+        <script src='js/hrm.js'></script>
     </head>
     <body class="nature">
         <h1 id="txt-logo" class="heading">
@@ -59,33 +59,6 @@
         </div>
 
         <script>
-            function file_uploader(files, url_call, on_ready_callback, info) {
-                var xhr = new XMLHttpRequest();
-                xhr.addEventListener('progress', function (e) {
-                    var done = e.position || e.loaded, total = e.totalSize || e.total;
-                    console.log('xhr progress: ' + (Math.floor(done / total * 1000) / 10) + '%');
-                }, false);
-                if (xhr.upload) {
-                    xhr.upload.onprogress = function (e) {
-                        var done = e.position || e.loaded, total = e.total || e.total;
-                        console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' +
-                                (Math.floor(done / total * 1000) / 10) + '%');
-                    };
-                }
-                xhr.onreadystatechange = function (e) {
-                    if (4 === this.readyState) {
-                        console.log(['xhr upload complete', e]);
-                        on_ready_callback(info);
-                    }
-                };
-                var formData = new FormData();
-                for (var i = 0; i < files.length; i++) {
-                    formData.append("file", files[i], files[i].name);
-                }
-                xhr.open('post', url_call);
-                xhr.send(formData);
-            }
-
             function d3_chart_init(dst_elm) {
                 dst_elm.style.backgroundColor = 'rgba(255,255,255,1)';
                 var width = dst_elm.offsetWidth;
@@ -124,38 +97,27 @@
                 alert('files has been uploaded');
             }
 
-            var g_files = null;
-            var g_curr_patient = null;
-
             function clk_patient_button(e) {
                 alert(this.id);
             }
 
-            function clk_set_file_path(e) {
-                g_files = document.getElementById("ipt-file-select").files;
-            }
-
             function clk_upload_file(e) {
-                file_uploader(g_files,
-                        "patient-info.jspx?call=CEPatientData&action=upload",
-                        on_file_uploaded, null);
-            }
-            
-            function focus_search_box(e) {
-                this.value = "";
-            }
-            
-            function defocus_search_box(e) {
-                this.value = "Search";
+                var datatransfer = new hrm.DataTransfer();
+                var file_select = document.getElementById("ipt-file-select");
+                if (file_select.files.length === 0) {
+                    alert('You have not selected any files');
+                    return ;
+                }
+                datatransfer.upload_files(file_select.files,
+                                          "patient-info.jspx?call=CEPatientData&action=upload",
+                                          on_file_uploaded, null);
             }
 
             function page_load() {
                 document.getElementById('btn-upload').onclick = clk_upload_file;
-                document.getElementById('ipt-file-select').onchange = clk_set_file_path;
                 document.getElementById('btn-01').onclick = clk_patient_button;
-                document.getElementById('txt-search').onfocus = focus_search_box;
-                document.getElementById('txt-search').onblur = defocus_search_box;
-
+                
+                hrmui.InputHint(document.getElementById('txt-search'), 'Search');
                 d3_chart_init(document.getElementById('charting-area'));
             }
 
