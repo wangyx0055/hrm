@@ -68,4 +68,8 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-pre-init">
+    	<echo message="Copying client javascript library"/>
+    	<copy file="../hrm/src/hrm/client/hrm.js" todir="web/js/"/>
+    </target>
 </project>
