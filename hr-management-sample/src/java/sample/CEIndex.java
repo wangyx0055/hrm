@@ -53,7 +53,7 @@ public class CEIndex extends CalleeContext {
 
                 @Override
                 public JSPResolver get_resolver() {
-                        return new BasicJSPResolver("login");
+                        return null;
                 }
                 
         }

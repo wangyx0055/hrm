@@ -23,6 +23,7 @@ import hrm.controller.ReturnValue;
 import hrm.utils.Attribute;
 import hrm.controller.BasicJSPResolver;
 import hrm.controller.JSPResolver;
+import hrm.view.UIBuilder;
 import hrm.view.UIBuilder.InsertionPoint;
 import hrm.view.UIBuilder.UINode;
 import java.awt.event.ActionEvent;
@@ -60,20 +61,20 @@ public class CEUserAccount extends CalleeContext {
 
                 @Override
                 public JSPResolver get_resolver() {
-                        BasicJSPResolver resolver = new BasicJSPResolver("user-account");
-                        UINode root = resolver.create_node(true, "user-account");
+                        UIBuilder ui = new UIBuilder();
+                        UINode root = ui.create_node(true, "user-account");
                         
                         Map<String, InsertionPoint> insps = 
                                 root.insert_html(Assets.get_user_account_html_fragment(), true);
                         InsertionPoint insp = insps.get("DETAILED-ACCOUNT-MANAGEMENT-UI");
-                        UINode mgm_ui = resolver.create_node(false, "mgm-ui");
+                        UINode mgm_ui = ui.create_node(false, "mgm-ui");
                         if (m_which.equals("login")) {
                                 mgm_ui.insert_html(Assets.get_login_html_fragment(), false);
                         } else {
                                 mgm_ui.insert_html(Assets.get_signup_html_fragment(), false);
                         }
                         insp.link_ui_node(mgm_ui);
-                        return resolver;
+                        return new BasicJSPResolver("user-account", ui);
                 }  
         }
         

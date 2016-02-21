@@ -17,31 +17,15 @@
  */
 package hrm.controller;
 
-import hrm.view.UIBuilder;
-
 /**
- * Simple implementation of JSPResolver which takes in the UIBuilder and output
- * all the UI contained in it.
- *
+ * To store sessional data.
+ * The server may want to cache certain objects on sessional basis so that 
+ * it knows what had previously been done to a client session and perform appropriate actions.
+ * the object cached will be referenced by name.
+ * For example, those objects can be ReponseData and Authen.
+ * 
  * @author davis
  */
-public class BasicJSPResolver implements JSPResolver {
-
-        private final String m_name;
-        private final UIBuilder m_ui;
-
-        public BasicJSPResolver(String name, UIBuilder ui) {
-                m_name = name;
-                m_ui = ui;
-        }
-
-        @Override
-        public String get_name() {
-                return m_name;
-        }
-
-        @Override
-        public String toString() {
-                return m_ui.get_root_node().generate_ui();
-        }
+public class Session {
+        
 }

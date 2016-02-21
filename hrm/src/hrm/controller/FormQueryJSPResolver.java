@@ -17,10 +17,31 @@
  */
 package hrm.controller;
 
+import hrm.model.FormData;
+import hrm.view.UIBuilder;
+import java.util.Collection;
+
 /**
- *
+ * A JSPResolver implementation to resolve query results. 
+ * It takes in a collection of FormData query results and reproduce the same amount of UIs '
+ * such that each of which is linked with the query result. This is useful when the set 
+ * of UI content is dependent of some query results.
+ * 
  * @author davis
  */
-public class FormQueryJSPResolver {
+public class FormQueryJSPResolver implements JSPResolver {
+        
+        public FormQueryJSPResolver(Collection<FormData> formdatas, UIBuilder ui) {
+        }
+                
+        @Override
+        public String get_name() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+        @Override
+        public String toString() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
         
 }

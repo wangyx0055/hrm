@@ -17,34 +17,23 @@
  */
 package hrm.controller;
 
-import hrm.view.UIBuilder;
-
 /**
- * Resolve page element to JSP page.
+ * Represents one type of ResponseData that can be visualized in the form of JSP page.
+ * A JSPResolver will return JSP code as string through the toString method.
+ * 
  * @author davis
  */
-public abstract class JSPResolver extends UIBuilder {
+public interface JSPResolver extends ResponseData {
         
         /**
          * @return unique name of the resolver.
          */
-        abstract public String get_name();
-        
-        /**
-         * Partially resolve a page.
-         * @param group_name the group to be resolved.
-         * @return resolved JSP code.
-         */
-        public String resolve_group(String group_name) {
-                throw new UnsupportedOperationException();
-        }
+        public String get_name();
         
         /**
          * Resolve the entire page.
          * @return resolved JSP code.
          */
         @Override
-        public String toString() {
-                return super.get_root_node().toString();
-        }
+        public String toString();
 }

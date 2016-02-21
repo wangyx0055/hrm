@@ -54,30 +54,31 @@ public class UIBuilder {
                 LabeledDropDownList,
                 LineBreak
         }
-        
+
         public class InsertionPoint {
-                private final String            m_id;
-                private final Element           m_elm;
-                private UINode                  m_node;
-                
+
+                private final String m_id;
+                private final Element m_elm;
+                private UINode m_node;
+
                 public InsertionPoint(String id, Element elm) {
                         m_id = id;
                         m_elm = elm;
                         m_node = null;
                 }
-                
+
                 public void link_ui_node(UINode node) {
                         m_node = node;
                 }
-                
+
                 public UINode node_2b_inserted() {
                         return m_node;
                 }
-                
+
                 public Element insertion_spot() {
                         return m_elm;
                 }
-                
+
                 @Override
                 public boolean equals(Object o) {
                         if (o instanceof String) {
@@ -94,7 +95,7 @@ public class UIBuilder {
                         return hash;
                 }
         }
-        
+
         public class UINode {
 
                 private final String m_id;
@@ -105,20 +106,20 @@ public class UIBuilder {
                 Map<String, InsertionPoint> m_ins_points = new HashMap<>();
                 private boolean is_dirty = true;
                 private String m_cached_html = "";
-                
+
                 private void touch() {
                         is_dirty = true;
                 }
-                
+
                 private boolean is_touched() {
                         return is_dirty;
                 }
-                
+
                 private void save(String html) {
                         m_cached_html = html;
                         is_dirty = false;
                 }
-                
+
                 private UINode(String id, String name) {
                         m_id = id;
                         m_name = name;
@@ -178,7 +179,7 @@ public class UIBuilder {
                         hash = 79 * hash + Objects.hashCode(this.m_id);
                         return hash;
                 }
-                
+
                 private Element finalize_body(UINode node) {
                         if (node == null) {
                                 return null;
@@ -199,41 +200,59 @@ public class UIBuilder {
                  *
                  * @return
                  */
-                @Override
-                public String toString() {
+                public String generate_ui() {
 //                        if (!is_touched()) {
 //                                return m_cached_html;
 //                        } else {
-                                finalize_body(this);
-                                XMLOutputter xout = new XMLOutputter();
-                                StringWriter sw = new StringWriter();
-                                try {
-                                        xout.output(m_doc, sw);
-                                } catch (IOException ex) {
-                                        Prompt.log(Prompt.ERROR, getClass().toString(),
-                                                   "Failed to generate html: " + ex.getMessage());
-                                }
-                                save(sw.toString());
-                                return sw.toString();
+                        finalize_body(this);
+                        XMLOutputter xout = new XMLOutputter();
+                        StringWriter sw = new StringWriter();
+                        try {
+                                xout.output(m_body, sw);
+                        } catch (IOException ex) {
+                                Prompt.log(Prompt.ERROR, getClass().toString(),
+                                           "Failed to generate html: " + ex.getMessage());
+                        }
+                        //save(sw.toString());
+                        return sw.toString();
 //                        }
                 }
                 
+                public String generate_page() {
+//                        if (!is_touched()) {
+//                                return m_cached_html;
+//                        } else {
+                        finalize_body(this);
+                        XMLOutputter xout = new XMLOutputter();
+                        StringWriter sw = new StringWriter();
+                        try {
+                                xout.output(m_doc, sw);
+                        } catch (IOException ex) {
+                                Prompt.log(Prompt.ERROR, getClass().toString(),
+                                           "Failed to generate html: " + ex.getMessage());
+                        }
+                        //save(sw.toString());
+                        return sw.toString();
+//                        }
+                }
+
                 private void append_html_element(Element parent, List<Element> html1) {
                         List<Element> backup = new LinkedList<>(html1);
                         for (Element elm : backup) {
                                 parent.addContent(elm.detach());
                         }
                 }
-                
+
                 private static final String MONITORED_TAG = "div";
-                
+
                 private void generate_insertion_points(Element elm, Map<String, InsertionPoint> insert) {
                         List<Element> children = elm.getChildren();
                         for (Element node : children) {
                                 if (node.getName().equals(MONITORED_TAG)) {
                                         Attribute id = node.getAttribute("id");
-                                        if (id == null || !id.isSpecified())
+                                        if (id == null || !id.isSpecified()) {
                                                 continue;
+                                        }
                                         InsertionPoint p = new InsertionPoint(id.getValue(), node);
                                         insert.put(id.getValue(), p);
                                 }
@@ -243,7 +262,7 @@ public class UIBuilder {
 
                 public Map<String, InsertionPoint> insert_html(String html_frag, boolean insert_header) {
                         touch();
-                        
+
                         SAXBuilder sax = new SAXBuilder();
                         Document doc;
                         try {
@@ -290,7 +309,7 @@ public class UIBuilder {
         public UINode get_node_by_id(String id) {
                 return m_nodes.get(id);
         }
-        
+
         public UINode get_root_node() {
                 return m_root;
         }

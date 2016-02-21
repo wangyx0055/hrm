@@ -17,31 +17,16 @@
  */
 package hrm.controller;
 
-import hrm.view.UIBuilder;
-
 /**
- * Simple implementation of JSPResolver which takes in the UIBuilder and output
- * all the UI contained in it.
- *
+ * Represents one type of ResponseData that describe the status of certain business element.
+ * The status of each element can be used to affect the state of page elements once 
+ * this descriptor is passed to the client and if that client put those page elements
+ * under control.
+ * 
  * @author davis
  */
-public class BasicJSPResolver implements JSPResolver {
-
-        private final String m_name;
-        private final UIBuilder m_ui;
-
-        public BasicJSPResolver(String name, UIBuilder ui) {
-                m_name = name;
-                m_ui = ui;
-        }
-
-        @Override
-        public String get_name() {
-                return m_name;
-        }
-
-        @Override
-        public String toString() {
-                return m_ui.get_root_node().generate_ui();
+public class ElementDescriptor implements ResponseData {
+        
+        public ElementDescriptor() {
         }
 }
