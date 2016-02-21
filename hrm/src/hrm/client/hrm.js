@@ -179,17 +179,29 @@ var hrm = {
                  * @returns {undefined}
                  */
                 this.clear = function() {
-                        this.__target.innerHTML = '';
+                        if (this.__target !== null)
+                                this.__target.innerHTML = '';
                 };
+                /**
+                 * Find a way to present the data
+                 * @param {var} data
+                 * @param {string} format
+                 * @param {bool} to_append
+                 * @returns {void}
+                 */
                 this.__presentdata = function(data, format, to_append) {
                         if (!to_append) {
                                 this.clear();
                         }
                         switch (format) {
-                                case 'html':
+                                case 'ui':
                                 {
                                         this.__target += data;
                                         break;
+                                }
+                                case 'page':
+                                {
+                                        document.body.innerHTML = data;
                                 }
                                 case 'bar-chart':
                                 {

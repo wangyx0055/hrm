@@ -23,7 +23,6 @@ import hrm.utils.Serializable;
 import hrm.utils.Serializer;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,11 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * Construct a query.
+ * To construct a query. A query is used to fetch, store and remove pieces of FormData 
+ * in FormDataManager. It specifies the relational information of the keys which can 
+ * confine the locations where the FormData can be extracted from/stored in.
+ * It also store the full set of keys. With these keys and the name of the query,
+ * a relational table in FormDataManager can be uniquely associated.
  *
  * @author davis
  */

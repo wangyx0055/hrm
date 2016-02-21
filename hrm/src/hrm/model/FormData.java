@@ -17,7 +17,6 @@
  */
 package hrm.model;
 
-import hrm.utils.Attribute;
 import hrm.utils.Element;
 import hrm.utils.Pair;
 import hrm.utils.Prompt;
@@ -25,15 +24,18 @@ import hrm.utils.RMIConstructor;
 import hrm.utils.RMIObj;
 import hrm.utils.Serializable;
 import hrm.utils.Serializer;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * To store form data.
+ * Represents a row of relational data. Each FormData consists of information of a row of named values.
+ * The names of the value should contain, at least but not limited to, all the name of the keys.
+ * FormDataManager is the container to store the pieces of FormData in the form of relational tables.
+ * It requires a FormQuery object to uniquely associate a relational table in the FormDataManager 
+ * in order to store the FormData in/fetch the FormData from the container.
  *
  * @author davis
  */
@@ -79,13 +81,23 @@ public class FormData implements Serializable {
                 }
                 return attris;
         }
-        
+
+        @Override
         public boolean equals(Object o) {
-                if (!(o instanceof FormData)) return false;
+                if (!(o instanceof FormData)) {
+                        return false;
+                }
                 FormData other = (FormData) o;
                 return m_attris.equals(other.m_attris);
         }
-        
+
+        @Override
+        public int hashCode() {
+                int hash = 3;
+                hash = 37 * hash + Objects.hashCode(this.m_attris);
+                return hash;
+        }
+
         @Override
         public String toString() {
                 return "FormData = [" + m_attris + "]";
@@ -119,8 +131,8 @@ public class FormData implements Serializable {
                                 m_attris.put(attri_name, obj);
                         } catch (Exception ex) {
                                 Prompt.log(Prompt.ERROR, getClass().toString(),
-                                        "Failed to reflexively construct the class: "
-                                        + class_name + ", Details: " + ex.getMessage());
+                                           "Failed to reflexively construct the class: "
+                                           + class_name + ", Details: " + ex.getMessage());
                         }
                 }
         }
