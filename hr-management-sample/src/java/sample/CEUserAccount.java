@@ -23,9 +23,9 @@ import hrm.controller.ReturnValue;
 import hrm.utils.Attribute;
 import hrm.controller.BasicJSPResolver;
 import hrm.controller.JSPResolver;
-import hrm.view.UIBuilder;
-import hrm.view.UIBuilder.InsertionPoint;
-import hrm.view.UIBuilder.UINode;
+import hrm.view.HtmlUIBuilder;
+import hrm.view.HtmlUIBuilder.InsertionPoint;
+import hrm.view.HtmlUIBuilder.UINode;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +61,7 @@ public class CEUserAccount extends CalleeContext {
 
                 @Override
                 public JSPResolver get_resolver() {
-                        UIBuilder ui = new UIBuilder();
+                        HtmlUIBuilder ui = new HtmlUIBuilder();
                         UINode root = ui.create_node(true, "user-account");
                         
                         Map<String, InsertionPoint> insps = 

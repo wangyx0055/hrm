@@ -22,13 +22,11 @@ import hrm.utils.UIDGenerator;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -42,7 +40,7 @@ import org.jdom2.output.XMLOutputter;
  *
  * @author davis
  */
-public class UIBuilder {
+public class HtmlUIBuilder {
 
         public enum UIElement {
                 Label,
@@ -292,9 +290,14 @@ public class UIBuilder {
         private UINode m_root = null;
         private final Map<String, UINode> m_nodes = new HashMap<>();
 
-        public interface Visitor {
+        public interface NodeVisitor {
 
                 public void node_visit(UINode node);
+        }
+        
+        public interface ElementVisitor {
+                
+                public void element_visit(Element elm);
         }
 
         public UINode create_node(boolean as_root, String name) {
@@ -313,8 +316,28 @@ public class UIBuilder {
         public UINode get_root_node() {
                 return m_root;
         }
+        
+        private void visit_node_dfs(UINode node, NodeVisitor visitor) {
+                if (node == null) return;
+                visitor.node_visit(node);
+                for (InsertionPoint insp : node.m_ins_points.values()) {
+                        visit_node_dfs(insp.m_node, visitor);
+                }
+        }
 
-        public void visit(Visitor visitor) {
-                throw new UnsupportedOperationException();
+        public void visit_nodes(NodeVisitor visitor) {
+                visit_node_dfs(get_root_node(), visitor);
+        }
+        
+        private void visit_element_dfs(Element element, ElementVisitor visitor) {
+                if (element == null) return;
+                visitor.element_visit(element);
+                for (Element elm : element.getChildren()) {
+                        visit_element_dfs(elm, visitor);
+                }
+        }
+        
+        public void visit_element(UINode node, ElementVisitor visitor) {
+                visit_element_dfs(node.m_body, visitor);
         }
 }

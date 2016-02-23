@@ -18,13 +18,13 @@
 package hrm.controller;
 
 import hrm.model.FormModule;
-import hrm.view.UIBuilder;
+import hrm.view.HtmlUIBuilder;
 
 /**
  * A JSPResolver implementation to resolve internal FormModule correspondence. 
- * It takes in a FormModule and UIBuilder then link the elements in the UIBuilder 
- * with the associated data in the FormModule. This is particularly useful if 
- * you want to deal with elements with preset information lie within the DataCompoenentManager.
+ * It takes in a FormModule and HtmlUIBuilder then link the elements in the HtmlUIBuilder 
+ with the associated data in the FormModule. This is particularly useful if 
+ you want to deal with elements with preset information lie within the DataCompoenentManager.
  *
  * @author davis
  */
@@ -34,9 +34,9 @@ public class FormModuleJSPResolver implements JSPResolver {
          * Constructor.
          *
          * @param m the FormModule.
-         * @param ui UIBuilder which contains UIs that have already configured.
+         * @param ui HtmlUIBuilder which contains UIs that have already configured.
          */
-        public FormModuleJSPResolver(FormModule m, UIBuilder ui) {
+        public FormModuleJSPResolver(FormModule m, HtmlUIBuilder ui) {
         }
         
         @Override

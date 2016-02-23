@@ -17,20 +17,20 @@
  */
 package hrm.controller;
 
-import hrm.view.UIBuilder;
+import hrm.view.HtmlUIBuilder;
 
 /**
- * Simple implementation of JSPResolver which takes in the UIBuilder and output
- * all the UI contained in it.
+ * Simple implementation of JSPResolver which takes in the HtmlUIBuilder and output
+ all the UI contained in it.
  *
  * @author davis
  */
 public class BasicJSPResolver implements JSPResolver {
 
         private final String m_name;
-        private final UIBuilder m_ui;
+        private final HtmlUIBuilder m_ui;
 
-        public BasicJSPResolver(String name, UIBuilder ui) {
+        public BasicJSPResolver(String name, HtmlUIBuilder ui) {
                 m_name = name;
                 m_ui = ui;
         }

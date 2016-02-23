@@ -18,7 +18,7 @@
 package hrm.controller;
 
 import hrm.model.FormData;
-import hrm.view.UIBuilder;
+import hrm.view.HtmlUIBuilder;
 import java.util.Collection;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Collection;
  */
 public class FormQueryJSPResolver implements JSPResolver {
         
-        public FormQueryJSPResolver(Collection<FormData> formdatas, UIBuilder ui) {
+        public FormQueryJSPResolver(Collection<FormData> formdatas, HtmlUIBuilder ui) {
         }
                 
         @Override

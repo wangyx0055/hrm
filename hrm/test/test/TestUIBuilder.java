@@ -17,9 +17,9 @@
  */
 package test;
 
-import hrm.view.UIBuilder;
-import hrm.view.UIBuilder.InsertionPoint;
-import hrm.view.UIBuilder.UINode;
+import hrm.view.HtmlUIBuilder;
+import hrm.view.HtmlUIBuilder.InsertionPoint;
+import hrm.view.HtmlUIBuilder.UINode;
 import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -137,9 +137,9 @@ public class TestUIBuilder {
 "    </body>\n" +
 "</html>";
                                 
-                UIBuilder ui = new UIBuilder();
+                HtmlUIBuilder ui = new HtmlUIBuilder();
                 UINode root = ui.create_node(true, "root");
-                Map<String, UIBuilder.InsertionPoint> insps = root.insert_html(user_account, true);
+                Map<String, HtmlUIBuilder.InsertionPoint> insps = root.insert_html(user_account, true);
                 
                 System.out.println("Insertion points generated: " + insps);
                 InsertionPoint insp = insps.get("DETAILED-ACCOUNT-MANAGEMENT-UI");
