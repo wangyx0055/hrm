@@ -22,6 +22,8 @@ import hrm.utils.UIDGenerator;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +44,7 @@ import org.jdom2.output.XMLOutputter;
  */
 public class HtmlUIBuilder {
 
-        public enum UIElement {
+        public enum UIElementTypes {
                 Label,
                 Entry,
                 LargeEntry,
@@ -93,6 +95,56 @@ public class HtmlUIBuilder {
                         return hash;
                 }
         }
+        
+        public class UIElement {
+                
+                private final Element m_elm;
+                private String m_id;
+                
+                private UIElement(Element elm) {
+                        m_elm = elm;
+                        String id = elm.getAttributeValue("id");
+                        m_id = id != null ? id : "";
+                }
+
+                public String get_id() {
+                        return m_id;
+                }
+                
+                private static final String TOKEN_DELIMINATOR = ",";
+                
+                public boolean has_category(String category) {
+                        String id = m_elm.getAttributeValue("id");
+                        return id != null ? id.startsWith(category) : false;
+                }
+                
+                public String[] tokenize_id() {
+                        return m_id.split(TOKEN_DELIMINATOR);
+                }
+                
+                public String get_uid(String[] tokens) {
+                        return tokens[1];
+                }
+                
+                public String element_renew_id(String category, String[] parameters) {
+                        StringBuilder s = new StringBuilder();
+                        s.append(category).append(TOKEN_DELIMINATOR);
+                        s.append(UIDGenerator.get_uid());
+                        if (parameters.length != 0) {
+                                s.append("-").append(parameters[0]);
+                                for (int i = 1; i < parameters.length; i ++) {
+                                        s.append("-").append(parameters[i]);
+                                }
+                        }
+                        m_id = s.toString();
+                        m_elm.setAttribute("id", m_id);
+                        return m_id;
+                }
+
+                private Element get_element() {
+                        return m_elm;
+                }
+        }
 
         public class UINode {
 
@@ -102,6 +154,7 @@ public class HtmlUIBuilder {
                 private final Element m_head = new Element("head");
                 private final Element m_body = new Element("body");
                 Map<String, InsertionPoint> m_ins_points = new HashMap<>();
+                Map<String, UIElement> m_uielms = new HashMap<>();
                 private boolean is_dirty = true;
                 private String m_cached_html = "";
 
@@ -215,7 +268,7 @@ public class HtmlUIBuilder {
                         return sw.toString();
 //                        }
                 }
-                
+
                 public String generate_page() {
 //                        if (!is_touched()) {
 //                                return m_cached_html;
@@ -243,8 +296,14 @@ public class HtmlUIBuilder {
 
                 private static final String MONITORED_TAG = "div";
 
-                private void generate_insertion_points(Element elm, Map<String, InsertionPoint> insert) {
+                private void generate_elements_and_insertion_points(
+                                                     Element elm, 
+                                                      Map<String, UIElement> uielms,
+                                                      Map<String, InsertionPoint> insert) {
                         List<Element> children = elm.getChildren();
+                        
+                        UIElement uielm = new UIElement(elm);
+                        uielms.put(uielm.get_id(), uielm);
                         for (Element node : children) {
                                 if (node.getName().equals(MONITORED_TAG)) {
                                         Attribute id = node.getAttribute("id");
@@ -254,7 +313,7 @@ public class HtmlUIBuilder {
                                         InsertionPoint p = new InsertionPoint(id.getValue(), node);
                                         insert.put(id.getValue(), p);
                                 }
-                                generate_insertion_points(node, insert);
+                                generate_elements_and_insertion_points(node, uielms, insert);
                         }
                 }
 
@@ -282,8 +341,31 @@ public class HtmlUIBuilder {
                                 append_html_element(m_head, head.getChildren());
                         }
                         append_html_element(m_body, body.getChildren());
-                        generate_insertion_points(m_body, m_ins_points);
+                        generate_elements_and_insertion_points(m_body, m_uielms, m_ins_points);
                         return m_ins_points;
+                }
+
+                public void visit_element(ElementVisitor visitor) {
+                        for (UIElement elm : m_uielms.values()) {
+                                visitor.element_visit(elm, this);
+                        }
+                }
+                
+                public void visit_element_dfs(Element elm, ElementVisitor visitor){
+                        if (elm == null) return;
+                        String id = elm.getAttributeValue("id");
+                        visitor.element_visit(m_uielms.get(id), this);
+                        for (Element child : elm.getChildren()) {
+                                visit_element_dfs(child, visitor);
+                        }
+                }
+                
+                public void visit_element(UIElement elm, ElementVisitor visitor) {
+                        visit_element_dfs(elm.get_element(), visitor);
+                }
+
+                public List<UIElement> duplicate(UIElement elm, int n) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
         }
 
@@ -292,12 +374,12 @@ public class HtmlUIBuilder {
 
         public interface NodeVisitor {
 
-                public void node_visit(UINode node);
+                public void node_visit(final UINode node);
         }
-        
+
         public interface ElementVisitor {
-                
-                public void element_visit(Element elm);
+
+                public void element_visit(UIElement elm, final UINode node);
         }
 
         public UINode create_node(boolean as_root, String name) {
@@ -316,9 +398,11 @@ public class HtmlUIBuilder {
         public UINode get_root_node() {
                 return m_root;
         }
-        
+
         private void visit_node_dfs(UINode node, NodeVisitor visitor) {
-                if (node == null) return;
+                if (node == null) {
+                        return;
+                }
                 visitor.node_visit(node);
                 for (InsertionPoint insp : node.m_ins_points.values()) {
                         visit_node_dfs(insp.m_node, visitor);
@@ -327,17 +411,5 @@ public class HtmlUIBuilder {
 
         public void visit_nodes(NodeVisitor visitor) {
                 visit_node_dfs(get_root_node(), visitor);
-        }
-        
-        private void visit_element_dfs(Element element, ElementVisitor visitor) {
-                if (element == null) return;
-                visitor.element_visit(element);
-                for (Element elm : element.getChildren()) {
-                        visit_element_dfs(elm, visitor);
-                }
-        }
-        
-        public void visit_element(UINode node, ElementVisitor visitor) {
-                visit_element_dfs(node.m_body, visitor);
         }
 }

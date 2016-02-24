@@ -26,4 +26,7 @@ public interface RMIObj extends Serializable {
         abstract String get_class_name();
         
         abstract Object get_object();
+        
+        @Override
+        abstract String toString();
 }
